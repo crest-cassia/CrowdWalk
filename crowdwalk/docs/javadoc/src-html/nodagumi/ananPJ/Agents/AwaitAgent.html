@@ -1,0 +1,540 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">package nodagumi.ananPJ.Agents;</a>
+<span class="sourceLineNo">003</span><a id="line.3"></a>
+<span class="sourceLineNo">004</span><a id="line.4">import java.io.IOException;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import java.io.ObjectInputStream;</a>
+<span class="sourceLineNo">006</span><a id="line.6">import java.io.ObjectOutputStream;</a>
+<span class="sourceLineNo">007</span><a id="line.7">import java.lang.ClassNotFoundException;</a>
+<span class="sourceLineNo">008</span><a id="line.8">import java.util.ArrayList;</a>
+<span class="sourceLineNo">009</span><a id="line.9">import java.util.Collections;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import java.util.Random;</a>
+<span class="sourceLineNo">011</span><a id="line.11">import java.util.Map;</a>
+<span class="sourceLineNo">012</span><a id="line.12">import java.util.HashMap;</a>
+<span class="sourceLineNo">013</span><a id="line.13">import java.util.regex.Matcher;</a>
+<span class="sourceLineNo">014</span><a id="line.14">import java.util.regex.Pattern;</a>
+<span class="sourceLineNo">015</span><a id="line.15"></a>
+<span class="sourceLineNo">016</span><a id="line.16">import org.w3c.dom.Document;</a>
+<span class="sourceLineNo">017</span><a id="line.17">import org.w3c.dom.Element;</a>
+<span class="sourceLineNo">018</span><a id="line.18">import org.w3c.dom.NodeList;</a>
+<span class="sourceLineNo">019</span><a id="line.19">import org.w3c.dom.Text;</a>
+<span class="sourceLineNo">020</span><a id="line.20"></a>
+<span class="sourceLineNo">021</span><a id="line.21">import net.arnx.jsonic.JSON ;</a>
+<span class="sourceLineNo">022</span><a id="line.22"></a>
+<span class="sourceLineNo">023</span><a id="line.23">import nodagumi.ananPJ.NetworkMap.OBNode;</a>
+<span class="sourceLineNo">024</span><a id="line.24">import nodagumi.ananPJ.NetworkMap.Link.MapLink;</a>
+<span class="sourceLineNo">025</span><a id="line.25">import nodagumi.ananPJ.NetworkMap.Node.MapNode;</a>
+<span class="sourceLineNo">026</span><a id="line.26">import nodagumi.ananPJ.misc.Place;</a>
+<span class="sourceLineNo">027</span><a id="line.27">import nodagumi.ananPJ.misc.RoutePlan;</a>
+<span class="sourceLineNo">028</span><a id="line.28">import nodagumi.ananPJ.misc.SimTime;</a>
+<span class="sourceLineNo">029</span><a id="line.29"></a>
+<span class="sourceLineNo">030</span><a id="line.30">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">031</span><a id="line.31"></a>
+<span class="sourceLineNo">032</span><a id="line.32">//======================================================================</a>
+<span class="sourceLineNo">033</span><a id="line.33">/**</a>
+<span class="sourceLineNo">034</span><a id="line.34"> * WAIT directive を解するエージェント</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * &lt;h3&gt; config, fallbackResources に書ける設定 &lt;/h3&gt;</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * {@link WalkAgent} に加えて、</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * &lt;pre&gt;</a>
+<span class="sourceLineNo">039</span><a id="line.39"> *  {</a>
+<span class="sourceLineNo">040</span><a id="line.40"> *    "minDistanceBetweenAgents" : __double__ // pack する際の最小距離(?)</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * }</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * &lt;/pre&gt;</a>
+<span class="sourceLineNo">043</span><a id="line.43"> */</a>
+<span class="sourceLineNo">044</span><a id="line.44">public class AwaitAgent extends WalkAgent {</a>
+<span class="sourceLineNo">045</span><a id="line.45"></a>
+<span class="sourceLineNo">046</span><a id="line.46">    //============================================================</a>
+<span class="sourceLineNo">047</span><a id="line.47">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">048</span><a id="line.48">    /**</a>
+<span class="sourceLineNo">049</span><a id="line.49">     * クラス名。</a>
+<span class="sourceLineNo">050</span><a id="line.50">     * ClassFinder でも参照できるようにしておく。</a>
+<span class="sourceLineNo">051</span><a id="line.51">     */</a>
+<span class="sourceLineNo">052</span><a id="line.52">    public static String typeString = "AwaitAgent" ;</a>
+<span class="sourceLineNo">053</span><a id="line.53">    public static String getTypeName() {</a>
+<span class="sourceLineNo">054</span><a id="line.54">        return typeString ;</a>
+<span class="sourceLineNo">055</span><a id="line.55">    }</a>
+<span class="sourceLineNo">056</span><a id="line.56"></a>
+<span class="sourceLineNo">057</span><a id="line.57">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">058</span><a id="line.58">    /**</a>
+<span class="sourceLineNo">059</span><a id="line.59">     * エージェント同士の最小の距離。</a>
+<span class="sourceLineNo">060</span><a id="line.60">     * scatter での適用範囲を定めるのに使用。</a>
+<span class="sourceLineNo">061</span><a id="line.61">     */</a>
+<span class="sourceLineNo">062</span><a id="line.62">    protected static final double Fallback_minDistanceBetweenAgents = 0.3;</a>
+<span class="sourceLineNo">063</span><a id="line.63">    protected double minDistanceBetweenAgents</a>
+<span class="sourceLineNo">064</span><a id="line.64">        = Fallback_minDistanceBetweenAgents ;</a>
+<span class="sourceLineNo">065</span><a id="line.65"></a>
+<span class="sourceLineNo">066</span><a id="line.66">    protected boolean waiting = false;</a>
+<span class="sourceLineNo">067</span><a id="line.67"></a>
+<span class="sourceLineNo">068</span><a id="line.68">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">069</span><a id="line.69">    /**</a>
+<span class="sourceLineNo">070</span><a id="line.70">     * 引数なしconstractor。 ClassFinder.newByName で必要。</a>
+<span class="sourceLineNo">071</span><a id="line.71">     */</a>
+<span class="sourceLineNo">072</span><a id="line.72">    public AwaitAgent() {} ;</a>
+<span class="sourceLineNo">073</span><a id="line.73"></a>
+<span class="sourceLineNo">074</span><a id="line.74">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">075</span><a id="line.75">    /**</a>
+<span class="sourceLineNo">076</span><a id="line.76">     * Conf による初期化。</a>
+<span class="sourceLineNo">077</span><a id="line.77">     */</a>
+<span class="sourceLineNo">078</span><a id="line.78">    @Override</a>
+<span class="sourceLineNo">079</span><a id="line.79">    public void initByConf(Term conf, Term fallback) {</a>
+<span class="sourceLineNo">080</span><a id="line.80">        super.initByConf(conf, fallback) ;</a>
+<span class="sourceLineNo">081</span><a id="line.81"></a>
+<span class="sourceLineNo">082</span><a id="line.82">        minDistanceBetweenAgents =</a>
+<span class="sourceLineNo">083</span><a id="line.83">            getDoubleFromConfig("minDistanceBetweenAgents",</a>
+<span class="sourceLineNo">084</span><a id="line.84">                                minDistanceBetweenAgents) ;</a>
+<span class="sourceLineNo">085</span><a id="line.85">    } ;</a>
+<span class="sourceLineNo">086</span><a id="line.86"></a>
+<span class="sourceLineNo">087</span><a id="line.87">    //----------------------------------------------------------------------</a>
+<span class="sourceLineNo">088</span><a id="line.88">    /**</a>
+<span class="sourceLineNo">089</span><a id="line.89">     * WAITING の処理</a>
+<span class="sourceLineNo">090</span><a id="line.90">     * @return もしここで preUpdate から return するなら true。</a>
+<span class="sourceLineNo">091</span><a id="line.91">     */</a>
+<span class="sourceLineNo">092</span><a id="line.92">    protected boolean doWait(Term how, SimTime currentTime) {</a>
+<span class="sourceLineNo">093</span><a id="line.93">        if (how.equals("SCATTER")) {</a>
+<span class="sourceLineNo">094</span><a id="line.94">            waiting = true;</a>
+<span class="sourceLineNo">095</span><a id="line.95">            scatter(currentTime);</a>
+<span class="sourceLineNo">096</span><a id="line.96">            return true;</a>
+<span class="sourceLineNo">097</span><a id="line.97">        } else if (how.equals("PACK")) {</a>
+<span class="sourceLineNo">098</span><a id="line.98">            waiting = true;</a>
+<span class="sourceLineNo">099</span><a id="line.99">            pack(currentTime);</a>
+<span class="sourceLineNo">100</span><a id="line.100">            return true;</a>
+<span class="sourceLineNo">101</span><a id="line.101">        } else {</a>
+<span class="sourceLineNo">102</span><a id="line.102">            Itk.logWarn("how to move not stated!", this);</a>
+<span class="sourceLineNo">103</span><a id="line.103">            return false ;</a>
+<span class="sourceLineNo">104</span><a id="line.104">        }</a>
+<span class="sourceLineNo">105</span><a id="line.105">    }</a>
+<span class="sourceLineNo">106</span><a id="line.106"></a>
+<span class="sourceLineNo">107</span><a id="line.107">    /**</a>
+<span class="sourceLineNo">108</span><a id="line.108">     * WAIT_FOR/WAIT_UNTIL 処理中か?</a>
+<span class="sourceLineNo">109</span><a id="line.109">     */</a>
+<span class="sourceLineNo">110</span><a id="line.110">    public boolean isWaiting() {</a>
+<span class="sourceLineNo">111</span><a id="line.111">        return waiting;</a>
+<span class="sourceLineNo">112</span><a id="line.112">    }</a>
+<span class="sourceLineNo">113</span><a id="line.113"></a>
+<span class="sourceLineNo">114</span><a id="line.114">    //----------------------------------------------------------------------</a>
+<span class="sourceLineNo">115</span><a id="line.115">    /**</a>
+<span class="sourceLineNo">116</span><a id="line.116">     * WAIT_FOR/WAIT_UNTIL 中のエージェントをレーンごとに均等な間隔で配置する。</a>
+<span class="sourceLineNo">117</span><a id="line.117">     * ※制限事項</a>
+<span class="sourceLineNo">118</span><a id="line.118">     * ・同じレーン上に scatter 以外のエージェントが存在すると間隔が詰まり均等にならなくなる。</a>
+<span class="sourceLineNo">119</span><a id="line.119">     * ・対向流が発生すると laneWidth が変化するため均等な間隔にならない事がある。</a>
+<span class="sourceLineNo">120</span><a id="line.120">     */</a>
+<span class="sourceLineNo">121</span><a id="line.121">    protected boolean scatter(SimTime currentTime) {</a>
+<span class="sourceLineNo">122</span><a id="line.122">        ArrayList&lt;AgentBase&gt; agents = currentPlace.getLane();</a>
+<span class="sourceLineNo">123</span><a id="line.123">        int laneWidth = currentPlace.getLaneWidth();</a>
+<span class="sourceLineNo">124</span><a id="line.124">        double space = currentPlace.getLinkLength() / ((agents.size() - 1) / laneWidth + 2);</a>
+<span class="sourceLineNo">125</span><a id="line.125"></a>
+<span class="sourceLineNo">126</span><a id="line.126">        // scatter メソッドが適用できないほど超過密状態の場合には pack を使用する</a>
+<span class="sourceLineNo">127</span><a id="line.127">        if (space &lt;= minDistanceBetweenAgents) {</a>
+<span class="sourceLineNo">128</span><a id="line.128">            return pack(currentTime);</a>
+<span class="sourceLineNo">129</span><a id="line.129">        }</a>
+<span class="sourceLineNo">130</span><a id="line.130"></a>
+<span class="sourceLineNo">131</span><a id="line.131">        int index = currentPlace.getIndexFromHeadingInLane(this) ;</a>
+<span class="sourceLineNo">132</span><a id="line.132">        double stopPosition = currentPlace.getLinkLength() - space * ((index / laneWidth) + 1);</a>
+<span class="sourceLineNo">133</span><a id="line.133">        double d = stopPosition - getAdvancingDistance();</a>
+<span class="sourceLineNo">134</span><a id="line.134"></a>
+<span class="sourceLineNo">135</span><a id="line.135">        // エージェントが停止予定位置より先にいた場合はその位置に留まらせる</a>
+<span class="sourceLineNo">136</span><a id="line.136">        if (d &lt; 0.0) d = 0.0; </a>
+<span class="sourceLineNo">137</span><a id="line.137"></a>
+<span class="sourceLineNo">138</span><a id="line.138">        // d が speed より小さい時、d に基づきスピードを決める。 </a>
+<span class="sourceLineNo">139</span><a id="line.139">        double previousSpeed = speed ;</a>
+<span class="sourceLineNo">140</span><a id="line.140">        speed = calcSpeed(speed, currentTime);</a>
+<span class="sourceLineNo">141</span><a id="line.141">        if (d &lt; speed * currentTime.getTickUnit()) {</a>
+<span class="sourceLineNo">142</span><a id="line.142">            speed = d / currentTime.getTickUnit() ;</a>
+<span class="sourceLineNo">143</span><a id="line.143">        }</a>
+<span class="sourceLineNo">144</span><a id="line.144">        checkSpeedChange(previousSpeed, speed) ;</a>
+<span class="sourceLineNo">145</span><a id="line.145"></a>
+<span class="sourceLineNo">146</span><a id="line.146">        return advanceNextPlace(speed, currentTime, true) ;</a>
+<span class="sourceLineNo">147</span><a id="line.147">    }</a>
+<span class="sourceLineNo">148</span><a id="line.148">    </a>
+<span class="sourceLineNo">149</span><a id="line.149">    //----------------------------------------------------------------------</a>
+<span class="sourceLineNo">150</span><a id="line.150">    /**</a>
+<span class="sourceLineNo">151</span><a id="line.151">     * できるだけ過密に並ぶ</a>
+<span class="sourceLineNo">152</span><a id="line.152">     */</a>
+<span class="sourceLineNo">153</span><a id="line.153">    protected boolean pack(SimTime currentTime) {</a>
+<span class="sourceLineNo">154</span><a id="line.154">        double previousSpeed = speed;</a>
+<span class="sourceLineNo">155</span><a id="line.155">        speed = calcSpeed(speed, currentTime);</a>
+<span class="sourceLineNo">156</span><a id="line.156"></a>
+<span class="sourceLineNo">157</span><a id="line.157">        // currentLink 内に収まるスピードにする</a>
+<span class="sourceLineNo">158</span><a id="line.158">        double deltaDistance = speed * currentTime.getTickUnit() ;</a>
+<span class="sourceLineNo">159</span><a id="line.159">        if (currentPlace.isBeyondLinkWithAdvance(deltaDistance)) {</a>
+<span class="sourceLineNo">160</span><a id="line.160">            double distance = currentPlace.getLinkLength() * Place.AlmostOne</a>
+<span class="sourceLineNo">161</span><a id="line.161">                - currentPlace.getAdvancingDistance();</a>
+<span class="sourceLineNo">162</span><a id="line.162">            speed = distance / currentTime.getTickUnit();</a>
+<span class="sourceLineNo">163</span><a id="line.163">        }</a>
+<span class="sourceLineNo">164</span><a id="line.164"></a>
+<span class="sourceLineNo">165</span><a id="line.165">        checkSpeedChange(previousSpeed, speed);</a>
+<span class="sourceLineNo">166</span><a id="line.166"></a>
+<span class="sourceLineNo">167</span><a id="line.167">        return advanceNextPlace(speed, currentTime, true) ;</a>
+<span class="sourceLineNo">168</span><a id="line.168">    }</a>
+<span class="sourceLineNo">169</span><a id="line.169"></a>
+<span class="sourceLineNo">170</span><a id="line.170">    static final double NOT_WAITING = -100.0;</a>
+<span class="sourceLineNo">171</span><a id="line.171">    private double wait_time = NOT_WAITING;</a>
+<span class="sourceLineNo">172</span><a id="line.172">    private double wait_time_start = NOT_WAITING;</a>
+<span class="sourceLineNo">173</span><a id="line.173"></a>
+<span class="sourceLineNo">174</span><a id="line.174">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">175</span><a id="line.175">    /**</a>
+<span class="sourceLineNo">176</span><a id="line.176">     * cycle 前処理。</a>
+<span class="sourceLineNo">177</span><a id="line.177">     * Wait directive の処理を呼び出す。</a>
+<span class="sourceLineNo">178</span><a id="line.178">     */</a>
+<span class="sourceLineNo">179</span><a id="line.179">    @Override</a>
+<span class="sourceLineNo">180</span><a id="line.180">    public void preUpdate(SimTime currentTime) {</a>
+<span class="sourceLineNo">181</span><a id="line.181">        waiting = false;</a>
+<span class="sourceLineNo">182</span><a id="line.182">        if (currentTime.isBeforeOrAt(generatedTime) || routePlan.isEmpty()) {</a>
+<span class="sourceLineNo">183</span><a id="line.183">            //生成前かroutePlanがすでに空なら</a>
+<span class="sourceLineNo">184</span><a id="line.184">            // do nothing</a>
+<span class="sourceLineNo">185</span><a id="line.185">        } else {</a>
+<span class="sourceLineNo">186</span><a id="line.186">            // WAIT directive かどうかのチェック。</a>
+<span class="sourceLineNo">187</span><a id="line.187">            Term tag = routePlan.top() ;</a>
+<span class="sourceLineNo">188</span><a id="line.188">            WaitDirective.Type waitType = WaitDirective.isDirective(tag) ;</a>
+<span class="sourceLineNo">189</span><a id="line.189">            if(waitType != null) {</a>
+<span class="sourceLineNo">190</span><a id="line.190">                Term target = tag.getArgTerm("target") ;</a>
+<span class="sourceLineNo">191</span><a id="line.191">                Term how = tag.getArgTerm("how") ;</a>
+<span class="sourceLineNo">192</span><a id="line.192">                Term until = tag.getArgTerm("until") ;</a>
+<span class="sourceLineNo">193</span><a id="line.193"></a>
+<span class="sourceLineNo">194</span><a id="line.194">                try {</a>
+<span class="sourceLineNo">195</span><a id="line.195">                    switch(waitType) {</a>
+<span class="sourceLineNo">196</span><a id="line.196">                    case WAIT_UNTIL:</a>
+<span class="sourceLineNo">197</span><a id="line.197">                        if(doWaitUntil(target, how, until, currentTime)) return ;</a>
+<span class="sourceLineNo">198</span><a id="line.198">                        break ;</a>
+<span class="sourceLineNo">199</span><a id="line.199">                    case WAIT_FOR:</a>
+<span class="sourceLineNo">200</span><a id="line.200">                        if(doWaitFor(target, how, until, currentTime)) return ;</a>
+<span class="sourceLineNo">201</span><a id="line.201">                        break ;</a>
+<span class="sourceLineNo">202</span><a id="line.202">                    }</a>
+<span class="sourceLineNo">203</span><a id="line.203">                } catch (Exception ex) {</a>
+<span class="sourceLineNo">204</span><a id="line.204">                    Itk.dumpStackTraceOf(ex) ;</a>
+<span class="sourceLineNo">205</span><a id="line.205">                }</a>
+<span class="sourceLineNo">206</span><a id="line.206">            }</a>
+<span class="sourceLineNo">207</span><a id="line.207">        }</a>
+<span class="sourceLineNo">208</span><a id="line.208">        super.preUpdate(currentTime);</a>
+<span class="sourceLineNo">209</span><a id="line.209">    }</a>
+<span class="sourceLineNo">210</span><a id="line.210"></a>
+<span class="sourceLineNo">211</span><a id="line.211">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">212</span><a id="line.212">    /**</a>
+<span class="sourceLineNo">213</span><a id="line.213">     * WAIT_UNTIL の場合の preUpdate 処理</a>
+<span class="sourceLineNo">214</span><a id="line.214">     * @return 処理が終わればすぐに return すべきかどうか。</a>
+<span class="sourceLineNo">215</span><a id="line.215">     *         (true なら super のpreUpdateを呼ばない)</a>
+<span class="sourceLineNo">216</span><a id="line.216">     */</a>
+<span class="sourceLineNo">217</span><a id="line.217">    protected boolean doWaitUntil(Term target, Term how, Term until,</a>
+<span class="sourceLineNo">218</span><a id="line.218">                                  SimTime currentTime) {</a>
+<span class="sourceLineNo">219</span><a id="line.219">        if (currentPlace.getLink().hasTag(target)) {</a>
+<span class="sourceLineNo">220</span><a id="line.220">            // until は、待っているリンクで生じるイベント</a>
+<span class="sourceLineNo">221</span><a id="line.221">            // until イベントが生じていたら、WAIT解除</a>
+<span class="sourceLineNo">222</span><a id="line.222">            if (currentPlace.getLink().hasTag(until.getString())) {</a>
+<span class="sourceLineNo">223</span><a id="line.223">                routePlan.shift() ;</a>
+<span class="sourceLineNo">224</span><a id="line.224">                return false ;</a>
+<span class="sourceLineNo">225</span><a id="line.225">            } else {</a>
+<span class="sourceLineNo">226</span><a id="line.226">                return doWait(how, currentTime) ;</a>
+<span class="sourceLineNo">227</span><a id="line.227">            }</a>
+<span class="sourceLineNo">228</span><a id="line.228">        } else {</a>
+<span class="sourceLineNo">229</span><a id="line.229">            return false ;</a>
+<span class="sourceLineNo">230</span><a id="line.230">        }</a>
+<span class="sourceLineNo">231</span><a id="line.231">    }</a>
+<span class="sourceLineNo">232</span><a id="line.232"></a>
+<span class="sourceLineNo">233</span><a id="line.233">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">234</span><a id="line.234">    /**</a>
+<span class="sourceLineNo">235</span><a id="line.235">     * WAIT_FOR の場合の preUpdate 処理</a>
+<span class="sourceLineNo">236</span><a id="line.236">     * @return 処理が終わればすぐに return すべきかどうか。</a>
+<span class="sourceLineNo">237</span><a id="line.237">     *         (super のpreUpdateがいらないかどうか)</a>
+<span class="sourceLineNo">238</span><a id="line.238">     */</a>
+<span class="sourceLineNo">239</span><a id="line.239">    protected boolean doWaitFor(Term target, Term how, Term until,</a>
+<span class="sourceLineNo">240</span><a id="line.240">                                SimTime currentTime) {</a>
+<span class="sourceLineNo">241</span><a id="line.241">        // until は待つ時間(?)</a>
+<span class="sourceLineNo">242</span><a id="line.242">        if (currentPlace.getLink().hasTag(target)) {</a>
+<span class="sourceLineNo">243</span><a id="line.243">            // 待ち始めた時刻と待ち時間を記録(初回のみ)</a>
+<span class="sourceLineNo">244</span><a id="line.244">            if (wait_time == NOT_WAITING) {</a>
+<span class="sourceLineNo">245</span><a id="line.245">                wait_time = until.getDouble() ;</a>
+<span class="sourceLineNo">246</span><a id="line.246">                wait_time_start = currentTime.getRelativeTime() ;</a>
+<span class="sourceLineNo">247</span><a id="line.247">            }</a>
+<span class="sourceLineNo">248</span><a id="line.248"></a>
+<span class="sourceLineNo">249</span><a id="line.249">            // wait_time (untilに記録) 時間過ぎたらWAIT解除</a>
+<span class="sourceLineNo">250</span><a id="line.250">            if (currentTime.getRelativeTime() - wait_time_start &gt; wait_time) {</a>
+<span class="sourceLineNo">251</span><a id="line.251">                wait_time = NOT_WAITING;</a>
+<span class="sourceLineNo">252</span><a id="line.252">                routePlan.shift() ;</a>
+<span class="sourceLineNo">253</span><a id="line.253">            } else {</a>
+<span class="sourceLineNo">254</span><a id="line.254">                boolean returnP = doWait(how, currentTime) ;</a>
+<span class="sourceLineNo">255</span><a id="line.255">                if(returnP) return true;</a>
+<span class="sourceLineNo">256</span><a id="line.256">            }</a>
+<span class="sourceLineNo">257</span><a id="line.257">        } else if (wait_time != NOT_WAITING) {</a>
+<span class="sourceLineNo">258</span><a id="line.258">            Itk.logWarn("Pushed Out", "agent " + ID + " pushed out from " + target);</a>
+<span class="sourceLineNo">259</span><a id="line.259">            wait_time = NOT_WAITING;</a>
+<span class="sourceLineNo">260</span><a id="line.260">            routePlan.shift() ;</a>
+<span class="sourceLineNo">261</span><a id="line.261">        }</a>
+<span class="sourceLineNo">262</span><a id="line.262">        return false ;</a>
+<span class="sourceLineNo">263</span><a id="line.263">    }</a>
+<span class="sourceLineNo">264</span><a id="line.264"></a>
+<span class="sourceLineNo">265</span><a id="line.265">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">266</span><a id="line.266">    /**</a>
+<span class="sourceLineNo">267</span><a id="line.267">     */</a>
+<span class="sourceLineNo">268</span><a id="line.268">    @Override</a>
+<span class="sourceLineNo">269</span><a id="line.269">    public boolean update(SimTime currentTime) {</a>
+<span class="sourceLineNo">270</span><a id="line.270">        return super.update(currentTime);</a>
+<span class="sourceLineNo">271</span><a id="line.271">    }</a>
+<span class="sourceLineNo">272</span><a id="line.272"></a>
+<span class="sourceLineNo">273</span><a id="line.273">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">274</span><a id="line.274">    /**</a>
+<span class="sourceLineNo">275</span><a id="line.275">     */</a>
+<span class="sourceLineNo">276</span><a id="line.276">    @Override</a>
+<span class="sourceLineNo">277</span><a id="line.277">    public ArrayList&lt;Term&gt; getPlannedRoute() {</a>
+<span class="sourceLineNo">278</span><a id="line.278">        ArrayList&lt;Term&gt; goal_tags = new ArrayList&lt;Term&gt;();</a>
+<span class="sourceLineNo">279</span><a id="line.279"></a>
+<span class="sourceLineNo">280</span><a id="line.280">        int delta = 0;</a>
+<span class="sourceLineNo">281</span><a id="line.281">        while (delta &lt; routePlan.length()) {</a>
+<span class="sourceLineNo">282</span><a id="line.282">            Term candidate = routePlan.top(delta) ;</a>
+<span class="sourceLineNo">283</span><a id="line.283">            /* [2014.12.27 I.Noda]</a>
+<span class="sourceLineNo">284</span><a id="line.284">             * 読み込み時点で、directive はすでに1つのタグに集約されているはず。</a>
+<span class="sourceLineNo">285</span><a id="line.285">             * (in "AgentGenerationFile.java")</a>
+<span class="sourceLineNo">286</span><a id="line.286">             */</a>
+<span class="sourceLineNo">287</span><a id="line.287">            WaitDirective.Type type = </a>
+<span class="sourceLineNo">288</span><a id="line.288">                WaitDirective.isDirective(candidate) ;</a>
+<span class="sourceLineNo">289</span><a id="line.289">            if(type != null) {</a>
+<span class="sourceLineNo">290</span><a id="line.290">                goal_tags.add(candidate.getArgTerm("target")) ;</a>
+<span class="sourceLineNo">291</span><a id="line.291">            } else {</a>
+<span class="sourceLineNo">292</span><a id="line.292">                goal_tags.add(candidate);</a>
+<span class="sourceLineNo">293</span><a id="line.293">            }</a>
+<span class="sourceLineNo">294</span><a id="line.294">            delta++ ;</a>
+<span class="sourceLineNo">295</span><a id="line.295">        }</a>
+<span class="sourceLineNo">296</span><a id="line.296">        return goal_tags;</a>
+<span class="sourceLineNo">297</span><a id="line.297">    }</a>
+<span class="sourceLineNo">298</span><a id="line.298"></a>
+<span class="sourceLineNo">299</span><a id="line.299">        //------------------------------------------------------------</a>
+<span class="sourceLineNo">300</span><a id="line.300">        /**</a>
+<span class="sourceLineNo">301</span><a id="line.301">         * 知っている directive かどうかのチェック</a>
+<span class="sourceLineNo">302</span><a id="line.302">         */</a>
+<span class="sourceLineNo">303</span><a id="line.303">    @Override</a>
+<span class="sourceLineNo">304</span><a id="line.304">    public boolean isKnownDirective(Term term) {</a>
+<span class="sourceLineNo">305</span><a id="line.305">        WaitDirective.Type type =</a>
+<span class="sourceLineNo">306</span><a id="line.306">            WaitDirective.isDirective(term) ;</a>
+<span class="sourceLineNo">307</span><a id="line.307">        if(type != null)</a>
+<span class="sourceLineNo">308</span><a id="line.308">            return true ;</a>
+<span class="sourceLineNo">309</span><a id="line.309">        else</a>
+<span class="sourceLineNo">310</span><a id="line.310">            return super.isKnownDirective(term) ;</a>
+<span class="sourceLineNo">311</span><a id="line.311">    }</a>
+<span class="sourceLineNo">312</span><a id="line.312"></a>
+<span class="sourceLineNo">313</span><a id="line.313">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">314</span><a id="line.314">    /**</a>
+<span class="sourceLineNo">315</span><a id="line.315">     * Directive のなかの代表的目的地の取得</a>
+<span class="sourceLineNo">316</span><a id="line.316">     * @param directive : 調べる directive。通常の place tag の場合もある。</a>
+<span class="sourceLineNo">317</span><a id="line.317">     *    もし directive が isKnownDirective() なら、なにか返すべき。</a>
+<span class="sourceLineNo">318</span><a id="line.318">     * @return もし directive なら代表的目的地。そうでないなら null</a>
+<span class="sourceLineNo">319</span><a id="line.319">     */</a>
+<span class="sourceLineNo">320</span><a id="line.320">    @Override</a>
+<span class="sourceLineNo">321</span><a id="line.321">    public Term getPrimalTargetPlaceInDirective(Term directive) {</a>
+<span class="sourceLineNo">322</span><a id="line.322">        WaitDirective.Type type =</a>
+<span class="sourceLineNo">323</span><a id="line.323">            WaitDirective.isDirective(directive) ;</a>
+<span class="sourceLineNo">324</span><a id="line.324">        if(type != null) {</a>
+<span class="sourceLineNo">325</span><a id="line.325">            return directive.getArgTerm("target") ;</a>
+<span class="sourceLineNo">326</span><a id="line.326">        } else {</a>
+<span class="sourceLineNo">327</span><a id="line.327">            return null ;</a>
+<span class="sourceLineNo">328</span><a id="line.328">        }</a>
+<span class="sourceLineNo">329</span><a id="line.329">    }</a>
+<span class="sourceLineNo">330</span><a id="line.330"></a>
+<span class="sourceLineNo">331</span><a id="line.331">    //============================================================</a>
+<span class="sourceLineNo">332</span><a id="line.332">    //============================================================</a>
+<span class="sourceLineNo">333</span><a id="line.333">    //============================================================</a>
+<span class="sourceLineNo">334</span><a id="line.334">    /**</a>
+<span class="sourceLineNo">335</span><a id="line.335">     * WAIT directive 解釈</a>
+<span class="sourceLineNo">336</span><a id="line.336">     */</a>
+<span class="sourceLineNo">337</span><a id="line.337">    static public class WaitDirective {</a>
+<span class="sourceLineNo">338</span><a id="line.338">        //==============================</a>
+<span class="sourceLineNo">339</span><a id="line.339">        //::::::::::::::::::::::::::::::</a>
+<span class="sourceLineNo">340</span><a id="line.340">        /**</a>
+<span class="sourceLineNo">341</span><a id="line.341">         * enum for WAIT directive</a>
+<span class="sourceLineNo">342</span><a id="line.342">         */</a>
+<span class="sourceLineNo">343</span><a id="line.343">        static public enum Type {</a>
+<span class="sourceLineNo">344</span><a id="line.344">            WAIT_FOR,</a>
+<span class="sourceLineNo">345</span><a id="line.345">            WAIT_UNTIL</a>
+<span class="sourceLineNo">346</span><a id="line.346">        }</a>
+<span class="sourceLineNo">347</span><a id="line.347">        //::::::::::::::::::::::::::::::</a>
+<span class="sourceLineNo">348</span><a id="line.348">        /**</a>
+<span class="sourceLineNo">349</span><a id="line.349">         * Lexicon for WAIT directive</a>
+<span class="sourceLineNo">350</span><a id="line.350">         */</a>
+<span class="sourceLineNo">351</span><a id="line.351">        static public Lexicon lexicon = new Lexicon() ;</a>
+<span class="sourceLineNo">352</span><a id="line.352">        static {</a>
+<span class="sourceLineNo">353</span><a id="line.353">            // Rule で定義された名前をそのまま文字列で Lexicon を</a>
+<span class="sourceLineNo">354</span><a id="line.354">            // 引けるようにする。</a>
+<span class="sourceLineNo">355</span><a id="line.355">            // 例えば、 WaitDirective.WAIT_FOR は、"WAIT_FOR" で引けるようになる。</a>
+<span class="sourceLineNo">356</span><a id="line.356">            lexicon.registerEnum(Type.class) ;</a>
+<span class="sourceLineNo">357</span><a id="line.357">        }</a>
+<span class="sourceLineNo">358</span><a id="line.358"></a>
+<span class="sourceLineNo">359</span><a id="line.359">        //==============================</a>
+<span class="sourceLineNo">360</span><a id="line.360">        //------------------------------</a>
+<span class="sourceLineNo">361</span><a id="line.361">        static public Type isDirective(Term term) {</a>
+<span class="sourceLineNo">362</span><a id="line.362">            return (Type)lexicon.lookUp(term.getHeadString()) ;</a>
+<span class="sourceLineNo">363</span><a id="line.363">        }</a>
+<span class="sourceLineNo">364</span><a id="line.364">        //==============================</a>
+<span class="sourceLineNo">365</span><a id="line.365">        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">366</span><a id="line.366">        /**</a>
+<span class="sourceLineNo">367</span><a id="line.367">         * route 中の WAIT 命令の解釈パターン</a>
+<span class="sourceLineNo">368</span><a id="line.368">         */</a>
+<span class="sourceLineNo">369</span><a id="line.369">        static public Pattern FullPattern =</a>
+<span class="sourceLineNo">370</span><a id="line.370">            Pattern.compile("(\\w+)\\((\\w+),(\\w+),(\\w+)\\)") ;</a>
+<span class="sourceLineNo">371</span><a id="line.371">        static public Pattern HeadPattern =</a>
+<span class="sourceLineNo">372</span><a id="line.372">            Pattern.compile("(\\w+)\\((\\w+)") ;</a>
+<span class="sourceLineNo">373</span><a id="line.373">        static public Pattern TailPattern =</a>
+<span class="sourceLineNo">374</span><a id="line.374">            Pattern.compile("(\\w+)\\)") ;</a>
+<span class="sourceLineNo">375</span><a id="line.375"></a>
+<span class="sourceLineNo">376</span><a id="line.376">        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">377</span><a id="line.377">        /**</a>
+<span class="sourceLineNo">378</span><a id="line.378">         * route 中の WAIT 命令の解釈パターン</a>
+<span class="sourceLineNo">379</span><a id="line.379">         */</a>
+<span class="sourceLineNo">380</span><a id="line.380">        public Type type ;</a>
+<span class="sourceLineNo">381</span><a id="line.381">        public String head ;</a>
+<span class="sourceLineNo">382</span><a id="line.382">        public String target ; // arg1</a>
+<span class="sourceLineNo">383</span><a id="line.383">        public String how ;    // arg2</a>
+<span class="sourceLineNo">384</span><a id="line.384">        public String untilStr ; // arg3</a>
+<span class="sourceLineNo">385</span><a id="line.385"></a>
+<span class="sourceLineNo">386</span><a id="line.386">        //------------------------------</a>
+<span class="sourceLineNo">387</span><a id="line.387">        public WaitDirective(Type _type, String _head, String _target, </a>
+<span class="sourceLineNo">388</span><a id="line.388">                             String _how, String _untilStr) {</a>
+<span class="sourceLineNo">389</span><a id="line.389">            type = _type ;</a>
+<span class="sourceLineNo">390</span><a id="line.390">            head = _head ;</a>
+<span class="sourceLineNo">391</span><a id="line.391">            target = _target ;</a>
+<span class="sourceLineNo">392</span><a id="line.392">            how = _how ;</a>
+<span class="sourceLineNo">393</span><a id="line.393">            untilStr = _untilStr ;</a>
+<span class="sourceLineNo">394</span><a id="line.394">        }</a>
+<span class="sourceLineNo">395</span><a id="line.395"></a>
+<span class="sourceLineNo">396</span><a id="line.396">        //------------------------------</a>
+<span class="sourceLineNo">397</span><a id="line.397">        public Term targetTerm() {</a>
+<span class="sourceLineNo">398</span><a id="line.398">            return new Term(target, false) ;</a>
+<span class="sourceLineNo">399</span><a id="line.399">        }</a>
+<span class="sourceLineNo">400</span><a id="line.400"></a>
+<span class="sourceLineNo">401</span><a id="line.401">        //------------------------------</a>
+<span class="sourceLineNo">402</span><a id="line.402">        private static final String Lex_target = Itk.intern("target") ;</a>
+<span class="sourceLineNo">403</span><a id="line.403">        private static final String Lex_how = Itk.intern("how") ;</a>
+<span class="sourceLineNo">404</span><a id="line.404">        private static final String Lex_until = Itk.intern("until") ;</a>
+<span class="sourceLineNo">405</span><a id="line.405">        </a>
+<span class="sourceLineNo">406</span><a id="line.406">        //------------------------------</a>
+<span class="sourceLineNo">407</span><a id="line.407">        public Term toTerm() {</a>
+<span class="sourceLineNo">408</span><a id="line.408">            Term term = new Term(head, false) ;</a>
+<span class="sourceLineNo">409</span><a id="line.409">            term.setArg(Lex_target, new Term(target, false)) ;</a>
+<span class="sourceLineNo">410</span><a id="line.410">            term.setArg(Lex_how, new Term(how, false)) ;</a>
+<span class="sourceLineNo">411</span><a id="line.411">            switch(type) {</a>
+<span class="sourceLineNo">412</span><a id="line.412">            case WAIT_UNTIL:</a>
+<span class="sourceLineNo">413</span><a id="line.413">                term.setArg(Lex_until, new Term(untilStr, false)) ;</a>
+<span class="sourceLineNo">414</span><a id="line.414">                break ;</a>
+<span class="sourceLineNo">415</span><a id="line.415">            case WAIT_FOR:</a>
+<span class="sourceLineNo">416</span><a id="line.416">                term.setArg(Lex_until,</a>
+<span class="sourceLineNo">417</span><a id="line.417">                            new Term(Double.parseDouble(untilStr))) ;</a>
+<span class="sourceLineNo">418</span><a id="line.418">                break ;</a>
+<span class="sourceLineNo">419</span><a id="line.419">            }</a>
+<span class="sourceLineNo">420</span><a id="line.420"></a>
+<span class="sourceLineNo">421</span><a id="line.421">            return term ;</a>
+<span class="sourceLineNo">422</span><a id="line.422">        }</a>
+<span class="sourceLineNo">423</span><a id="line.423"></a>
+<span class="sourceLineNo">424</span><a id="line.424">        //==============================</a>
+<span class="sourceLineNo">425</span><a id="line.425">        //------------------------------</a>
+<span class="sourceLineNo">426</span><a id="line.426">        /**</a>
+<span class="sourceLineNo">427</span><a id="line.427">         * atom String 状態の wait directive を解析する。</a>
+<span class="sourceLineNo">428</span><a id="line.428">         * &lt;pre&gt;</a>
+<span class="sourceLineNo">429</span><a id="line.429">         *   _directive_ ::= _head_(_target_,_how_,_until_)</a>
+<span class="sourceLineNo">430</span><a id="line.430">         *   _head_      ::= "WAIT_UNTIL" | "WAIT_FOR"</a>
+<span class="sourceLineNo">431</span><a id="line.431">         *   _how_       ::= ???</a>
+<span class="sourceLineNo">432</span><a id="line.432">         *   _until_     ::= _eventTag_ | _duration_</a>
+<span class="sourceLineNo">433</span><a id="line.433">         * &lt;/pre&gt;</a>
+<span class="sourceLineNo">434</span><a id="line.434">         */</a>
+<span class="sourceLineNo">435</span><a id="line.435">        static public WaitDirective scanDirective(Term directive) {</a>
+<span class="sourceLineNo">436</span><a id="line.436">            return scanDirective(directive.getString()) ;</a>
+<span class="sourceLineNo">437</span><a id="line.437">        }</a>
+<span class="sourceLineNo">438</span><a id="line.438">        //==============================</a>
+<span class="sourceLineNo">439</span><a id="line.439">        //------------------------------</a>
+<span class="sourceLineNo">440</span><a id="line.440">        static public WaitDirective scanDirective(String directive) {</a>
+<span class="sourceLineNo">441</span><a id="line.441">            Matcher matchFull = FullPattern.matcher(directive) ;</a>
+<span class="sourceLineNo">442</span><a id="line.442">            if(! matchFull.matches()) {</a>
+<span class="sourceLineNo">443</span><a id="line.443">                return null ;</a>
+<span class="sourceLineNo">444</span><a id="line.444">            }</a>
+<span class="sourceLineNo">445</span><a id="line.445"></a>
+<span class="sourceLineNo">446</span><a id="line.446">            String head = Itk.intern(matchFull.group(1)) ;</a>
+<span class="sourceLineNo">447</span><a id="line.447">            Type waitType = (Type)lexicon.lookUp(head) ;</a>
+<span class="sourceLineNo">448</span><a id="line.448">            if(waitType == null) {</a>
+<span class="sourceLineNo">449</span><a id="line.449">                return null ;</a>
+<span class="sourceLineNo">450</span><a id="line.450">            }</a>
+<span class="sourceLineNo">451</span><a id="line.451"></a>
+<span class="sourceLineNo">452</span><a id="line.452">            WaitDirective _directive = </a>
+<span class="sourceLineNo">453</span><a id="line.453">                new WaitDirective(waitType, head,</a>
+<span class="sourceLineNo">454</span><a id="line.454">                                  Itk.intern(matchFull.group(2)),</a>
+<span class="sourceLineNo">455</span><a id="line.455">                                  Itk.intern(matchFull.group(3)),</a>
+<span class="sourceLineNo">456</span><a id="line.456">                                  Itk.intern(matchFull.group(4))) ;</a>
+<span class="sourceLineNo">457</span><a id="line.457"></a>
+<span class="sourceLineNo">458</span><a id="line.458">            return _directive ;</a>
+<span class="sourceLineNo">459</span><a id="line.459">        }</a>
+<span class="sourceLineNo">460</span><a id="line.460">    }</a>
+<span class="sourceLineNo">461</span><a id="line.461"></a>
+<span class="sourceLineNo">462</span><a id="line.462">}</a>
+<span class="sourceLineNo">463</span><a id="line.463">//;;; Local Variables:</a>
+<span class="sourceLineNo">464</span><a id="line.464">//;;; mode:java</a>
+<span class="sourceLineNo">465</span><a id="line.465">//;;; tab-width:4</a>
+<span class="sourceLineNo">466</span><a id="line.466">//;;; End:</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

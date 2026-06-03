@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">/** OBNode のテーブル</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * @author:: Itsuki Noda</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * @version:: 0.0 2014/12/18 I.Noda</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * &lt;B&gt;History:&lt;/B&gt;</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * &lt;UL&gt;</a>
+<span class="sourceLineNo">007</span><a id="line.7"> *   &lt;LI&gt; [2014/12/18]: Create This File. &lt;/LI&gt;</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * &lt;/UL&gt;</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * &lt;B&gt;Usage:&lt;/B&gt;</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * ...</a>
+<span class="sourceLineNo">011</span><a id="line.11"> */</a>
+<span class="sourceLineNo">012</span><a id="line.12"></a>
+<span class="sourceLineNo">013</span><a id="line.13">package nodagumi.ananPJ.NetworkMap;</a>
+<span class="sourceLineNo">014</span><a id="line.14"></a>
+<span class="sourceLineNo">015</span><a id="line.15">import java.util.Collection;</a>
+<span class="sourceLineNo">016</span><a id="line.16">import java.util.ArrayList;</a>
+<span class="sourceLineNo">017</span><a id="line.17">import java.util.HashMap;</a>
+<span class="sourceLineNo">018</span><a id="line.18">import java.util.Random;</a>
+<span class="sourceLineNo">019</span><a id="line.19"></a>
+<span class="sourceLineNo">020</span><a id="line.20">import nodagumi.ananPJ.NetworkMap.OBNode;</a>
+<span class="sourceLineNo">021</span><a id="line.21"></a>
+<span class="sourceLineNo">022</span><a id="line.22">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">023</span><a id="line.23"></a>
+<span class="sourceLineNo">024</span><a id="line.24">//======================================================================</a>
+<span class="sourceLineNo">025</span><a id="line.25">/**</a>
+<span class="sourceLineNo">026</span><a id="line.26"> * OBNode のテーブル。 </a>
+<span class="sourceLineNo">027</span><a id="line.27"> * {@literal ArrayList&lt;OBNode&gt;} を置き換え、各種機能を提供する。</a>
+<span class="sourceLineNo">028</span><a id="line.28"> */</a>
+<span class="sourceLineNo">029</span><a id="line.29">public class OBNodeTable&lt;T extends OBNode&gt; extends ArrayList&lt;T&gt; {</a>
+<span class="sourceLineNo">030</span><a id="line.30">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">031</span><a id="line.31">    /**</a>
+<span class="sourceLineNo">032</span><a id="line.32">     * Constructor with no args</a>
+<span class="sourceLineNo">033</span><a id="line.33">     */</a>
+<span class="sourceLineNo">034</span><a id="line.34">    public OBNodeTable() { </a>
+<span class="sourceLineNo">035</span><a id="line.35">        super() ; </a>
+<span class="sourceLineNo">036</span><a id="line.36">    }</a>
+<span class="sourceLineNo">037</span><a id="line.37"></a>
+<span class="sourceLineNo">038</span><a id="line.38">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">039</span><a id="line.39">    /**</a>
+<span class="sourceLineNo">040</span><a id="line.40">     * Constructor from Collection</a>
+<span class="sourceLineNo">041</span><a id="line.41">     */</a>
+<span class="sourceLineNo">042</span><a id="line.42">    public OBNodeTable(Collection&lt;T&gt; origin) {</a>
+<span class="sourceLineNo">043</span><a id="line.43">        this() ;</a>
+<span class="sourceLineNo">044</span><a id="line.44">        for(T obNode  : origin) {</a>
+<span class="sourceLineNo">045</span><a id="line.45">            add(obNode) ;</a>
+<span class="sourceLineNo">046</span><a id="line.46">        }</a>
+<span class="sourceLineNo">047</span><a id="line.47">    }</a>
+<span class="sourceLineNo">048</span><a id="line.48"></a>
+<span class="sourceLineNo">049</span><a id="line.49">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">050</span><a id="line.50">    /**</a>
+<span class="sourceLineNo">051</span><a id="line.51">     * 指定された tag を持つリンクの存在チェック</a>
+<span class="sourceLineNo">052</span><a id="line.52">     * @param tag tag名</a>
+<span class="sourceLineNo">053</span><a id="line.53">     * @return 存在したら true。</a>
+<span class="sourceLineNo">054</span><a id="line.54">     */</a>
+<span class="sourceLineNo">055</span><a id="line.55">    public boolean tagExistP(String tag) {</a>
+<span class="sourceLineNo">056</span><a id="line.56">        for(OBNode obNode : this) {</a>
+<span class="sourceLineNo">057</span><a id="line.57">            if(obNode.hasTag(tag)) {</a>
+<span class="sourceLineNo">058</span><a id="line.58">                return true ;</a>
+<span class="sourceLineNo">059</span><a id="line.59">            }</a>
+<span class="sourceLineNo">060</span><a id="line.60">        }</a>
+<span class="sourceLineNo">061</span><a id="line.61">        return false ;</a>
+<span class="sourceLineNo">062</span><a id="line.62">    }</a>
+<span class="sourceLineNo">063</span><a id="line.63"></a>
+<span class="sourceLineNo">064</span><a id="line.64">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">065</span><a id="line.65">    /**</a>
+<span class="sourceLineNo">066</span><a id="line.66">     * 指定された id を持つOBNodeの取得</a>
+<span class="sourceLineNo">067</span><a id="line.67">     * @param id tag名</a>
+<span class="sourceLineNo">068</span><a id="line.68">     * @return 存在したらそのOBNode。</a>
+<span class="sourceLineNo">069</span><a id="line.69">     */</a>
+<span class="sourceLineNo">070</span><a id="line.70">    public T findById(String id) {</a>
+<span class="sourceLineNo">071</span><a id="line.71">        for(T obNode : this) {</a>
+<span class="sourceLineNo">072</span><a id="line.72">            if(obNode.getID().equals(id)) {</a>
+<span class="sourceLineNo">073</span><a id="line.73">                return obNode ;</a>
+<span class="sourceLineNo">074</span><a id="line.74">            }</a>
+<span class="sourceLineNo">075</span><a id="line.75">        }</a>
+<span class="sourceLineNo">076</span><a id="line.76">        return null ;</a>
+<span class="sourceLineNo">077</span><a id="line.77">    }</a>
+<span class="sourceLineNo">078</span><a id="line.78"></a>
+<span class="sourceLineNo">079</span><a id="line.79">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">080</span><a id="line.80">    /**</a>
+<span class="sourceLineNo">081</span><a id="line.81">     * 指定された tag を持つOBNodeを取り出す。</a>
+<span class="sourceLineNo">082</span><a id="line.82">     * @param tag tag名</a>
+<span class="sourceLineNo">083</span><a id="line.83">     * @return tag 名を持つOBNodeを集めた OBNodeTable</a>
+<span class="sourceLineNo">084</span><a id="line.84">     */</a>
+<span class="sourceLineNo">085</span><a id="line.85">    public OBNodeTable&lt;T&gt; findTaggedOBNodes(String tag){</a>
+<span class="sourceLineNo">086</span><a id="line.86">        return findTaggedOBNodes(tag, new OBNodeTable&lt;T&gt;()) ;</a>
+<span class="sourceLineNo">087</span><a id="line.87">    }</a>
+<span class="sourceLineNo">088</span><a id="line.88"></a>
+<span class="sourceLineNo">089</span><a id="line.89">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">090</span><a id="line.90">    /**</a>
+<span class="sourceLineNo">091</span><a id="line.91">     * 指定された tag を持つリンクを取り出す。</a>
+<span class="sourceLineNo">092</span><a id="line.92">     * @param tag tag名</a>
+<span class="sourceLineNo">093</span><a id="line.93">     * @param table 格納用テーブル</a>
+<span class="sourceLineNo">094</span><a id="line.94">     * @return tag 名を持つOBNodeを集めた OBNodeTable。table がそのまま返る。</a>
+<span class="sourceLineNo">095</span><a id="line.95">     */</a>
+<span class="sourceLineNo">096</span><a id="line.96">    public OBNodeTable findTaggedOBNodes(String tag, OBNodeTable table){</a>
+<span class="sourceLineNo">097</span><a id="line.97">        for(OBNode obNode : this) {</a>
+<span class="sourceLineNo">098</span><a id="line.98">            if(obNode.hasTag(tag)) {</a>
+<span class="sourceLineNo">099</span><a id="line.99">                table.add(obNode) ;</a>
+<span class="sourceLineNo">100</span><a id="line.100">            }</a>
+<span class="sourceLineNo">101</span><a id="line.101">        }</a>
+<span class="sourceLineNo">102</span><a id="line.102">        return table ;</a>
+<span class="sourceLineNo">103</span><a id="line.103">    }</a>
+<span class="sourceLineNo">104</span><a id="line.104"></a>
+<span class="sourceLineNo">105</span><a id="line.105">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">106</span><a id="line.106">    /**</a>
+<span class="sourceLineNo">107</span><a id="line.107">     * テーブル内の要素をランダムに選択</a>
+<span class="sourceLineNo">108</span><a id="line.108">     * @param random 乱数生成器</a>
+<span class="sourceLineNo">109</span><a id="line.109">     * @return 選択された要素</a>
+<span class="sourceLineNo">110</span><a id="line.110">     */</a>
+<span class="sourceLineNo">111</span><a id="line.111">    public T chooseRandom(Random random) {</a>
+<span class="sourceLineNo">112</span><a id="line.112">        return get(random.nextInt(size())) ;</a>
+<span class="sourceLineNo">113</span><a id="line.113">    }</a>
+<span class="sourceLineNo">114</span><a id="line.114"></a>
+<span class="sourceLineNo">115</span><a id="line.115">} // class OBNodeTable&lt;T&gt;</a>
+<span class="sourceLineNo">116</span><a id="line.116"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

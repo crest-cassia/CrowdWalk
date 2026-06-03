@@ -1,0 +1,5 @@
+{
+    "agent" : {"xA_0" : 0.8 },
+    "agentHandler" : { "zeroSpeedThreshold" : 0.0001 },
+    "_" : null
+}

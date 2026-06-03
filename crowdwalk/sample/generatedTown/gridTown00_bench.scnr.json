@@ -1,0 +1,21 @@
+[
+  { "type":"Initiate",
+    "atTime":"18:00:00"},
+  { "type":"Alert",
+    "atTime":"18:00:10",
+    "placeTag":"link_node_05_05__node_05_06",
+    "message":"foo-bar-baz"}
+  { "type":"Alert",
+    "atTime":"18:45:00",
+    "placeTag":"link_node_05_03__node_06_03",
+    "message":"foo-bar-baz"}
+  { "type":"Alert",
+    "atTime":"19:20:00",
+    "onoff":false,
+    "placeTag":"link_node_05_03__node_06_03",
+    "message":"foo-bar-baz"}
+  { "type":"Alert",
+    "atTime":"18:15:00",
+    "placeTag":"link_node_01_04__node_02_04",
+    "message":"emergency"}
+]

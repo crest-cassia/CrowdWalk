@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">/** </a>
+<span class="sourceLineNo">003</span><a id="line.3"> * 素朴なエージェント</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * いろんなエージェントクラスのベースにする予定のもの。</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * AwaitAgent がベースだが、</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * いずれ整理する予定</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * @author:: Itsuki Noda</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * @version:: 0.0 2014/12/19 I.Noda</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * &lt;B&gt;History:&lt;/B&gt;</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * &lt;UL&gt;</a>
+<span class="sourceLineNo">011</span><a id="line.11"> *   &lt;LI&gt; [2014/12/19]: Create This File. &lt;/LI&gt;</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * &lt;/UL&gt;</a>
+<span class="sourceLineNo">013</span><a id="line.13"> */</a>
+<span class="sourceLineNo">014</span><a id="line.14"></a>
+<span class="sourceLineNo">015</span><a id="line.15">package nodagumi.ananPJ.Agents;</a>
+<span class="sourceLineNo">016</span><a id="line.16"></a>
+<span class="sourceLineNo">017</span><a id="line.17">import java.util.Random;</a>
+<span class="sourceLineNo">018</span><a id="line.18">import java.util.Map;</a>
+<span class="sourceLineNo">019</span><a id="line.19">import java.util.HashMap;</a>
+<span class="sourceLineNo">020</span><a id="line.20"></a>
+<span class="sourceLineNo">021</span><a id="line.21">import nodagumi.ananPJ.misc.Place;</a>
+<span class="sourceLineNo">022</span><a id="line.22">import nodagumi.ananPJ.NetworkMap.Link.MapLink;</a>
+<span class="sourceLineNo">023</span><a id="line.23">import nodagumi.ananPJ.NetworkMap.Node.MapNode;</a>
+<span class="sourceLineNo">024</span><a id="line.24">import nodagumi.ananPJ.NetworkMap.Node.TargetNotFoundException;</a>
+<span class="sourceLineNo">025</span><a id="line.25">import nodagumi.ananPJ.Agents.AwaitAgent ;</a>
+<span class="sourceLineNo">026</span><a id="line.26">import nodagumi.ananPJ.misc.SimTime;</a>
+<span class="sourceLineNo">027</span><a id="line.27"></a>
+<span class="sourceLineNo">028</span><a id="line.28">import nodagumi.Itk.* ;</a>
+<span class="sourceLineNo">029</span><a id="line.29"></a>
+<span class="sourceLineNo">030</span><a id="line.30">//======================================================================</a>
+<span class="sourceLineNo">031</span><a id="line.31">/**</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * 素朴なエージェント</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * 各種エージェントクラスのベースにするもの。</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * &lt;h3&gt; config, fallbackResources に書ける設定 &lt;/h3&gt;</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * {@link AwaitAgent} に加えて、</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * &lt;pre&gt;</a>
+<span class="sourceLineNo">038</span><a id="line.38"> *  {</a>
+<span class="sourceLineNo">039</span><a id="line.39"> *    "trailCountStep" : __double__ // 一度通った道のカウントアップの幅。</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * }</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * &lt;/pre&gt;</a>
+<span class="sourceLineNo">042</span><a id="line.42"> */</a>
+<span class="sourceLineNo">043</span><a id="line.43">public class NaiveAgent</a>
+<span class="sourceLineNo">044</span><a id="line.44">    extends AwaitAgent {</a>
+<span class="sourceLineNo">045</span><a id="line.45">    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</a>
+<span class="sourceLineNo">046</span><a id="line.46">    /**</a>
+<span class="sourceLineNo">047</span><a id="line.47">     * クラス名。</a>
+<span class="sourceLineNo">048</span><a id="line.48">     * ClassFinder でも参照できるようにしておく。</a>
+<span class="sourceLineNo">049</span><a id="line.49">     */</a>
+<span class="sourceLineNo">050</span><a id="line.50">    public static String typeString = "NaiveAgent" ;</a>
+<span class="sourceLineNo">051</span><a id="line.51">    public static String getTypeName() { return typeString ;}</a>
+<span class="sourceLineNo">052</span><a id="line.52"></a>
+<span class="sourceLineNo">053</span><a id="line.53">    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</a>
+<span class="sourceLineNo">054</span><a id="line.54">    /**</a>
+<span class="sourceLineNo">055</span><a id="line.55">     * 一度通った道に加えるカウントの大きさの規定値</a>
+<span class="sourceLineNo">056</span><a id="line.56">     */</a>
+<span class="sourceLineNo">057</span><a id="line.57">    static final public double Fallback_TrailCountStep = 1.0 ;</a>
+<span class="sourceLineNo">058</span><a id="line.58"></a>
+<span class="sourceLineNo">059</span><a id="line.59">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">060</span><a id="line.60">    /**</a>
+<span class="sourceLineNo">061</span><a id="line.61">     * 一度通った道に加えるカウントの大きさの規定値</a>
+<span class="sourceLineNo">062</span><a id="line.62">     */</a>
+<span class="sourceLineNo">063</span><a id="line.63">    protected double trailCountStep = Fallback_TrailCountStep ;</a>
+<span class="sourceLineNo">064</span><a id="line.64"></a>
+<span class="sourceLineNo">065</span><a id="line.65">    //============================================================</a>
+<span class="sourceLineNo">066</span><a id="line.66">    /**</a>
+<span class="sourceLineNo">067</span><a id="line.67">     * 一度通った道の足跡テーブル</a>
+<span class="sourceLineNo">068</span><a id="line.68">     */</a>
+<span class="sourceLineNo">069</span><a id="line.69">    public class TrailCountTable {</a>
+<span class="sourceLineNo">070</span><a id="line.70">        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">071</span><a id="line.71">        /**</a>
+<span class="sourceLineNo">072</span><a id="line.72">         * 格納用テーブル</a>
+<span class="sourceLineNo">073</span><a id="line.73">         */</a>
+<span class="sourceLineNo">074</span><a id="line.74">        private HashMap&lt;MapLink, HashMap&lt;MapNode, Double&gt;&gt; table =</a>
+<span class="sourceLineNo">075</span><a id="line.75">            new HashMap&lt;MapLink, HashMap&lt;MapNode, Double&gt;&gt;() ;</a>
+<span class="sourceLineNo">076</span><a id="line.76">        </a>
+<span class="sourceLineNo">077</span><a id="line.77">        //------------------------------</a>
+<span class="sourceLineNo">078</span><a id="line.78">        /**</a>
+<span class="sourceLineNo">079</span><a id="line.79">         * アクセス</a>
+<span class="sourceLineNo">080</span><a id="line.80">         * @param fromNode 出発ノード</a>
+<span class="sourceLineNo">081</span><a id="line.81">         * @param toLink fromNodeからたどるリンク</a>
+<span class="sourceLineNo">082</span><a id="line.82">         */</a>
+<span class="sourceLineNo">083</span><a id="line.83">        public Double get(MapNode fromNode, MapLink toLink) {</a>
+<span class="sourceLineNo">084</span><a id="line.84">            HashMap&lt;MapNode, Double&gt; nodeTab = table.get(toLink) ;</a>
+<span class="sourceLineNo">085</span><a id="line.85">            if(nodeTab != null) {</a>
+<span class="sourceLineNo">086</span><a id="line.86">                Double count = nodeTab.get(fromNode) ;</a>
+<span class="sourceLineNo">087</span><a id="line.87">                if(count != null) {</a>
+<span class="sourceLineNo">088</span><a id="line.88">                    return count ;</a>
+<span class="sourceLineNo">089</span><a id="line.89">                } else {</a>
+<span class="sourceLineNo">090</span><a id="line.90">                    return 0.0 ;</a>
+<span class="sourceLineNo">091</span><a id="line.91">                }</a>
+<span class="sourceLineNo">092</span><a id="line.92">            } else {</a>
+<span class="sourceLineNo">093</span><a id="line.93">                return 0.0 ;</a>
+<span class="sourceLineNo">094</span><a id="line.94">            }</a>
+<span class="sourceLineNo">095</span><a id="line.95">        }</a>
+<span class="sourceLineNo">096</span><a id="line.96"></a>
+<span class="sourceLineNo">097</span><a id="line.97">        //------------------------------</a>
+<span class="sourceLineNo">098</span><a id="line.98">        /**</a>
+<span class="sourceLineNo">099</span><a id="line.99">         * 足跡を残す</a>
+<span class="sourceLineNo">100</span><a id="line.100">         * ここでは、単純に、通る毎にcountStepを足しているだけ。</a>
+<span class="sourceLineNo">101</span><a id="line.101">         * もし、減衰するフェロモンのように扱いたい場合は、</a>
+<span class="sourceLineNo">102</span><a id="line.102">         * 以下のようにする必要がある。</a>
+<span class="sourceLineNo">103</span><a id="line.103">         * &lt;UL&gt;</a>
+<span class="sourceLineNo">104</span><a id="line.104">         *  &lt;LI&gt; 開始からの時刻 t がわかっているとする。 &lt;/LI&gt;</a>
+<span class="sourceLineNo">105</span><a id="line.105">         *  &lt;LI&gt; あるリンクの値が count とすると、</a>
+<span class="sourceLineNo">106</span><a id="line.106">         *       count = log(1+exp(count-t)) + t &lt;/LI&gt;</a>
+<span class="sourceLineNo">107</span><a id="line.107">         *  &lt;LI&gt; 実際の値として用いるのは、</a>
+<span class="sourceLineNo">108</span><a id="line.108">         *       value = exp(count - t) &lt;/LI&gt;</a>
+<span class="sourceLineNo">109</span><a id="line.109">         *  &lt;LI&gt; 上記のようにすれば、value は、毎ステップ (1/e) 倍に</a>
+<span class="sourceLineNo">110</span><a id="line.110">         *       していきつつ、使われると 1 増えるとしたのと同じになる&lt;/LI&gt;</a>
+<span class="sourceLineNo">111</span><a id="line.111">         * &lt;/UL&gt;</a>
+<span class="sourceLineNo">112</span><a id="line.112">         * @param fromNode 出発ノード</a>
+<span class="sourceLineNo">113</span><a id="line.113">         * @param toLink fromNodeからたどるリンク</a>
+<span class="sourceLineNo">114</span><a id="line.114">         * @param countStep 一歩の値</a>
+<span class="sourceLineNo">115</span><a id="line.115">         */</a>
+<span class="sourceLineNo">116</span><a id="line.116">        public Double add(MapNode fromNode, MapLink toLink, double countStep) {</a>
+<span class="sourceLineNo">117</span><a id="line.117">            HashMap&lt;MapNode, Double&gt; nodeTab = table.get(toLink) ;</a>
+<span class="sourceLineNo">118</span><a id="line.118">            if(nodeTab == null) {</a>
+<span class="sourceLineNo">119</span><a id="line.119">                nodeTab = new HashMap&lt;MapNode, Double&gt;() ;</a>
+<span class="sourceLineNo">120</span><a id="line.120">                table.put(toLink, nodeTab) ;</a>
+<span class="sourceLineNo">121</span><a id="line.121">            }</a>
+<span class="sourceLineNo">122</span><a id="line.122"></a>
+<span class="sourceLineNo">123</span><a id="line.123">            Double count = nodeTab.get(fromNode) ;</a>
+<span class="sourceLineNo">124</span><a id="line.124">            if(count == null) count = 0.0 ;</a>
+<span class="sourceLineNo">125</span><a id="line.125"></a>
+<span class="sourceLineNo">126</span><a id="line.126">            count += countStep ;</a>
+<span class="sourceLineNo">127</span><a id="line.127">            nodeTab.put(fromNode, count) ;</a>
+<span class="sourceLineNo">128</span><a id="line.128"></a>
+<span class="sourceLineNo">129</span><a id="line.129">            return count ;</a>
+<span class="sourceLineNo">130</span><a id="line.130">        }</a>
+<span class="sourceLineNo">131</span><a id="line.131">    } // class TrailCountTable</a>
+<span class="sourceLineNo">132</span><a id="line.132"></a>
+<span class="sourceLineNo">133</span><a id="line.133">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">134</span><a id="line.134">    /**</a>
+<span class="sourceLineNo">135</span><a id="line.135">     * 一度通った道のカウント（アナログ値）</a>
+<span class="sourceLineNo">136</span><a id="line.136">     * 斉藤さんの実装を参考に再実装</a>
+<span class="sourceLineNo">137</span><a id="line.137">     */</a>
+<span class="sourceLineNo">138</span><a id="line.138">    public TrailCountTable trailCountTable = new TrailCountTable() ;</a>
+<span class="sourceLineNo">139</span><a id="line.139"></a>
+<span class="sourceLineNo">140</span><a id="line.140">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">141</span><a id="line.141">    /**</a>
+<span class="sourceLineNo">142</span><a id="line.142">     * 引数なしconstractor。 ClassFinder.newByName で必要。</a>
+<span class="sourceLineNo">143</span><a id="line.143">     */</a>
+<span class="sourceLineNo">144</span><a id="line.144">    public NaiveAgent(){}</a>
+<span class="sourceLineNo">145</span><a id="line.145"></a>
+<span class="sourceLineNo">146</span><a id="line.146">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">147</span><a id="line.147">    /**</a>
+<span class="sourceLineNo">148</span><a id="line.148">     * Conf による初期化。</a>
+<span class="sourceLineNo">149</span><a id="line.149">     */</a>
+<span class="sourceLineNo">150</span><a id="line.150">    @Override</a>
+<span class="sourceLineNo">151</span><a id="line.151">    public void initByConf(Term conf, Term fallback) {</a>
+<span class="sourceLineNo">152</span><a id="line.152">        super.initByConf(conf, fallback) ;</a>
+<span class="sourceLineNo">153</span><a id="line.153"></a>
+<span class="sourceLineNo">154</span><a id="line.154">        trailCountStep = getDoubleFromConfig("trailCountStep", trailCountStep) ;</a>
+<span class="sourceLineNo">155</span><a id="line.155"></a>
+<span class="sourceLineNo">156</span><a id="line.156">    } ;</a>
+<span class="sourceLineNo">157</span><a id="line.157"></a>
+<span class="sourceLineNo">158</span><a id="line.158">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">159</span><a id="line.159">    /**</a>
+<span class="sourceLineNo">160</span><a id="line.160">     * あるlinkを選択した場合の目的地(_target)までのコスト。</a>
+<span class="sourceLineNo">161</span><a id="line.161">     * 正規のコストに、ランダム要素を加味する。</a>
+<span class="sourceLineNo">162</span><a id="line.162">     */</a>
+<span class="sourceLineNo">163</span><a id="line.163">    @Override</a>
+<span class="sourceLineNo">164</span><a id="line.164">    public double calcCostFromNodeViaLink(MapLink _link, MapNode _node,</a>
+<span class="sourceLineNo">165</span><a id="line.165">                                          Term _target) </a>
+<span class="sourceLineNo">166</span><a id="line.166">        throws TargetNotFoundException {</a>
+<span class="sourceLineNo">167</span><a id="line.167">        return super.calcCostFromNodeViaLink(_link, _node, _target) ;</a>
+<span class="sourceLineNo">168</span><a id="line.168">    }</a>
+<span class="sourceLineNo">169</span><a id="line.169"></a>
+<span class="sourceLineNo">170</span><a id="line.170">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">171</span><a id="line.171">    /**</a>
+<span class="sourceLineNo">172</span><a id="line.172">     * 最終決定したルート、足跡情報の記録</a>
+<span class="sourceLineNo">173</span><a id="line.173">     * [2014.12.19 I.Noda] tryToPassNode() より移動</a>
+<span class="sourceLineNo">174</span><a id="line.174">     */</a>
+<span class="sourceLineNo">175</span><a id="line.175">    @Override</a>
+<span class="sourceLineNo">176</span><a id="line.176">    protected void recordTrail(SimTime currentTime, Place passingPlace, </a>
+<span class="sourceLineNo">177</span><a id="line.177">                               MapLink nextLink) {</a>
+<span class="sourceLineNo">178</span><a id="line.178">        super.recordTrail(currentTime, passingPlace, nextLink) ;</a>
+<span class="sourceLineNo">179</span><a id="line.179"></a>
+<span class="sourceLineNo">180</span><a id="line.180">        trailCountTable.add(passingPlace.getHeadingNode(),</a>
+<span class="sourceLineNo">181</span><a id="line.181">                            nextLink, trailCountStep) ;</a>
+<span class="sourceLineNo">182</span><a id="line.182">    }</a>
+<span class="sourceLineNo">183</span><a id="line.183"></a>
+<span class="sourceLineNo">184</span><a id="line.184">} // class NaiveAgent</a>
+<span class="sourceLineNo">185</span><a id="line.185"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">package nodagumi.ananPJ.Gui.LinkAppearance.view3d;</a>
+<span class="sourceLineNo">002</span><a id="line.2"></a>
+<span class="sourceLineNo">003</span><a id="line.3">import javafx.geometry.Point3D;</a>
+<span class="sourceLineNo">004</span><a id="line.4">import javafx.scene.shape.CullFace;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import javafx.scene.shape.DrawMode;</a>
+<span class="sourceLineNo">006</span><a id="line.6">import javafx.scene.shape.MeshView;</a>
+<span class="sourceLineNo">007</span><a id="line.7">import javafx.scene.shape.Shape3D;</a>
+<span class="sourceLineNo">008</span><a id="line.8"></a>
+<span class="sourceLineNo">009</span><a id="line.9">import nodagumi.ananPJ.NetworkMap.Link.MapLink;</a>
+<span class="sourceLineNo">010</span><a id="line.10"></a>
+<span class="sourceLineNo">011</span><a id="line.11">/**</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * 実線リンクの 3D 表示</a>
+<span class="sourceLineNo">013</span><a id="line.13"> */</a>
+<span class="sourceLineNo">014</span><a id="line.14">public class SolidLine3D extends LinkViewBase3D {</a>
+<span class="sourceLineNo">015</span><a id="line.15">    /**</a>
+<span class="sourceLineNo">016</span><a id="line.16">     * コンストラクタ</a>
+<span class="sourceLineNo">017</span><a id="line.17">     */</a>
+<span class="sourceLineNo">018</span><a id="line.18">    public SolidLine3D() {}</a>
+<span class="sourceLineNo">019</span><a id="line.19"></a>
+<span class="sourceLineNo">020</span><a id="line.20">    /**</a>
+<span class="sourceLineNo">021</span><a id="line.21">     * 最終的なリンクの幅を取得する</a>
+<span class="sourceLineNo">022</span><a id="line.22">     */</a>
+<span class="sourceLineNo">023</span><a id="line.23">    public double getWidth(MapLink link) {</a>
+<span class="sourceLineNo">024</span><a id="line.24">        return THIN_LINK_WIDTH;</a>
+<span class="sourceLineNo">025</span><a id="line.25">    }</a>
+<span class="sourceLineNo">026</span><a id="line.26"></a>
+<span class="sourceLineNo">027</span><a id="line.27">    /**</a>
+<span class="sourceLineNo">028</span><a id="line.28">     * 線分と見分けが付かない超鋭角の三角形シェイプを生成する</a>
+<span class="sourceLineNo">029</span><a id="line.29">     */</a>
+<span class="sourceLineNo">030</span><a id="line.30">    public Shape3D[] createShapes(MapLink link) {</a>
+<span class="sourceLineNo">031</span><a id="line.31">        Point3D[] vertices = calcVertices(link.getFrom(), link.getTo(), THIN_LINK_WIDTH, 0.0);</a>
+<span class="sourceLineNo">032</span><a id="line.32">        Shape3D shape = new MeshView(panel.new TrianglePolygon(vertices));</a>
+<span class="sourceLineNo">033</span><a id="line.33">        shape.setDrawMode(DrawMode.LINE);</a>
+<span class="sourceLineNo">034</span><a id="line.34">        shape.setCullFace(CullFace.NONE);    // これがないと時々表示が消える</a>
+<span class="sourceLineNo">035</span><a id="line.35">        shape.setMaterial(material);</a>
+<span class="sourceLineNo">036</span><a id="line.36"></a>
+<span class="sourceLineNo">037</span><a id="line.37">        Shape3D[] shapes = { shape };</a>
+<span class="sourceLineNo">038</span><a id="line.38">        return shapes;</a>
+<span class="sourceLineNo">039</span><a id="line.39">    }</a>
+<span class="sourceLineNo">040</span><a id="line.40">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

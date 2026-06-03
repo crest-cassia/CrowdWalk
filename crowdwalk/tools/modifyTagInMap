@@ -1,0 +1,145 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+## -*- mode: ruby -*-
+## = modify tag of nodes and links in a map
+## Author:: Itsuki Noda
+## Version:: 0.0 2017/02/14 I.Noda
+##
+## === History
+## * [2017/02/14]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * ...
+
+require 'optparse' ;
+require 'pp' ;
+require 'time' ;
+
+$LOAD_PATH.push(File::dirname(__FILE__) + "/RubyLib");
+
+require 'MapTown.rb' ;
+
+#------------------------------------------------------------------------
+#++
+$conf = {
+  :link => true,
+  :node => true,
+  :mapFile => nil,
+  :outFile => nil,
+  :filterTag => nil,
+  :newTag => nil,
+  :removeP => false,
+  :quietP => false,
+  :verboseP => false,
+} ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+Usage: #{$0} [Options]* FilterTag NewTag MapFile
+       Add NewTag if a node/link has FilterTag in the MapFile.
+       If NewTag is null string (''), add nothing.
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-l","--onlyLink", sep + "add only to each link.") {
+    $conf[:link] = true ;
+    $conf[:node] = false ;
+  }
+  op.on("-n","--onlyNode", sep + "add only to each node.") {
+    $conf[:link] = false ;
+    $conf[:node] = true ;
+  }
+  op.on("-b","--both", sep + "add to both of link and node.") {
+    $conf[:link] = false ;
+    $conf[:node] = true ;
+  }
+  op.on("-r","--remove", sep + "remove FilterTag from node/link.") {
+    $conf[:removeP] = true ;
+  }
+  op.on("-o","--outFile OutFile", String, sep + "output file.") {|file|
+    $conf[:outFile] = file ;
+  }
+  op.on("-v","--verbose", sep + "verbose mode.") {
+    $conf[:verboseP] = true ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    puts(op)
+    puts("Defaults:") ;
+    pp $conf
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+p [:rest, ARGV], [:conf,$conf] ;
+if(ARGV.length != 3) then
+  puts($op) ;
+  exit(1) ;
+end
+$conf[:filterTag] = ARGV[0]
+$conf[:newTag] = ARGV[1]
+$conf[:mapFile] = ARGV[2]
+
+##------------------------------------------------------------------------
+##++ ID を Tag として付与する。
+## _map_:: TownMap データ
+## _conf_:: 各種設定
+def modifyTag(map, conf)
+  modifyTagOfLink(map, conf) if (conf[:link]) ;
+  modifyTagOfNode(map, conf) if (conf[:node]) ;
+end
+
+##------------------------------------------------------------------------
+##++ ID を Tag として付与する。(リンク)
+## _map_:: TownMap データ
+## _conf_:: 各種設定
+def modifyTagOfLink(map, conf)
+  modifyTagInObjectList(map.linkList, conf) ;
+end
+
+##------------------------------------------------------------------------
+##++ ID を Tag として付与する。(ノード)
+## _map_:: TownMap データ
+## _conf_:: 各種設定
+def modifyTagOfNode(map, conf)
+  modifyTagInObjectList(map.nodeList, conf) ;
+end
+
+##------------------------------------------------------------------------
+##++ ID を Tag として付与する。(リンク)
+## _objList_:: Map Object List
+## _conf_:: 各種設定
+def modifyTagInObjectList(objList, conf)
+  objList.each{|obj|
+    if(obj.hasTag(conf[:filterTag])) then
+      obj.addTag(conf[:newTag]) ;
+      obj.removeTag(conf[:filterTag]) if conf[:removeP] ;
+    end
+  }
+end
+
+
+########################################################################
+########################################################################
+########################################################################
+
+map = MapTown.new() ;
+map.loadXmlMapFile($conf[:mapFile], $conf[:verboseP]) ;
+
+STDERR.puts("Adding tags...") if ($conf[:verboseP]) ;
+modifyTag(map, $conf) ;
+
+if($conf[:outFile].nil?) then
+  map.saveXmlToStream(STDOUT) ;
+else
+  STDERR.puts("Save file to: #{$conf[:outFile]}") if ($conf[:verboseP]) ;
+  map.saveXmlToFile($conf[:outFile]) ;
+end
+                       

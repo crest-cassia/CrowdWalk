@@ -1,0 +1,10 @@
+{
+    foo: {
+       width_ratio: 3.0,
+       color: 'GREEN'
+    },
+    bar: {
+       width_ratio: 3.0,
+       color: 'RED'
+    }
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">package nodagumi.ananPJ;</a>
+<span class="sourceLineNo">003</span><a id="line.3"></a>
+<span class="sourceLineNo">004</span><a id="line.4">import java.io.*;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import java.util.*;</a>
+<span class="sourceLineNo">006</span><a id="line.6"></a>
+<span class="sourceLineNo">007</span><a id="line.7">import nodagumi.ananPJ.*;</a>
+<span class="sourceLineNo">008</span><a id="line.8">import nodagumi.ananPJ.Agents.*;</a>
+<span class="sourceLineNo">009</span><a id="line.9">import nodagumi.ananPJ.Agents.WalkAgent.*;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import nodagumi.ananPJ.Simulator.*;</a>
+<span class="sourceLineNo">011</span><a id="line.11">import nodagumi.ananPJ.misc.*;</a>
+<span class="sourceLineNo">012</span><a id="line.12"></a>
+<span class="sourceLineNo">013</span><a id="line.13">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">014</span><a id="line.14"></a>
+<span class="sourceLineNo">015</span><a id="line.15">//======================================================================</a>
+<span class="sourceLineNo">016</span><a id="line.16">/**</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * コマンドライン用シミュレーションランチャー</a>
+<span class="sourceLineNo">018</span><a id="line.18"> */</a>
+<span class="sourceLineNo">019</span><a id="line.19">public class CuiSimulationLauncher extends BasicSimulationLauncher {</a>
+<span class="sourceLineNo">020</span><a id="line.20"></a>
+<span class="sourceLineNo">021</span><a id="line.21">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">022</span><a id="line.22">    /**</a>
+<span class="sourceLineNo">023</span><a id="line.23">     * constructor</a>
+<span class="sourceLineNo">024</span><a id="line.24">     */</a>
+<span class="sourceLineNo">025</span><a id="line.25">    public CuiSimulationLauncher(Random _random) {</a>
+<span class="sourceLineNo">026</span><a id="line.26">        super(_random);</a>
+<span class="sourceLineNo">027</span><a id="line.27">    }</a>
+<span class="sourceLineNo">028</span><a id="line.28"></a>
+<span class="sourceLineNo">029</span><a id="line.29">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30">    /**</a>
+<span class="sourceLineNo">031</span><a id="line.31">     * constructor</a>
+<span class="sourceLineNo">032</span><a id="line.32">     */</a>
+<span class="sourceLineNo">033</span><a id="line.33">    public CuiSimulationLauncher(String _propertiesPath,</a>
+<span class="sourceLineNo">034</span><a id="line.34">                                 ArrayList&lt;String&gt; commandLineFallbacks) {</a>
+<span class="sourceLineNo">035</span><a id="line.35">        super(null) ;</a>
+<span class="sourceLineNo">036</span><a id="line.36">        // load properties</a>
+<span class="sourceLineNo">037</span><a id="line.37">        setPropertiesFromFile(_propertiesPath, commandLineFallbacks) ;</a>
+<span class="sourceLineNo">038</span><a id="line.38"></a>
+<span class="sourceLineNo">039</span><a id="line.39">        if(!setupNetworkMap()) {</a>
+<span class="sourceLineNo">040</span><a id="line.40">            Itk.logFatal("can not read map file.") ;</a>
+<span class="sourceLineNo">041</span><a id="line.41">            Itk.quitByError() ;</a>
+<span class="sourceLineNo">042</span><a id="line.42">        }</a>
+<span class="sourceLineNo">043</span><a id="line.43">    }</a>
+<span class="sourceLineNo">044</span><a id="line.44"></a>
+<span class="sourceLineNo">045</span><a id="line.45">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">046</span><a id="line.46">    /**</a>
+<span class="sourceLineNo">047</span><a id="line.47">     * マップファイルチェック</a>
+<span class="sourceLineNo">048</span><a id="line.48">     */</a>
+<span class="sourceLineNo">049</span><a id="line.49">    private boolean setupNetworkMap() {</a>
+<span class="sourceLineNo">050</span><a id="line.50">        // check property options</a>
+<span class="sourceLineNo">051</span><a id="line.51">        if (getNetworkMapFile() == null) {</a>
+<span class="sourceLineNo">052</span><a id="line.52">            Itk.logError("No map file is specified.") ;</a>
+<span class="sourceLineNo">053</span><a id="line.53">            return false;</a>
+<span class="sourceLineNo">054</span><a id="line.54">        } else if (!((File) new File(getNetworkMapFile())).exists()) {</a>
+<span class="sourceLineNo">055</span><a id="line.55">            Itk.logError("Map file does not exist.", getNetworkMapFile()) ;</a>
+<span class="sourceLineNo">056</span><a id="line.56">            return false;</a>
+<span class="sourceLineNo">057</span><a id="line.57">        }</a>
+<span class="sourceLineNo">058</span><a id="line.58">        try {</a>
+<span class="sourceLineNo">059</span><a id="line.59">            map = readMapWithName(getNetworkMapFile()) ;</a>
+<span class="sourceLineNo">060</span><a id="line.60">        } catch (IOException ioe) {</a>
+<span class="sourceLineNo">061</span><a id="line.61">            Itk.logError("error in reading map file:", getNetworkMapFile()) ;</a>
+<span class="sourceLineNo">062</span><a id="line.62">            Itk.dumpStackTraceOf(ioe);</a>
+<span class="sourceLineNo">063</span><a id="line.63">            return false ;</a>
+<span class="sourceLineNo">064</span><a id="line.64">        }</a>
+<span class="sourceLineNo">065</span><a id="line.65">        return true ;</a>
+<span class="sourceLineNo">066</span><a id="line.66">    }</a>
+<span class="sourceLineNo">067</span><a id="line.67"></a>
+<span class="sourceLineNo">068</span><a id="line.68">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">069</span><a id="line.69">    /**</a>
+<span class="sourceLineNo">070</span><a id="line.70">     * 初期化</a>
+<span class="sourceLineNo">071</span><a id="line.71">     */</a>
+<span class="sourceLineNo">072</span><a id="line.72">    public void initialize() {</a>
+<span class="sourceLineNo">073</span><a id="line.73">        initializeSimulatorEntity() ;</a>
+<span class="sourceLineNo">074</span><a id="line.74">    }</a>
+<span class="sourceLineNo">075</span><a id="line.75"></a>
+<span class="sourceLineNo">076</span><a id="line.76">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">077</span><a id="line.77">    /**</a>
+<span class="sourceLineNo">078</span><a id="line.78">     * シミュレータ開始</a>
+<span class="sourceLineNo">079</span><a id="line.79">     */</a>
+<span class="sourceLineNo">080</span><a id="line.80">    public void start() {</a>
+<span class="sourceLineNo">081</span><a id="line.81">        Itk.logDebug("CuiSimulationLauncher start!");</a>
+<span class="sourceLineNo">082</span><a id="line.82">        paused = false ;</a>
+<span class="sourceLineNo">083</span><a id="line.83">        simulateMainLoop() ;</a>
+<span class="sourceLineNo">084</span><a id="line.84">    }</a>
+<span class="sourceLineNo">085</span><a id="line.85"></a>
+<span class="sourceLineNo">086</span><a id="line.86">    /**</a>
+<span class="sourceLineNo">087</span><a id="line.87">     * ディスプレーを持つかどうか。</a>
+<span class="sourceLineNo">088</span><a id="line.88">     */</a>
+<span class="sourceLineNo">089</span><a id="line.89">    public boolean hasDisplay() {</a>
+<span class="sourceLineNo">090</span><a id="line.90">        return false;</a>
+<span class="sourceLineNo">091</span><a id="line.91">    }</a>
+<span class="sourceLineNo">092</span><a id="line.92"></a>
+<span class="sourceLineNo">093</span><a id="line.93">    /**</a>
+<span class="sourceLineNo">094</span><a id="line.94">     * EvacuationSimulator のステップ処理が終了してカウントアップされる直前に呼び出される。</a>
+<span class="sourceLineNo">095</span><a id="line.95">     */</a>
+<span class="sourceLineNo">096</span><a id="line.96">    public void updateEveryTick(SimTime currentTime) {</a>
+<span class="sourceLineNo">097</span><a id="line.97">        // 何もしない</a>
+<span class="sourceLineNo">098</span><a id="line.98">    }</a>
+<span class="sourceLineNo">099</span><a id="line.99"></a>
+<span class="sourceLineNo">100</span><a id="line.100">    /**</a>
+<span class="sourceLineNo">101</span><a id="line.101">     * エージェント登録</a>
+<span class="sourceLineNo">102</span><a id="line.102">     */</a>
+<span class="sourceLineNo">103</span><a id="line.103">    public void registerAgent(AgentBase agent) {</a>
+<span class="sourceLineNo">104</span><a id="line.104">        // 何もしない</a>
+<span class="sourceLineNo">105</span><a id="line.105">    }</a>
+<span class="sourceLineNo">106</span><a id="line.106">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

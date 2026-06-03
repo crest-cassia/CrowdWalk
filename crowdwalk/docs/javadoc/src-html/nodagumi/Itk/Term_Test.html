@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">/** Itk Template for Java</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * @author:: Itsuki Noda</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * @version:: 0.0 2014/12/12 I.Noda</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * &lt;B&gt;History:&lt;/B&gt;</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * &lt;UL&gt;</a>
+<span class="sourceLineNo">007</span><a id="line.7"> *   &lt;LI&gt; [2014/12/12]: Create This File. &lt;/LI&gt;</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * &lt;/UL&gt;</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * &lt;B&gt;Usage:&lt;/B&gt;</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * ...</a>
+<span class="sourceLineNo">011</span><a id="line.11"> */</a>
+<span class="sourceLineNo">012</span><a id="line.12"></a>
+<span class="sourceLineNo">013</span><a id="line.13">package nodagumi.Itk;</a>
+<span class="sourceLineNo">014</span><a id="line.14"></a>
+<span class="sourceLineNo">015</span><a id="line.15">import static org.junit.Assert.*;</a>
+<span class="sourceLineNo">016</span><a id="line.16">import org.junit.Test;</a>
+<span class="sourceLineNo">017</span><a id="line.17">//import junit.framework.TestCase;</a>
+<span class="sourceLineNo">018</span><a id="line.18"></a>
+<span class="sourceLineNo">019</span><a id="line.19">import java.io.*;</a>
+<span class="sourceLineNo">020</span><a id="line.20">import java.util.Map ;</a>
+<span class="sourceLineNo">021</span><a id="line.21">import java.util.HashMap ;</a>
+<span class="sourceLineNo">022</span><a id="line.22">import java.util.ArrayList ;</a>
+<span class="sourceLineNo">023</span><a id="line.23">import java.util.List ;</a>
+<span class="sourceLineNo">024</span><a id="line.24">import java.util.Set ;</a>
+<span class="sourceLineNo">025</span><a id="line.25">import java.util.Arrays ;</a>
+<span class="sourceLineNo">026</span><a id="line.26">import net.arnx.jsonic.JSON ;</a>
+<span class="sourceLineNo">027</span><a id="line.27">import net.arnx.jsonic.JSONWriter;</a>
+<span class="sourceLineNo">028</span><a id="line.28"></a>
+<span class="sourceLineNo">029</span><a id="line.29">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">030</span><a id="line.30"></a>
+<span class="sourceLineNo">031</span><a id="line.31">//======================================================================</a>
+<span class="sourceLineNo">032</span><a id="line.32">/**</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * description of Test.</a>
+<span class="sourceLineNo">034</span><a id="line.34"> */</a>
+<span class="sourceLineNo">035</span><a id="line.35">public class Term_Test {</a>
+<span class="sourceLineNo">036</span><a id="line.36">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">037</span><a id="line.37">    /**</a>
+<span class="sourceLineNo">038</span><a id="line.38">     */</a>
+<span class="sourceLineNo">039</span><a id="line.39">    @Test</a>
+<span class="sourceLineNo">040</span><a id="line.40">    public void test_Jsonic() {</a>
+<span class="sourceLineNo">041</span><a id="line.41">        try {</a>
+<span class="sourceLineNo">042</span><a id="line.42">            HashMap h = new HashMap&lt;String, Object&gt;() ;</a>
+<span class="sourceLineNo">043</span><a id="line.43">            //h.put("", "") ;</a>
+<span class="sourceLineNo">044</span><a id="line.44">            h.put("foo", new ArrayList&lt;Object&gt;()) ;</a>
+<span class="sourceLineNo">045</span><a id="line.45">            h.put("bar", new ArrayList&lt;Object&gt;()) ;</a>
+<span class="sourceLineNo">046</span><a id="line.46">            h.put("baz", new ArrayList&lt;Object&gt;()) ;</a>
+<span class="sourceLineNo">047</span><a id="line.47">            </a>
+<span class="sourceLineNo">048</span><a id="line.48">            Set&lt;Map.Entry&lt;String, Object&gt;&gt; s = h.entrySet() ;</a>
+<span class="sourceLineNo">049</span><a id="line.49">            JSONWriter writer = new JSON().getWriter((OutputStream)System.out) ;</a>
+<span class="sourceLineNo">050</span><a id="line.50">            writer.beginObject() ;</a>
+<span class="sourceLineNo">051</span><a id="line.51">            for(Map.Entry&lt;String,Object&gt; entry : s) {</a>
+<span class="sourceLineNo">052</span><a id="line.52">              writer.name(entry.getKey());</a>
+<span class="sourceLineNo">053</span><a id="line.53">              if(entry.getValue() instanceof List) {</a>
+<span class="sourceLineNo">054</span><a id="line.54">                  writer.beginArray();</a>
+<span class="sourceLineNo">055</span><a id="line.55">                  for(Object obj : (List)entry.getValue()) {</a>
+<span class="sourceLineNo">056</span><a id="line.56">                      writer.value(obj) ;</a>
+<span class="sourceLineNo">057</span><a id="line.57">                  }</a>
+<span class="sourceLineNo">058</span><a id="line.58">                  writer.endArray();</a>
+<span class="sourceLineNo">059</span><a id="line.59">              } else {</a>
+<span class="sourceLineNo">060</span><a id="line.60">                  writer.value(entry.getValue()) ;</a>
+<span class="sourceLineNo">061</span><a id="line.61">              }</a>
+<span class="sourceLineNo">062</span><a id="line.62">            }</a>
+<span class="sourceLineNo">063</span><a id="line.63">            writer.endObject() ;</a>
+<span class="sourceLineNo">064</span><a id="line.64">            System.out.close() ;</a>
+<span class="sourceLineNo">065</span><a id="line.65">        } catch(Exception e) {</a>
+<span class="sourceLineNo">066</span><a id="line.66">            System.err.println("Error") ;</a>
+<span class="sourceLineNo">067</span><a id="line.67">        } ;</a>
+<span class="sourceLineNo">068</span><a id="line.68">    }</a>
+<span class="sourceLineNo">069</span><a id="line.69">        </a>
+<span class="sourceLineNo">070</span><a id="line.70">    /**</a>
+<span class="sourceLineNo">071</span><a id="line.71">     */</a>
+<span class="sourceLineNo">072</span><a id="line.72">    //@Test</a>
+<span class="sourceLineNo">073</span><a id="line.73">    public void test_updateObject() {</a>
+<span class="sourceLineNo">074</span><a id="line.74">        String str0 = "{'a':'foo', 'b':'def', 'c':1, 'jkl':null, 'x':[1,2,{},'234',null,{'xx':'yy','zz':'123'}], 'y':{'':'bar', 'a':3.21, 'b':[]}, 'zzz':'kkkkk'}" ;</a>
+<span class="sourceLineNo">075</span><a id="line.75">        str0 = str0.replaceAll("'","\"") ;</a>
+<span class="sourceLineNo">076</span><a id="line.76">        Itk.dbgVal("str0",str0) ;</a>
+<span class="sourceLineNo">077</span><a id="line.77">        Term term0 = Term.newByJson(str0) ;</a>
+<span class="sourceLineNo">078</span><a id="line.78">        Itk.dbgVal("term0",term0) ;</a>
+<span class="sourceLineNo">079</span><a id="line.79"></a>
+<span class="sourceLineNo">080</span><a id="line.80">        String str1 = "{'a':1, 'x':[3,4,null],'y':{'b':[10,20,30],'c':2.718}, 'z':{'a':1}}" ;</a>
+<span class="sourceLineNo">081</span><a id="line.81">        str1 = str1.replaceAll("'","\"") ;</a>
+<span class="sourceLineNo">082</span><a id="line.82">        Itk.dbgVal("str1",str1) ;</a>
+<span class="sourceLineNo">083</span><a id="line.83">        Term term1 = Term.newByJson(str1) ;</a>
+<span class="sourceLineNo">084</span><a id="line.84">        Itk.dbgVal("term1",term1) ;</a>
+<span class="sourceLineNo">085</span><a id="line.85"></a>
+<span class="sourceLineNo">086</span><a id="line.86">        term0.updateObjectFacile(term1, true) ;</a>
+<span class="sourceLineNo">087</span><a id="line.87">        Itk.dbgVal("term0",term0) ;</a>
+<span class="sourceLineNo">088</span><a id="line.88">    }</a>
+<span class="sourceLineNo">089</span><a id="line.89">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">090</span><a id="line.90">    /**</a>
+<span class="sourceLineNo">091</span><a id="line.91">     */</a>
+<span class="sourceLineNo">092</span><a id="line.92">    //@Test</a>
+<span class="sourceLineNo">093</span><a id="line.93">    public void test_scanJsonComment() {</a>
+<span class="sourceLineNo">094</span><a id="line.94">        String str0 = "{'_':'foo', '_':'def', '_':1, 'jkl':null, 'x':[1,2,{},'234',null,{'xx':'yy','zz':'123'}], 'y':{'':'bar', 'a':3.21, 'b':[]}, '_':'kkkkk'}" ;</a>
+<span class="sourceLineNo">095</span><a id="line.95">        str0 = str0.replaceAll("'","\"") ;</a>
+<span class="sourceLineNo">096</span><a id="line.96">        Itk.dbgVal("str0",str0) ;</a>
+<span class="sourceLineNo">097</span><a id="line.97">        Term term0 = Term.newByJson(str0) ;</a>
+<span class="sourceLineNo">098</span><a id="line.98">        Itk.dbgVal("term0",term0) ;</a>
+<span class="sourceLineNo">099</span><a id="line.99">    }</a>
+<span class="sourceLineNo">100</span><a id="line.100">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">101</span><a id="line.101">    /**</a>
+<span class="sourceLineNo">102</span><a id="line.102">     */</a>
+<span class="sourceLineNo">103</span><a id="line.103">    //@Test</a>
+<span class="sourceLineNo">104</span><a id="line.104">    public void test_scanJson() {</a>
+<span class="sourceLineNo">105</span><a id="line.105">        Itk.dbgMsgMethodInfo() ;</a>
+<span class="sourceLineNo">106</span><a id="line.106"></a>
+<span class="sourceLineNo">107</span><a id="line.107">        String str0 = "{'':'foo', 'abc':'def', 'ghi':1, 'jkl':null, 'x':[1,2,{},'234',null,{'xx':'yy','zz':'123'}], 'y':{'':'bar', 'a':3.21, 'b':[]}}" ;</a>
+<span class="sourceLineNo">108</span><a id="line.108">        str0 = str0.replaceAll("'","\"") ;</a>
+<span class="sourceLineNo">109</span><a id="line.109">        Itk.dbgVal("str0",str0) ;</a>
+<span class="sourceLineNo">110</span><a id="line.110">        Term term0 = Term.newByJson(str0) ;</a>
+<span class="sourceLineNo">111</span><a id="line.111">        Itk.dbgVal("term0",term0) ;</a>
+<span class="sourceLineNo">112</span><a id="line.112">        Itk.dbgVal("term0(JSON)",term0.toJson()) ;</a>
+<span class="sourceLineNo">113</span><a id="line.113">        Itk.dbgVal("term0(JSON)",term0.toJson(true)) ;</a>
+<span class="sourceLineNo">114</span><a id="line.114"></a>
+<span class="sourceLineNo">115</span><a id="line.115">        Itk.dbgVal("term0[x]",term0.getArg("x")) ;</a>
+<span class="sourceLineNo">116</span><a id="line.116">        Itk.dbgVal("term0[y]",term0.getArg("y")) ;</a>
+<span class="sourceLineNo">117</span><a id="line.117">        Itk.dbgVal("term0.head",term0.getHead()) ;</a>
+<span class="sourceLineNo">118</span><a id="line.118">        </a>
+<span class="sourceLineNo">119</span><a id="line.119">    }</a>
+<span class="sourceLineNo">120</span><a id="line.120"></a>
+<span class="sourceLineNo">121</span><a id="line.121">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">122</span><a id="line.122">    /**</a>
+<span class="sourceLineNo">123</span><a id="line.123">     */</a>
+<span class="sourceLineNo">124</span><a id="line.124">    //@Test</a>
+<span class="sourceLineNo">125</span><a id="line.125">    public void test_array() {</a>
+<span class="sourceLineNo">126</span><a id="line.126">        Itk.dbgMsgMethodInfo() ;</a>
+<span class="sourceLineNo">127</span><a id="line.127"></a>
+<span class="sourceLineNo">128</span><a id="line.128">        List&lt;String&gt; array0 = Arrays.asList("foo","bar","baz") ;</a>
+<span class="sourceLineNo">129</span><a id="line.129">        Itk.dbgVal("array0",array0) ;</a>
+<span class="sourceLineNo">130</span><a id="line.130">        Term term0 = new Term(array0, false) ;</a>
+<span class="sourceLineNo">131</span><a id="line.131">        Itk.dbgVal("term0",term0) ;</a>
+<span class="sourceLineNo">132</span><a id="line.132">        Itk.dbgVal("term0(JSON)",term0.toJson()) ;</a>
+<span class="sourceLineNo">133</span><a id="line.133"></a>
+<span class="sourceLineNo">134</span><a id="line.134">        String str1 = "['a',1,2.3,{'':'foo','bar':[],'baz':{}}]" ;</a>
+<span class="sourceLineNo">135</span><a id="line.135">        str1 = str1.replaceAll("'","\"") ;</a>
+<span class="sourceLineNo">136</span><a id="line.136">        Itk.dbgVal("str1",str1) ;</a>
+<span class="sourceLineNo">137</span><a id="line.137">        Term term1 = Term.newByJson(str1) ;</a>
+<span class="sourceLineNo">138</span><a id="line.138">        Itk.dbgVal("term1",term1) ;</a>
+<span class="sourceLineNo">139</span><a id="line.139">        Itk.dbgVal("term1(JSON)",term1.toJson()) ;</a>
+<span class="sourceLineNo">140</span><a id="line.140">    }</a>
+<span class="sourceLineNo">141</span><a id="line.141"></a>
+<span class="sourceLineNo">142</span><a id="line.142">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">143</span><a id="line.143">    /**</a>
+<span class="sourceLineNo">144</span><a id="line.144">     */</a>
+<span class="sourceLineNo">145</span><a id="line.145">    //@Test</a>
+<span class="sourceLineNo">146</span><a id="line.146">    public void test_construct() {</a>
+<span class="sourceLineNo">147</span><a id="line.147">        Itk.dbgMsgMethodInfo() ;</a>
+<span class="sourceLineNo">148</span><a id="line.148"></a>
+<span class="sourceLineNo">149</span><a id="line.149">        Term term0 = new Term() ;</a>
+<span class="sourceLineNo">150</span><a id="line.150">        Itk.dbgVal("term0",term0) ;</a>
+<span class="sourceLineNo">151</span><a id="line.151">        Itk.dbgVal("term0(JSON)",term0.toJson()) ;</a>
+<span class="sourceLineNo">152</span><a id="line.152"></a>
+<span class="sourceLineNo">153</span><a id="line.153">        Term term1 = new Term("foo", true) ;</a>
+<span class="sourceLineNo">154</span><a id="line.154">        Itk.dbgVal("term1",term1) ;</a>
+<span class="sourceLineNo">155</span><a id="line.155">        Itk.dbgVal("term1(JSON)",term1.toJson()) ;</a>
+<span class="sourceLineNo">156</span><a id="line.156"></a>
+<span class="sourceLineNo">157</span><a id="line.157"></a>
+<span class="sourceLineNo">158</span><a id="line.158">        HashMap&lt;String,Object&gt; b2 = new HashMap() ;</a>
+<span class="sourceLineNo">159</span><a id="line.159">        b2.put("foo",1) ;</a>
+<span class="sourceLineNo">160</span><a id="line.160">        b2.put("bar",2) ;</a>
+<span class="sourceLineNo">161</span><a id="line.161">        Term term2 = new Term(b2) ;</a>
+<span class="sourceLineNo">162</span><a id="line.162">        Itk.dbgVal("term2",term2) ;</a>
+<span class="sourceLineNo">163</span><a id="line.163">        Itk.dbgVal("term2(JSON)",term2.toJson()) ;</a>
+<span class="sourceLineNo">164</span><a id="line.164"></a>
+<span class="sourceLineNo">165</span><a id="line.165">        HashMap&lt;String,Object&gt; b3 = new HashMap() ;</a>
+<span class="sourceLineNo">166</span><a id="line.166">        b3.put("foo",1) ;</a>
+<span class="sourceLineNo">167</span><a id="line.167">        b3.put("bar",2) ;</a>
+<span class="sourceLineNo">168</span><a id="line.168">        b3.put("","baz") ;</a>
+<span class="sourceLineNo">169</span><a id="line.169">        Term term3 = new Term(b3) ;</a>
+<span class="sourceLineNo">170</span><a id="line.170">        Itk.dbgVal("term3",term3) ;</a>
+<span class="sourceLineNo">171</span><a id="line.171">        Itk.dbgVal("term3(JSON)",term3.toJson()) ;</a>
+<span class="sourceLineNo">172</span><a id="line.172"></a>
+<span class="sourceLineNo">173</span><a id="line.173">        HashMap&lt;String,Object&gt; b4 = new HashMap() ;</a>
+<span class="sourceLineNo">174</span><a id="line.174">        b4.put("bar","aho") ;</a>
+<span class="sourceLineNo">175</span><a id="line.175">        b4.put("baz",2.34) ;</a>
+<span class="sourceLineNo">176</span><a id="line.176">        Term term4 = new Term("foo",b4, true) ;</a>
+<span class="sourceLineNo">177</span><a id="line.177">        Itk.dbgVal("term4",term4) ;</a>
+<span class="sourceLineNo">178</span><a id="line.178">        Itk.dbgVal("term4(JSON)",term4.toJson()) ;</a>
+<span class="sourceLineNo">179</span><a id="line.179"></a>
+<span class="sourceLineNo">180</span><a id="line.180">        Term term5 = new Term("foo", true) ;</a>
+<span class="sourceLineNo">181</span><a id="line.181">        term5.setArg("bar","aho") ;</a>
+<span class="sourceLineNo">182</span><a id="line.182">        term5.setArg("baz",2.34) ;</a>
+<span class="sourceLineNo">183</span><a id="line.183">        Itk.dbgVal("term5", term5) ;</a>
+<span class="sourceLineNo">184</span><a id="line.184">        Itk.dbgVal("term5(JSON)", term5.toJson()) ;</a>
+<span class="sourceLineNo">185</span><a id="line.185"></a>
+<span class="sourceLineNo">186</span><a id="line.186"></a>
+<span class="sourceLineNo">187</span><a id="line.187">        Itk.dbgMsg("term0==null",term0.equals(null)) ;</a>
+<span class="sourceLineNo">188</span><a id="line.188">        Itk.dbgMsg("term0==100",term0.equals(100)) ;</a>
+<span class="sourceLineNo">189</span><a id="line.189">        Itk.dbgMsg("term0==3.14",term0.equals(3.14)) ;</a>
+<span class="sourceLineNo">190</span><a id="line.190">        Itk.dbgMsg("term1==foo",term1.equals("foo")) ;</a>
+<span class="sourceLineNo">191</span><a id="line.191">        Itk.dbgMsg("term1==bar",term1.equals("bar")) ;</a>
+<span class="sourceLineNo">192</span><a id="line.192">        Itk.dbgMsg("term1==term0",term1.equals(term0)) ;</a>
+<span class="sourceLineNo">193</span><a id="line.193">        Itk.dbgMsg("term0==term1",term0.equals(term1)) ;</a>
+<span class="sourceLineNo">194</span><a id="line.194">        Itk.dbgMsg("term4==term1",term4.equals(term1)) ;</a>
+<span class="sourceLineNo">195</span><a id="line.195">        Itk.dbgMsg("term4==term5",term4.equals(term5)) ;</a>
+<span class="sourceLineNo">196</span><a id="line.196">        Itk.dbgMsg("term3==term4",term3.equals(term4)) ;</a>
+<span class="sourceLineNo">197</span><a id="line.197">    }</a>
+<span class="sourceLineNo">198</span><a id="line.198"></a>
+<span class="sourceLineNo">199</span><a id="line.199">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">200</span><a id="line.200">    /**</a>
+<span class="sourceLineNo">201</span><a id="line.201">     */</a>
+<span class="sourceLineNo">202</span><a id="line.202">    //@Test</a>
+<span class="sourceLineNo">203</span><a id="line.203">    public void test_isIntDouble() {</a>
+<span class="sourceLineNo">204</span><a id="line.204">        String str = "{'a':123, 'b':0, 'c': 12.34, 'd': 0.0, 'e':'123'}" ;</a>
+<span class="sourceLineNo">205</span><a id="line.205">        str = str.replaceAll("'","\"") ;</a>
+<span class="sourceLineNo">206</span><a id="line.206">        Itk.dbgVal("str",str) ;</a>
+<span class="sourceLineNo">207</span><a id="line.207">        Term term = Term.newByJson(str) ;</a>
+<span class="sourceLineNo">208</span><a id="line.208">        Itk.dbgVal("term", term) ;</a>
+<span class="sourceLineNo">209</span><a id="line.209">        Itk.dbgVal("term.getArg('a')",term.getArg("a")) ;</a>
+<span class="sourceLineNo">210</span><a id="line.210">        Itk.dbgVal("term.getArg('b')",term.getArg("b")) ;</a>
+<span class="sourceLineNo">211</span><a id="line.211">        Itk.dbgVal("term.getArg('c')",term.getArg("c")) ;</a>
+<span class="sourceLineNo">212</span><a id="line.212">        Itk.dbgVal("term.getArg('d')",term.getArg("d")) ;</a>
+<span class="sourceLineNo">213</span><a id="line.213">        Itk.dbgVal("term.getArg('e')",term.getArg("e")) ;</a>
+<span class="sourceLineNo">214</span><a id="line.214">        Itk.dbgVal("term.getArg('a').isInt()",term.getArgTerm("a").isInt()) ;</a>
+<span class="sourceLineNo">215</span><a id="line.215">        Itk.dbgVal("term.getArg('b').isInt()",term.getArgTerm("b").isInt()) ;</a>
+<span class="sourceLineNo">216</span><a id="line.216">        Itk.dbgVal("term.getArg('c').isInt()",term.getArgTerm("c").isInt()) ;</a>
+<span class="sourceLineNo">217</span><a id="line.217">        Itk.dbgVal("term.getArg('d').isInt()",term.getArgTerm("d").isInt()) ;</a>
+<span class="sourceLineNo">218</span><a id="line.218">        Itk.dbgVal("term.getArg('e').isInt()",term.getArgTerm("e").isInt()) ;</a>
+<span class="sourceLineNo">219</span><a id="line.219">        Itk.dbgVal("term.getArg('a').isDouble()",term.getArgTerm("a").isDouble()) ;</a>
+<span class="sourceLineNo">220</span><a id="line.220">        Itk.dbgVal("term.getArg('b').isDouble()",term.getArgTerm("b").isDouble()) ;</a>
+<span class="sourceLineNo">221</span><a id="line.221">        Itk.dbgVal("term.getArg('c').isDouble()",term.getArgTerm("c").isDouble()) ;</a>
+<span class="sourceLineNo">222</span><a id="line.222">        Itk.dbgVal("term.getArg('d').isDouble()",term.getArgTerm("d").isDouble()) ;</a>
+<span class="sourceLineNo">223</span><a id="line.223">        Itk.dbgVal("term.getArg('e').isDouble()",term.getArgTerm("e").isDouble()) ;</a>
+<span class="sourceLineNo">224</span><a id="line.224">    }</a>
+<span class="sourceLineNo">225</span><a id="line.225"></a>
+<span class="sourceLineNo">226</span><a id="line.226">} // class ClassFinderTest</a>
+<span class="sourceLineNo">227</span><a id="line.227"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

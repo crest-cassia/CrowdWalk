@@ -1,0 +1,25 @@
+/*
+    設定方法: https://github.com/crest-cassia/CrowdWalk/wiki/Node-appearance-%E3%81%AE%E8%A8%AD%E5%AE%9A%E6%96%B9%E6%B3%95
+*/
+[
+    {
+        "tag" : "EXIT",
+        "2D_View" : {
+            "className" : "RoundNode2D",
+            "parameters" : {
+                "diameter" : 0.5,
+                "color" : "BLACK",
+                "transparency" : 0.3
+            }
+        },
+        "3D_View" : {
+            "className" : "RoundNode3D",
+            "parameters" : {
+                "diameter" : 0.5,
+                "height" : 0.01,
+                "color" : "BLACK",
+                "transparency" : 0.2
+            }
+        }
+    }
+]

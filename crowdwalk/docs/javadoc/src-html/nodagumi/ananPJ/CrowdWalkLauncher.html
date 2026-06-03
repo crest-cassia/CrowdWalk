@@ -1,0 +1,438 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">package nodagumi.ananPJ;</a>
+<span class="sourceLineNo">003</span><a id="line.3"></a>
+<span class="sourceLineNo">004</span><a id="line.4">import java.io.File;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import java.io.IOException;</a>
+<span class="sourceLineNo">006</span><a id="line.6">import java.io.PrintWriter;</a>
+<span class="sourceLineNo">007</span><a id="line.7">import java.net.HttpURLConnection;</a>
+<span class="sourceLineNo">008</span><a id="line.8">import java.net.SocketTimeoutException;</a>
+<span class="sourceLineNo">009</span><a id="line.9">import java.net.URL;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import java.util.Arrays;</a>
+<span class="sourceLineNo">011</span><a id="line.11">import java.util.Map;</a>
+<span class="sourceLineNo">012</span><a id="line.12">import java.util.ArrayList;</a>
+<span class="sourceLineNo">013</span><a id="line.13"></a>
+<span class="sourceLineNo">014</span><a id="line.14">import org.apache.commons.cli.CommandLine;</a>
+<span class="sourceLineNo">015</span><a id="line.15">import org.apache.commons.cli.CommandLineParser;</a>
+<span class="sourceLineNo">016</span><a id="line.16">import org.apache.commons.cli.HelpFormatter;</a>
+<span class="sourceLineNo">017</span><a id="line.17">import org.apache.commons.cli.OptionBuilder;</a>
+<span class="sourceLineNo">018</span><a id="line.18">import org.apache.commons.cli.Options;</a>
+<span class="sourceLineNo">019</span><a id="line.19">import org.apache.commons.cli.ParseException;</a>
+<span class="sourceLineNo">020</span><a id="line.20">import org.apache.commons.cli.PosixParser;</a>
+<span class="sourceLineNo">021</span><a id="line.21"></a>
+<span class="sourceLineNo">022</span><a id="line.22">import nodagumi.ananPJ.Editor.MapEditor;</a>
+<span class="sourceLineNo">023</span><a id="line.23">import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;</a>
+<span class="sourceLineNo">024</span><a id="line.24">import nodagumi.ananPJ.misc.SimTime;</a>
+<span class="sourceLineNo">025</span><a id="line.25">import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;</a>
+<span class="sourceLineNo">026</span><a id="line.26"></a>
+<span class="sourceLineNo">027</span><a id="line.27">import nodagumi.Itk.Itk;</a>
+<span class="sourceLineNo">028</span><a id="line.28"></a>
+<span class="sourceLineNo">029</span><a id="line.29">/**</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * CrowdWalk の起動を司る</a>
+<span class="sourceLineNo">031</span><a id="line.31"> */</a>
+<span class="sourceLineNo">032</span><a id="line.32">public class CrowdWalkLauncher {</a>
+<span class="sourceLineNo">033</span><a id="line.33">    public static String optionsFormat = "[-c|g|g2] [-h] [-l &lt;LEVEL&gt;] [-L] [-N] [-o] [-t &lt;FILE&gt;] [-f &lt;FALLBACK&gt;]* [-v] [-V]"; // これはメソッドによる取得も可能</a>
+<span class="sourceLineNo">034</span><a id="line.34">    public static String commandLineSyntax = String.format("crowdwalk %s [properties-file]", optionsFormat);</a>
+<span class="sourceLineNo">035</span><a id="line.35">    public static String SETTINGS_FILE_NAME = "GuiSimulationLauncher.ini";</a>
+<span class="sourceLineNo">036</span><a id="line.36"></a>
+<span class="sourceLineNo">037</span><a id="line.37">    /**</a>
+<span class="sourceLineNo">038</span><a id="line.38">     * インターネット応答確認用 URL (国土地理院の地理院タイル提供サイト)</a>
+<span class="sourceLineNo">039</span><a id="line.39">     */</a>
+<span class="sourceLineNo">040</span><a id="line.40">    public static String RESPONSE_CONFIRMATION_URL = "https://cyberjapandata.gsi.go.jp";</a>
+<span class="sourceLineNo">041</span><a id="line.41"></a>
+<span class="sourceLineNo">042</span><a id="line.42">    /**</a>
+<span class="sourceLineNo">043</span><a id="line.43">     * GUI 設定情報のパス設定項目(マップファイル以外)</a>
+<span class="sourceLineNo">044</span><a id="line.44">     */</a>
+<span class="sourceLineNo">045</span><a id="line.45">    private static String[] SETTING_PATH_ITEMS = {"generation", "scenario", "fallback", "obstructer"};</a>
+<span class="sourceLineNo">046</span><a id="line.46"></a>
+<span class="sourceLineNo">047</span><a id="line.47">    /**</a>
+<span class="sourceLineNo">048</span><a id="line.48">     * GUI の設定情報</a>
+<span class="sourceLineNo">049</span><a id="line.49">     */</a>
+<span class="sourceLineNo">050</span><a id="line.50">    private static Settings settings = null;</a>
+<span class="sourceLineNo">051</span><a id="line.51"></a>
+<span class="sourceLineNo">052</span><a id="line.52">    /**</a>
+<span class="sourceLineNo">053</span><a id="line.53">     * 2D GUI シミュレータを使用する</a>
+<span class="sourceLineNo">054</span><a id="line.54">     */</a>
+<span class="sourceLineNo">055</span><a id="line.55">    public static boolean use2dSimulator = false;</a>
+<span class="sourceLineNo">056</span><a id="line.56"></a>
+<span class="sourceLineNo">057</span><a id="line.57">    /**</a>
+<span class="sourceLineNo">058</span><a id="line.58">     * オフラインモード</a>
+<span class="sourceLineNo">059</span><a id="line.59">     */</a>
+<span class="sourceLineNo">060</span><a id="line.60">    public static boolean offline = false;</a>
+<span class="sourceLineNo">061</span><a id="line.61"></a>
+<span class="sourceLineNo">062</span><a id="line.62">    /**</a>
+<span class="sourceLineNo">063</span><a id="line.63">     * インターネット接続可能</a>
+<span class="sourceLineNo">064</span><a id="line.64">     */</a>
+<span class="sourceLineNo">065</span><a id="line.65">    public static boolean internetEnabled = false;</a>
+<span class="sourceLineNo">066</span><a id="line.66"></a>
+<span class="sourceLineNo">067</span><a id="line.67">    /**</a>
+<span class="sourceLineNo">068</span><a id="line.68">     * legacy モード</a>
+<span class="sourceLineNo">069</span><a id="line.69">     */</a>
+<span class="sourceLineNo">070</span><a id="line.70">    public static boolean legacy = false;</a>
+<span class="sourceLineNo">071</span><a id="line.71"></a>
+<span class="sourceLineNo">072</span><a id="line.72">    /**</a>
+<span class="sourceLineNo">073</span><a id="line.73">     * コマンドラインオプションの定義</a>
+<span class="sourceLineNo">074</span><a id="line.74">     */</a>
+<span class="sourceLineNo">075</span><a id="line.75">    public static void defineOptions(Options options) {</a>
+<span class="sourceLineNo">076</span><a id="line.76">        options.addOption("c", "cui", false, "CUI モードでシミュレーションを開始する\nproperties-file の指定が必須");</a>
+<span class="sourceLineNo">077</span><a id="line.77">        options.addOption("g", "gui", false, "マップエディタウィンドウを開かずに GUI モードでシミュレーションを開始する\nproperties-file の指定が必須");</a>
+<span class="sourceLineNo">078</span><a id="line.78">        options.addOption("2", "use-2d-simulator", false, "2D GUI シミュレータを使用する");</a>
+<span class="sourceLineNo">079</span><a id="line.79">        options.addOption("h", "help", false, "この使い方を表示して終了する");</a>
+<span class="sourceLineNo">080</span><a id="line.80">        options.addOption(OptionBuilder.withLongOpt("log-level")</a>
+<span class="sourceLineNo">081</span><a id="line.81">            .withDescription("ログレベルを指定する\nLEVEL = Trace | Debug | Info | Warn | Error | Fatal")</a>
+<span class="sourceLineNo">082</span><a id="line.82">            .hasArg().withArgName("LEVEL").create("l"));</a>
+<span class="sourceLineNo">083</span><a id="line.83">        options.addOption("L", "legacy", false, "legacy モードにする\nPOLYGON | STRUCTURE タグをポリゴンの識別子として扱う");</a>
+<span class="sourceLineNo">084</span><a id="line.84">        options.addOption("N", "disable-no-hint-for-goal-log", false, "\"No hint for goal\" ログを出力しない");</a>
+<span class="sourceLineNo">085</span><a id="line.85">        options.addOption("o", "offline", false, "Internet への接続をおこなわない");</a>
+<span class="sourceLineNo">086</span><a id="line.86">        options.addOption(OptionBuilder.withLongOpt("tick")</a>
+<span class="sourceLineNo">087</span><a id="line.87">            .withDescription("tick 情報を FILE に出力する\nCUI モード時のみ有効")</a>
+<span class="sourceLineNo">088</span><a id="line.88">            .hasArg().withArgName("FILE").create("t"));</a>
+<span class="sourceLineNo">089</span><a id="line.89">        options.addOption(OptionBuilder.withLongOpt("fallback")</a>
+<span class="sourceLineNo">090</span><a id="line.90">                          .withDescription("fallback の先頭に追加する")</a>
+<span class="sourceLineNo">091</span><a id="line.91">                          .hasArg().withArgName("JSON").create("f"));</a>
+<span class="sourceLineNo">092</span><a id="line.92">        options.addOption("v", "version", false, "バージョン情報を表示して終了する");</a>
+<span class="sourceLineNo">093</span><a id="line.93">        options.addOption("V", "validate", false, "マップデータを検証する\n問題があればシミュレーションを実行せずに終了する");</a>
+<span class="sourceLineNo">094</span><a id="line.94">    }</a>
+<span class="sourceLineNo">095</span><a id="line.95"></a>
+<span class="sourceLineNo">096</span><a id="line.96">    /**</a>
+<span class="sourceLineNo">097</span><a id="line.97">     * コマンドラインオプションを解析して指定された処理を実行する</a>
+<span class="sourceLineNo">098</span><a id="line.98">     * @param args : main メソッドの args 引数</a>
+<span class="sourceLineNo">099</span><a id="line.99">     */</a>
+<span class="sourceLineNo">100</span><a id="line.100">    public static void parseCommandLine(String[] args, Options options) {</a>
+<span class="sourceLineNo">101</span><a id="line.101">        String propertiesFilePath = null;</a>
+<span class="sourceLineNo">102</span><a id="line.102">        ArrayList&lt;String&gt; fallbackStringList = new ArrayList&lt;String&gt;() ;</a>
+<span class="sourceLineNo">103</span><a id="line.103"></a>
+<span class="sourceLineNo">104</span><a id="line.104">        try {</a>
+<span class="sourceLineNo">105</span><a id="line.105">            CommandLine commandLine = new PosixParser().parse(options, args);</a>
+<span class="sourceLineNo">106</span><a id="line.106">            // ヘルプ表示オプションもしくはコマンドライン引数エラー</a>
+<span class="sourceLineNo">107</span><a id="line.107">            if (commandLine.hasOption("help") || commandLine.getArgs().length &gt; 1) {</a>
+<span class="sourceLineNo">108</span><a id="line.108">                printHelp(options);</a>
+<span class="sourceLineNo">109</span><a id="line.109">                Itk.quitSafely() ;</a>
+<span class="sourceLineNo">110</span><a id="line.110">            }</a>
+<span class="sourceLineNo">111</span><a id="line.111">            // バージョン表示</a>
+<span class="sourceLineNo">112</span><a id="line.112">            if (commandLine.hasOption("version")) {</a>
+<span class="sourceLineNo">113</span><a id="line.113">                System.err.println(</a>
+<span class="sourceLineNo">114</span><a id="line.114">                    "CrowdWalk Version\n" +</a>
+<span class="sourceLineNo">115</span><a id="line.115">                    "----------------------------------------------------------------\n" +</a>
+<span class="sourceLineNo">116</span><a id="line.116">                    getVersion() +</a>
+<span class="sourceLineNo">117</span><a id="line.117">                    "----------------------------------------------------------------");</a>
+<span class="sourceLineNo">118</span><a id="line.118">                Itk.quitSafely() ;</a>
+<span class="sourceLineNo">119</span><a id="line.119">            }</a>
+<span class="sourceLineNo">120</span><a id="line.120"></a>
+<span class="sourceLineNo">121</span><a id="line.121">            // fallback への追加</a>
+<span class="sourceLineNo">122</span><a id="line.122">            if (commandLine.hasOption("fallback")) {</a>
+<span class="sourceLineNo">123</span><a id="line.123">                for(String fallback : commandLine.getOptionValues("fallback")) {</a>
+<span class="sourceLineNo">124</span><a id="line.124">                    fallbackStringList.add(fallback) ;</a>
+<span class="sourceLineNo">125</span><a id="line.125">                }</a>
+<span class="sourceLineNo">126</span><a id="line.126">            }</a>
+<span class="sourceLineNo">127</span><a id="line.127"></a>
+<span class="sourceLineNo">128</span><a id="line.128">            // プロパティファイルの指定あり</a>
+<span class="sourceLineNo">129</span><a id="line.129">            if (commandLine.getArgs().length == 1) {</a>
+<span class="sourceLineNo">130</span><a id="line.130">                propertiesFilePath = commandLine.getArgs()[0];</a>
+<span class="sourceLineNo">131</span><a id="line.131">            }</a>
+<span class="sourceLineNo">132</span><a id="line.132"></a>
+<span class="sourceLineNo">133</span><a id="line.133">            // ログレベルの指定</a>
+<span class="sourceLineNo">134</span><a id="line.134">            if (commandLine.hasOption("log-level")) {</a>
+<span class="sourceLineNo">135</span><a id="line.135">                setLogLevel(commandLine.getOptionValue("log-level"));</a>
+<span class="sourceLineNo">136</span><a id="line.136">            }</a>
+<span class="sourceLineNo">137</span><a id="line.137"></a>
+<span class="sourceLineNo">138</span><a id="line.138">            // 2D GUI シミュレータを使用する</a>
+<span class="sourceLineNo">139</span><a id="line.139">            use2dSimulator = commandLine.hasOption("use-2d-simulator");</a>
+<span class="sourceLineNo">140</span><a id="line.140"></a>
+<span class="sourceLineNo">141</span><a id="line.141">            // オフラインモード</a>
+<span class="sourceLineNo">142</span><a id="line.142">            offline = commandLine.hasOption("offline");</a>
+<span class="sourceLineNo">143</span><a id="line.143"></a>
+<span class="sourceLineNo">144</span><a id="line.144">            // "No hint for goal" ログを出力しない</a>
+<span class="sourceLineNo">145</span><a id="line.145">            CrowdWalkPropertiesHandler.setDisableNoHintForGoalLog(commandLine.hasOption("disable-no-hint-for-goal-log"));</a>
+<span class="sourceLineNo">146</span><a id="line.146"></a>
+<span class="sourceLineNo">147</span><a id="line.147">            // legacy モード</a>
+<span class="sourceLineNo">148</span><a id="line.148">            legacy = commandLine.hasOption("legacy");</a>
+<span class="sourceLineNo">149</span><a id="line.149"></a>
+<span class="sourceLineNo">150</span><a id="line.150">            // マップデータを検証する</a>
+<span class="sourceLineNo">151</span><a id="line.151">            CrowdWalkPropertiesHandler.setValidation(commandLine.hasOption("validate"));</a>
+<span class="sourceLineNo">152</span><a id="line.152"></a>
+<span class="sourceLineNo">153</span><a id="line.153">            // CUI モードで実行</a>
+<span class="sourceLineNo">154</span><a id="line.154">            if (commandLine.hasOption("cui")) {</a>
+<span class="sourceLineNo">155</span><a id="line.155">                if (propertiesFilePath == null) {</a>
+<span class="sourceLineNo">156</span><a id="line.156">                    printHelp(options);</a>
+<span class="sourceLineNo">157</span><a id="line.157">                    Itk.quitByError() ;</a>
+<span class="sourceLineNo">158</span><a id="line.158">                }</a>
+<span class="sourceLineNo">159</span><a id="line.159">                CuiSimulationLauncher launcher</a>
+<span class="sourceLineNo">160</span><a id="line.160">                    = launchCuiSimulator(propertiesFilePath, fallbackStringList);</a>
+<span class="sourceLineNo">161</span><a id="line.161">                // tick 情報の出力</a>
+<span class="sourceLineNo">162</span><a id="line.162">                if (launcher != null &amp;&amp; commandLine.hasOption("tick")) {</a>
+<span class="sourceLineNo">163</span><a id="line.163">                    String tickFilePath = commandLine.getOptionValue("tick");</a>
+<span class="sourceLineNo">164</span><a id="line.164">                    saveTick(tickFilePath, launcher.simulator.currentTime);</a>
+<span class="sourceLineNo">165</span><a id="line.165">                }</a>
+<span class="sourceLineNo">166</span><a id="line.166">            }</a>
+<span class="sourceLineNo">167</span><a id="line.167">            // GUI モードで実行</a>
+<span class="sourceLineNo">168</span><a id="line.168">            else if (commandLine.hasOption("gui")) {</a>
+<span class="sourceLineNo">169</span><a id="line.169">                if (propertiesFilePath == null) {</a>
+<span class="sourceLineNo">170</span><a id="line.170">                    printHelp(options);</a>
+<span class="sourceLineNo">171</span><a id="line.171">                    Itk.quitByError() ;</a>
+<span class="sourceLineNo">172</span><a id="line.172">                }</a>
+<span class="sourceLineNo">173</span><a id="line.173">                launchGuiSimulator(propertiesFilePath, fallbackStringList);</a>
+<span class="sourceLineNo">174</span><a id="line.174">            }</a>
+<span class="sourceLineNo">175</span><a id="line.175">            // マップエディタの実行</a>
+<span class="sourceLineNo">176</span><a id="line.176">            else {</a>
+<span class="sourceLineNo">177</span><a id="line.177">                launchMapEditor(propertiesFilePath, fallbackStringList);</a>
+<span class="sourceLineNo">178</span><a id="line.178">            }</a>
+<span class="sourceLineNo">179</span><a id="line.179">        } catch (ParseException e) {</a>
+<span class="sourceLineNo">180</span><a id="line.180">            Itk.logError(e.getMessage());</a>
+<span class="sourceLineNo">181</span><a id="line.181">            printHelp(options);</a>
+<span class="sourceLineNo">182</span><a id="line.182">            Itk.quitByError() ;</a>
+<span class="sourceLineNo">183</span><a id="line.183">        } catch (Exception e) {</a>
+<span class="sourceLineNo">184</span><a id="line.184">            Itk.dumpStackTraceOf(e);</a>
+<span class="sourceLineNo">185</span><a id="line.185">            Itk.logError(e.getMessage());</a>
+<span class="sourceLineNo">186</span><a id="line.186">            Itk.quitByError() ;</a>
+<span class="sourceLineNo">187</span><a id="line.187">        }</a>
+<span class="sourceLineNo">188</span><a id="line.188">    }</a>
+<span class="sourceLineNo">189</span><a id="line.189"></a>
+<span class="sourceLineNo">190</span><a id="line.190">    /**</a>
+<span class="sourceLineNo">191</span><a id="line.191">     * バージョン情報の取得(最終コミットログの出力で代用)</a>
+<span class="sourceLineNo">192</span><a id="line.192">     */</a>
+<span class="sourceLineNo">193</span><a id="line.193">    public static String getVersion() {</a>
+<span class="sourceLineNo">194</span><a id="line.194">        return ObstructerBase.resourceToString("/commit_version.txt");</a>
+<span class="sourceLineNo">195</span><a id="line.195">    }</a>
+<span class="sourceLineNo">196</span><a id="line.196"></a>
+<span class="sourceLineNo">197</span><a id="line.197">    /**</a>
+<span class="sourceLineNo">198</span><a id="line.198">     * ログレベルを設定する</a>
+<span class="sourceLineNo">199</span><a id="line.199">     */</a>
+<span class="sourceLineNo">200</span><a id="line.200">    public static void setLogLevel(String logLevelName) throws Exception {</a>
+<span class="sourceLineNo">201</span><a id="line.201">        for (Map.Entry&lt;Itk.LogLevel, String&gt; entry : Itk.LogTag.entrySet()) {</a>
+<span class="sourceLineNo">202</span><a id="line.202">            if (entry.getValue().equals(Itk.LogTagPrefix + logLevelName)) {</a>
+<span class="sourceLineNo">203</span><a id="line.203">                Itk.logLevel = entry.getKey();</a>
+<span class="sourceLineNo">204</span><a id="line.204">                return;</a>
+<span class="sourceLineNo">205</span><a id="line.205">            }</a>
+<span class="sourceLineNo">206</span><a id="line.206">        }</a>
+<span class="sourceLineNo">207</span><a id="line.207">        throw new Exception("Option error - ログレベル名が間違っています: "</a>
+<span class="sourceLineNo">208</span><a id="line.208">                            + logLevelName);</a>
+<span class="sourceLineNo">209</span><a id="line.209">    }</a>
+<span class="sourceLineNo">210</span><a id="line.210"></a>
+<span class="sourceLineNo">211</span><a id="line.211">    /**</a>
+<span class="sourceLineNo">212</span><a id="line.212">     * CUI シミュレータを実行する</a>
+<span class="sourceLineNo">213</span><a id="line.213">     */</a>
+<span class="sourceLineNo">214</span><a id="line.214">    public static CuiSimulationLauncher</a>
+<span class="sourceLineNo">215</span><a id="line.215">        launchCuiSimulator(String propertiesFilePath,</a>
+<span class="sourceLineNo">216</span><a id="line.216">                           ArrayList&lt;String&gt; commandLineFallbacks)</a>
+<span class="sourceLineNo">217</span><a id="line.217">    {</a>
+<span class="sourceLineNo">218</span><a id="line.218">        CuiSimulationLauncher launcher =</a>
+<span class="sourceLineNo">219</span><a id="line.219">            new CuiSimulationLauncher(propertiesFilePath,</a>
+<span class="sourceLineNo">220</span><a id="line.220">                                      commandLineFallbacks);</a>
+<span class="sourceLineNo">221</span><a id="line.221">        if (CrowdWalkPropertiesHandler.validation() &amp;&amp; ! launcher.getMap().validate()) {</a>
+<span class="sourceLineNo">222</span><a id="line.222">            Itk.logError_("Failed to validate the map data.");</a>
+<span class="sourceLineNo">223</span><a id="line.223">            return null;</a>
+<span class="sourceLineNo">224</span><a id="line.224">        }</a>
+<span class="sourceLineNo">225</span><a id="line.225">        launcher.initialize();</a>
+<span class="sourceLineNo">226</span><a id="line.226">        launcher.start();</a>
+<span class="sourceLineNo">227</span><a id="line.227">        return launcher;</a>
+<span class="sourceLineNo">228</span><a id="line.228">    }</a>
+<span class="sourceLineNo">229</span><a id="line.229"></a>
+<span class="sourceLineNo">230</span><a id="line.230">    /**</a>
+<span class="sourceLineNo">231</span><a id="line.231">     * GUI シミュレータを実行する</a>
+<span class="sourceLineNo">232</span><a id="line.232">     */</a>
+<span class="sourceLineNo">233</span><a id="line.233">    public static GuiSimulationLauncher</a>
+<span class="sourceLineNo">234</span><a id="line.234">        launchGuiSimulator(String propertiesFilePath,</a>
+<span class="sourceLineNo">235</span><a id="line.235">                           ArrayList&lt;String&gt; commandLineFallbacks) throws Exception</a>
+<span class="sourceLineNo">236</span><a id="line.236">    {</a>
+<span class="sourceLineNo">237</span><a id="line.237">        settings = Settings.load(SETTINGS_FILE_NAME);</a>
+<span class="sourceLineNo">238</span><a id="line.238">        GuiSimulationLauncher launcher;</a>
+<span class="sourceLineNo">239</span><a id="line.239">        if (use2dSimulator) {</a>
+<span class="sourceLineNo">240</span><a id="line.240">            launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher2D");</a>
+<span class="sourceLineNo">241</span><a id="line.241">        } else {</a>
+<span class="sourceLineNo">242</span><a id="line.242">            if (! GuiSimulationLauncher.isUsableClass("GuiSimulationLauncher3D")) {</a>
+<span class="sourceLineNo">243</span><a id="line.243">                throw new Exception("このビルドには 3D シミュレータ機能が組み込まれていません。");</a>
+<span class="sourceLineNo">244</span><a id="line.244">            }</a>
+<span class="sourceLineNo">245</span><a id="line.245">            launcher = GuiSimulationLauncher.createInstance("GuiSimulationLauncher3D");</a>
+<span class="sourceLineNo">246</span><a id="line.246">        }</a>
+<span class="sourceLineNo">247</span><a id="line.247">        launcher.init(propertiesFilePath, settings, commandLineFallbacks);</a>
+<span class="sourceLineNo">248</span><a id="line.248">        if (CrowdWalkPropertiesHandler.validation() &amp;&amp; ! launcher.getMap().validate()) {</a>
+<span class="sourceLineNo">249</span><a id="line.249">            Itk.logWarn_("Failed to validate the map data.");</a>
+<span class="sourceLineNo">250</span><a id="line.250">            return null;</a>
+<span class="sourceLineNo">251</span><a id="line.251">        }</a>
+<span class="sourceLineNo">252</span><a id="line.252">        launcher.simulate();</a>
+<span class="sourceLineNo">253</span><a id="line.253">        return launcher;</a>
+<span class="sourceLineNo">254</span><a id="line.254">    }</a>
+<span class="sourceLineNo">255</span><a id="line.255"></a>
+<span class="sourceLineNo">256</span><a id="line.256">    /**</a>
+<span class="sourceLineNo">257</span><a id="line.257">     * マップエディタを実行する</a>
+<span class="sourceLineNo">258</span><a id="line.258">     */</a>
+<span class="sourceLineNo">259</span><a id="line.259">    public static void launchMapEditor(String propertiesFilePath,</a>
+<span class="sourceLineNo">260</span><a id="line.260">            ArrayList&lt;String&gt; commandLineFallbacks) throws Exception {</a>
+<span class="sourceLineNo">261</span><a id="line.261">        if (! offline) {</a>
+<span class="sourceLineNo">262</span><a id="line.262">            if (isInternetEnabled()) {</a>
+<span class="sourceLineNo">263</span><a id="line.263">                internetEnabled = true;</a>
+<span class="sourceLineNo">264</span><a id="line.264">            } else {</a>
+<span class="sourceLineNo">265</span><a id="line.265">                offline = true;</a>
+<span class="sourceLineNo">266</span><a id="line.266">            }</a>
+<span class="sourceLineNo">267</span><a id="line.267">        }</a>
+<span class="sourceLineNo">268</span><a id="line.268">        settings = Settings.load(SETTINGS_FILE_NAME);</a>
+<span class="sourceLineNo">269</span><a id="line.269">        MapEditor editor = new MapEditor(settings);</a>
+<span class="sourceLineNo">270</span><a id="line.270">        if (propertiesFilePath != null) {</a>
+<span class="sourceLineNo">271</span><a id="line.271">            editor.setPropertiesFromFile(propertiesFilePath, commandLineFallbacks);</a>
+<span class="sourceLineNo">272</span><a id="line.272">            if (! editor.loadNetworkMap()) {</a>
+<span class="sourceLineNo">273</span><a id="line.273">                Itk.quitByError() ;</a>
+<span class="sourceLineNo">274</span><a id="line.274">            }</a>
+<span class="sourceLineNo">275</span><a id="line.275">        } else {</a>
+<span class="sourceLineNo">276</span><a id="line.276">            editor.initProperties(commandLineFallbacks);</a>
+<span class="sourceLineNo">277</span><a id="line.277">            editor.initNetworkMap();</a>
+<span class="sourceLineNo">278</span><a id="line.278">        }</a>
+<span class="sourceLineNo">279</span><a id="line.279">        editor.show();</a>
+<span class="sourceLineNo">280</span><a id="line.280">    }</a>
+<span class="sourceLineNo">281</span><a id="line.281"></a>
+<span class="sourceLineNo">282</span><a id="line.282">    /**</a>
+<span class="sourceLineNo">283</span><a id="line.283">     * tick 情報をファイルに出力する</a>
+<span class="sourceLineNo">284</span><a id="line.284">     */</a>
+<span class="sourceLineNo">285</span><a id="line.285">    public static void saveTick(String filePath, SimTime currentTime) throws IOException {</a>
+<span class="sourceLineNo">286</span><a id="line.286">        PrintWriter writer = new PrintWriter(filePath);</a>
+<span class="sourceLineNo">287</span><a id="line.287">        if (filePath.toLowerCase().endsWith(".json")) {</a>
+<span class="sourceLineNo">288</span><a id="line.288">            writer.write("{\"tick\" : " + currentTime.getRelativeTime() + "}");</a>
+<span class="sourceLineNo">289</span><a id="line.289">        } else {</a>
+<span class="sourceLineNo">290</span><a id="line.290">            writer.println(currentTime.getRelativeTime());</a>
+<span class="sourceLineNo">291</span><a id="line.291">        }</a>
+<span class="sourceLineNo">292</span><a id="line.292">        writer.close();</a>
+<span class="sourceLineNo">293</span><a id="line.293">    }</a>
+<span class="sourceLineNo">294</span><a id="line.294"></a>
+<span class="sourceLineNo">295</span><a id="line.295">    /**</a>
+<span class="sourceLineNo">296</span><a id="line.296">     * コマンドラインヘルプを標準出力に表示する</a>
+<span class="sourceLineNo">297</span><a id="line.297">     */</a>
+<span class="sourceLineNo">298</span><a id="line.298">    public static void printHelp(Options options) {</a>
+<span class="sourceLineNo">299</span><a id="line.299">        HelpFormatter formatter = new HelpFormatter();</a>
+<span class="sourceLineNo">300</span><a id="line.300">        int usageWidth = 7 + commandLineSyntax.length();    // "usege: " + commandLineSyntax</a>
+<span class="sourceLineNo">301</span><a id="line.301">        formatter.setWidth(Math.max(usageWidth, 80));       // 行の折りたたみ最小幅は80桁</a>
+<span class="sourceLineNo">302</span><a id="line.302">        formatter.printHelp(commandLineSyntax, options);</a>
+<span class="sourceLineNo">303</span><a id="line.303">    }</a>
+<span class="sourceLineNo">304</span><a id="line.304"></a>
+<span class="sourceLineNo">305</span><a id="line.305">    /**</a>
+<span class="sourceLineNo">306</span><a id="line.306">     * 3D シミュレータが使用可能か?</a>
+<span class="sourceLineNo">307</span><a id="line.307">     */</a>
+<span class="sourceLineNo">308</span><a id="line.308">    public static boolean isUsable3dSimulator() {</a>
+<span class="sourceLineNo">309</span><a id="line.309">        return GuiSimulationLauncher.isUsableClass("GuiSimulationLauncher3D");</a>
+<span class="sourceLineNo">310</span><a id="line.310">    }</a>
+<span class="sourceLineNo">311</span><a id="line.311"></a>
+<span class="sourceLineNo">312</span><a id="line.312">    /**</a>
+<span class="sourceLineNo">313</span><a id="line.313">     * インターネットにつながるか?</a>
+<span class="sourceLineNo">314</span><a id="line.314">     */</a>
+<span class="sourceLineNo">315</span><a id="line.315">    public static boolean isInternetEnabled() {</a>
+<span class="sourceLineNo">316</span><a id="line.316">        try {</a>
+<span class="sourceLineNo">317</span><a id="line.317">            Itk.logInfo("Trying HTTP connection to:",</a>
+<span class="sourceLineNo">318</span><a id="line.318">                        RESPONSE_CONFIRMATION_URL) ;</a>
+<span class="sourceLineNo">319</span><a id="line.319">            URL url = new URL(RESPONSE_CONFIRMATION_URL);</a>
+<span class="sourceLineNo">320</span><a id="line.320">            HttpURLConnection con = (HttpURLConnection)url.openConnection();</a>
+<span class="sourceLineNo">321</span><a id="line.321">            con.setRequestMethod("GET");</a>
+<span class="sourceLineNo">322</span><a id="line.322">            con.setConnectTimeout(1000);    // 接続タイムアウト: 1sec</a>
+<span class="sourceLineNo">323</span><a id="line.323">            con.setReadTimeout(1000);       // 読み取りタイムアウト: 1sec</a>
+<span class="sourceLineNo">324</span><a id="line.324">            con.connect();</a>
+<span class="sourceLineNo">325</span><a id="line.325">            if (con.getResponseCode() == -1) {</a>
+<span class="sourceLineNo">326</span><a id="line.326">                Itk.logWarn("HTTP connection got an unknown error") ;</a>
+<span class="sourceLineNo">327</span><a id="line.327">                Itk.logWarn_("HTTP Error", con.getResponseMessage()) ;</a>
+<span class="sourceLineNo">328</span><a id="line.328">                return false;</a>
+<span class="sourceLineNo">329</span><a id="line.329">            }</a>
+<span class="sourceLineNo">330</span><a id="line.330">            Itk.logInfo("HTTP connection succeeded.") ;</a>
+<span class="sourceLineNo">331</span><a id="line.331">        } catch (SocketTimeoutException e) {</a>
+<span class="sourceLineNo">332</span><a id="line.332">            Itk.logWarn("HTTP GET", e.getMessage());</a>
+<span class="sourceLineNo">333</span><a id="line.333">            return false;</a>
+<span class="sourceLineNo">334</span><a id="line.334">        } catch (IOException e) {</a>
+<span class="sourceLineNo">335</span><a id="line.335">            Itk.logWarn("HTTP GET", e.getMessage());</a>
+<span class="sourceLineNo">336</span><a id="line.336">            return false;</a>
+<span class="sourceLineNo">337</span><a id="line.337">        }</a>
+<span class="sourceLineNo">338</span><a id="line.338">        return true;</a>
+<span class="sourceLineNo">339</span><a id="line.339">    }</a>
+<span class="sourceLineNo">340</span><a id="line.340"></a>
+<span class="sourceLineNo">341</span><a id="line.341">    public static void main(String[] args) {</a>
+<span class="sourceLineNo">342</span><a id="line.342">        Options options = new Options();</a>
+<span class="sourceLineNo">343</span><a id="line.343">        defineOptions(options);</a>
+<span class="sourceLineNo">344</span><a id="line.344">        parseCommandLine(args, options);</a>
+<span class="sourceLineNo">345</span><a id="line.345"></a>
+<span class="sourceLineNo">346</span><a id="line.346">        // Settings の保存</a>
+<span class="sourceLineNo">347</span><a id="line.347">        Runtime.getRuntime().addShutdownHook(new Thread() {</a>
+<span class="sourceLineNo">348</span><a id="line.348">            public void run() {</a>
+<span class="sourceLineNo">349</span><a id="line.349">                if (settings != null) {</a>
+<span class="sourceLineNo">350</span><a id="line.350">                    // ディレクトリがマップファイルと異なる場合は危険なので保存しない</a>
+<span class="sourceLineNo">351</span><a id="line.351">                    String mapDir = settings.get("mapDir", "");</a>
+<span class="sourceLineNo">352</span><a id="line.352">                    for (String item : SETTING_PATH_ITEMS) {</a>
+<span class="sourceLineNo">353</span><a id="line.353">                        if (! settings.get(item + "Dir", "").equals(mapDir)) {</a>
+<span class="sourceLineNo">354</span><a id="line.354">                            settings.put(item + "Dir", "");</a>
+<span class="sourceLineNo">355</span><a id="line.355">                            settings.put(item + "File", "");</a>
+<span class="sourceLineNo">356</span><a id="line.356">                        }</a>
+<span class="sourceLineNo">357</span><a id="line.357">                    }</a>
+<span class="sourceLineNo">358</span><a id="line.358"></a>
+<span class="sourceLineNo">359</span><a id="line.359">                    Settings.save();</a>
+<span class="sourceLineNo">360</span><a id="line.360">                }</a>
+<span class="sourceLineNo">361</span><a id="line.361">            }</a>
+<span class="sourceLineNo">362</span><a id="line.362">        });</a>
+<span class="sourceLineNo">363</span><a id="line.363">    }</a>
+<span class="sourceLineNo">364</span><a id="line.364">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

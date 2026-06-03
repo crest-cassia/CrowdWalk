@@ -1,0 +1,12 @@
+{
+    "FixedScaleImageNode2D" : "nodagumi.ananPJ.Gui.NodeAppearance.view2d.FixedScaleImageNode2D",
+    "FixedScaleRoundNode2D" : "nodagumi.ananPJ.Gui.NodeAppearance.view2d.FixedScaleRoundNode2D",
+    "ImageNode2D" : "nodagumi.ananPJ.Gui.NodeAppearance.view2d.ImageNode2D",
+    "ImageNode3D" : "nodagumi.ananPJ.Gui.NodeAppearance.view3d.ImageNode3D",
+    "InvisibleNode2D" : "nodagumi.ananPJ.Gui.NodeAppearance.view2d.InvisibleNode2D",
+    "InvisibleNode3D" : "nodagumi.ananPJ.Gui.NodeAppearance.view3d.InvisibleNode3D",
+    "RoundNode2D" : "nodagumi.ananPJ.Gui.NodeAppearance.view2d.RoundNode2D",
+    "RoundNode3D" : "nodagumi.ananPJ.Gui.NodeAppearance.view3d.RoundNode3D",
+    "SquareNode2D" : "nodagumi.ananPJ.Gui.NodeAppearance.view2d.SquareNode2D",
+    "SquareNode3D" : "nodagumi.ananPJ.Gui.NodeAppearance.view3d.SquareNode3D"
+}

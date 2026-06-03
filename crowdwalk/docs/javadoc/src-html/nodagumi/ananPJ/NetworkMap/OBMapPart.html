@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">package nodagumi.ananPJ.NetworkMap;</a>
+<span class="sourceLineNo">003</span><a id="line.3"></a>
+<span class="sourceLineNo">004</span><a id="line.4">import java.io.IOException;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import java.io.ObjectInputStream;</a>
+<span class="sourceLineNo">006</span><a id="line.6">import java.io.ObjectOutputStream;</a>
+<span class="sourceLineNo">007</span><a id="line.7"></a>
+<span class="sourceLineNo">008</span><a id="line.8">import nodagumi.ananPJ.Agents.AgentBase;</a>
+<span class="sourceLineNo">009</span><a id="line.9">import nodagumi.ananPJ.misc.SimTime;</a>
+<span class="sourceLineNo">010</span><a id="line.10"></a>
+<span class="sourceLineNo">011</span><a id="line.11">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">012</span><a id="line.12"></a>
+<span class="sourceLineNo">013</span><a id="line.13">/* Parent of agent/node/link (leaf of OB) */</a>
+<span class="sourceLineNo">014</span><a id="line.14">public abstract class OBMapPart extends OBNode {</a>
+<span class="sourceLineNo">015</span><a id="line.15"></a>
+<span class="sourceLineNo">016</span><a id="line.16">        /**</a>
+<span class="sourceLineNo">017</span><a id="line.17">         * 引数なしconstractor。 ClassFinder.newByName で必要。</a>
+<span class="sourceLineNo">018</span><a id="line.18">         */</a>
+<span class="sourceLineNo">019</span><a id="line.19">        public OBMapPart() {} ;</a>
+<span class="sourceLineNo">020</span><a id="line.20"></a>
+<span class="sourceLineNo">021</span><a id="line.21">    public OBMapPart(String _ID){</a>
+<span class="sourceLineNo">022</span><a id="line.22">                init(_ID) ;</a>
+<span class="sourceLineNo">023</span><a id="line.23">        }</a>
+<span class="sourceLineNo">024</span><a id="line.24"></a>
+<span class="sourceLineNo">025</span><a id="line.25">        /**</a>
+<span class="sourceLineNo">026</span><a id="line.26">         * 初期化。constractorから分離。</a>
+<span class="sourceLineNo">027</span><a id="line.27">         */</a>
+<span class="sourceLineNo">028</span><a id="line.28">    @Override</a>
+<span class="sourceLineNo">029</span><a id="line.29">    public void init(String _ID){</a>
+<span class="sourceLineNo">030</span><a id="line.30">        super.init(_ID);</a>
+<span class="sourceLineNo">031</span><a id="line.31">        this.setAllowsChildren(false);</a>
+<span class="sourceLineNo">032</span><a id="line.32">    }</a>
+<span class="sourceLineNo">033</span><a id="line.33"></a>
+<span class="sourceLineNo">034</span><a id="line.34">    @Override</a>
+<span class="sourceLineNo">035</span><a id="line.35">    public boolean isLeaf() {</a>
+<span class="sourceLineNo">036</span><a id="line.36">        return true;</a>
+<span class="sourceLineNo">037</span><a id="line.37">    }</a>
+<span class="sourceLineNo">038</span><a id="line.38"></a>
+<span class="sourceLineNo">039</span><a id="line.39">    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</a>
+<span class="sourceLineNo">040</span><a id="line.40">    /** </a>
+<span class="sourceLineNo">041</span><a id="line.41">     * ルールで用いるタグ類</a>
+<span class="sourceLineNo">042</span><a id="line.42">     */</a>
+<span class="sourceLineNo">043</span><a id="line.43">    static private final String Slot_tag            = Itk.intern("tag") ;</a>
+<span class="sourceLineNo">044</span><a id="line.44">    static private final String Slot_type           = Itk.intern("type") ;</a>
+<span class="sourceLineNo">045</span><a id="line.45">    static private final String Slot_directed   = Itk.intern("directed") ;</a>
+<span class="sourceLineNo">046</span><a id="line.46">    static private final String Slot_factor     = Itk.intern("factor") ;</a>
+<span class="sourceLineNo">047</span><a id="line.47">    static private final String Slot_set                = Itk.intern("set") ;</a>
+<span class="sourceLineNo">048</span><a id="line.48">    static private final String Slot_multiply   = Itk.intern("multiply") ;</a>
+<span class="sourceLineNo">049</span><a id="line.49">    static private final String Slot_add                = Itk.intern("add") ;</a>
+<span class="sourceLineNo">050</span><a id="line.50">    </a>
+<span class="sourceLineNo">051</span><a id="line.51">    final public int DefaultOne = 1 ;</a>
+<span class="sourceLineNo">052</span><a id="line.52">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">053</span><a id="line.53">    /**</a>
+<span class="sourceLineNo">054</span><a id="line.54">     * ルールに従い速度等のvalueに制限を加える。</a>
+<span class="sourceLineNo">055</span><a id="line.55">         * ルールの書き方は、以下の通り。</a>
+<span class="sourceLineNo">056</span><a id="line.56">         * &lt;pre&gt;</a>
+<span class="sourceLineNo">057</span><a id="line.57">         *   _rule_ ::= { "type" : _Type_,</a>
+<span class="sourceLineNo">058</span><a id="line.58">         *                "tag" : _String_,</a>
+<span class="sourceLineNo">059</span><a id="line.59">         *                "factor" : _Double_ } </a>
+<span class="sourceLineNo">060</span><a id="line.60">     *            | { "type" : _Type_,</a>
+<span class="sourceLineNo">061</span><a id="line.61">     *                "directed" : true,</a>
+<span class="sourceLineNo">062</span><a id="line.62">         *                "tag" : _String_,</a>
+<span class="sourceLineNo">063</span><a id="line.63">         *                "factor" : [_Double_, _Double_] } </a>
+<span class="sourceLineNo">064</span><a id="line.64">         *   _Type_ ::= "set" | "multiply" | "add"</a>
+<span class="sourceLineNo">065</span><a id="line.65">         * &lt;/pre&gt;</a>
+<span class="sourceLineNo">066</span><a id="line.66">         * "tag" には、link, node が所有すべきタグを指定する。</a>
+<span class="sourceLineNo">067</span><a id="line.67">         * このタグを持つlink,node 上のエージェントが受ける影響を求める。</a>
+<span class="sourceLineNo">068</span><a id="line.68">         * "factor" は、"type" により意味が異なる。</a>
+<span class="sourceLineNo">069</span><a id="line.69">         * &lt;ul&gt;</a>
+<span class="sourceLineNo">070</span><a id="line.70">         *   &lt;li&gt; "set" : value を "factor" で置き換え。 &lt;/li&gt;</a>
+<span class="sourceLineNo">071</span><a id="line.71">         *   &lt;li&gt; "multiply" : value に "factor" を乗ずる。 &lt;/li&gt;</a>
+<span class="sourceLineNo">072</span><a id="line.72">         *   &lt;li&gt; "add" : value に "factor" で加える。 &lt;/li&gt;</a>
+<span class="sourceLineNo">073</span><a id="line.73">         * &lt;/ul&gt;</a>
+<span class="sourceLineNo">074</span><a id="line.74">     * 2つ目の形式では、リンクの方向性で扱いが異なる。</a>
+<span class="sourceLineNo">075</span><a id="line.75">     * agent の現在地(currentPlace)が、forwardDirection なら、</a>
+<span class="sourceLineNo">076</span><a id="line.76">     * "factor" の第0要素を、</a>
+<span class="sourceLineNo">077</span><a id="line.77">     * backwardDirection なら、"factor" の第1要素を、計算に用いる。</a>
+<span class="sourceLineNo">078</span><a id="line.78">     * @param value: 元になる値</a>
+<span class="sourceLineNo">079</span><a id="line.79">     * @param rule: ルール</a>
+<span class="sourceLineNo">080</span><a id="line.80">     * @param agent: 対象となるエージェント。リンク上にいる。</a>
+<span class="sourceLineNo">081</span><a id="line.81">     * @param currnetTime: 現在時刻</a>
+<span class="sourceLineNo">082</span><a id="line.82">     * @return 変更された値</a>
+<span class="sourceLineNo">083</span><a id="line.83">     */</a>
+<span class="sourceLineNo">084</span><a id="line.84">    public double applyRestrictionRule(double value, Term rule,</a>
+<span class="sourceLineNo">085</span><a id="line.85">                                       AgentBase agent, SimTime currnetTime) {</a>
+<span class="sourceLineNo">086</span><a id="line.86">        String tag = rule.getArgString(Slot_tag) ;</a>
+<span class="sourceLineNo">087</span><a id="line.87">        if(hasTag(tag)) {</a>
+<span class="sourceLineNo">088</span><a id="line.88">            // factor の値を、directed などから決める。</a>
+<span class="sourceLineNo">089</span><a id="line.89">            boolean directed = rule.getArgBoolean(Slot_directed) ;</a>
+<span class="sourceLineNo">090</span><a id="line.90">            double factor ;</a>
+<span class="sourceLineNo">091</span><a id="line.91">            if(directed) {</a>
+<span class="sourceLineNo">092</span><a id="line.92">                boolean isForward = agent.isForwardDirection() ;</a>
+<span class="sourceLineNo">093</span><a id="line.93">                Term factorList = rule.getArgTerm(Slot_factor) ;</a>
+<span class="sourceLineNo">094</span><a id="line.94">                factor = factorList.getNthDouble((isForward ? 0 : 1)) ;</a>
+<span class="sourceLineNo">095</span><a id="line.95">            } else {</a>
+<span class="sourceLineNo">096</span><a id="line.96">                factor = rule.getArgDouble(Slot_factor) ;</a>
+<span class="sourceLineNo">097</span><a id="line.97">            }</a>
+<span class="sourceLineNo">098</span><a id="line.98">            // type ごとの処理</a>
+<span class="sourceLineNo">099</span><a id="line.99">            String type = rule.getArgString(Slot_type) ;</a>
+<span class="sourceLineNo">100</span><a id="line.100">            if(type == Slot_set) {</a>
+<span class="sourceLineNo">101</span><a id="line.101">                value = factor ;</a>
+<span class="sourceLineNo">102</span><a id="line.102">            } else if(type == Slot_multiply) {</a>
+<span class="sourceLineNo">103</span><a id="line.103">                value *= factor ;</a>
+<span class="sourceLineNo">104</span><a id="line.104">            } else if(type == Slot_add) {</a>
+<span class="sourceLineNo">105</span><a id="line.105">                value += factor ;</a>
+<span class="sourceLineNo">106</span><a id="line.106">            } else {</a>
+<span class="sourceLineNo">107</span><a id="line.107">                Itk.logError("unknown restriction rule type",</a>
+<span class="sourceLineNo">108</span><a id="line.108">                             "rule=", rule) ;</a>
+<span class="sourceLineNo">109</span><a id="line.109">            }</a>
+<span class="sourceLineNo">110</span><a id="line.110">        }</a>
+<span class="sourceLineNo">111</span><a id="line.111">        return value ;</a>
+<span class="sourceLineNo">112</span><a id="line.112">    }</a>
+<span class="sourceLineNo">113</span><a id="line.113"></a>
+<span class="sourceLineNo">114</span><a id="line.114"></a>
+<span class="sourceLineNo">115</span><a id="line.115"></a>
+<span class="sourceLineNo">116</span><a id="line.116"></a>
+<span class="sourceLineNo">117</span><a id="line.117">}</a>
+<span class="sourceLineNo">118</span><a id="line.118">//;;; Local Variables:</a>
+<span class="sourceLineNo">119</span><a id="line.119">//;;; mode:java</a>
+<span class="sourceLineNo">120</span><a id="line.120">//;;; tab-width:4</a>
+<span class="sourceLineNo">121</span><a id="line.121">//;;; End:</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

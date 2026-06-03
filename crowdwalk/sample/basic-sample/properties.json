@@ -1,0 +1,20 @@
+{
+    "map_file": "test_model.xml",
+    "generation_file": "test_generation.csv",
+    "scenario_file": "test_scenario.json",
+    "node_appearance_file": "node_appearance.json",
+
+    "randseed": 2525,
+    "exit_count": 0,
+    "all_agent_speed_zero_break": false,
+
+    "record_simulation_screen":false,
+    "screenshot_dir": "../../screenshots",
+    "clear_screenshot_dir":true,
+    "screenshot_image_type":"png",
+
+    "agent_size": 0.4,
+    "exit_with_simulation_finished": false,
+    "simulation_window_open": false,
+    "auto_simulation_start": false
+}

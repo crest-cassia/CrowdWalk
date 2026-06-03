@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+  <Properties>sample/4bridges/properties-4bridges-density.xml</Properties>
+  <Variables>
+    <Variable>
+      <name>randseed</name>
+      <type>int</type>
+      <change>range</change>
+      <start>0</start>
+      <end>4</end>
+      <step>1</step>
+    </Variable>
+    <Variable>
+      <name>number_of_agent_ratio</name>
+      <type>int</type>
+      <change>range</change>
+      <start>1</start>
+      <end>10</end>
+      <step>1</step>
+    </Variable>
+  </Variables>
+</root>

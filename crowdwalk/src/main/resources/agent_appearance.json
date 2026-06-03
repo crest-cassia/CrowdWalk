@@ -1,0 +1,22 @@
+[
+    {
+        "tag" : "*",
+        "model" : {
+            "className" : "SpeedModel",
+            "parameters" : {
+                "coefficientOfHue" : 0.35,
+                "exponent" : 5.0,
+                "saturation" : 0.8588,
+                "brightness" : 0.698
+            }
+        },
+        "2D_View" : {
+            "className" : "RoundAgent",
+            "parameters" : {}
+        },
+        "3D_View" : {
+            "className" : "SphereAgent",
+            "parameters" : {}
+        }
+    }
+]

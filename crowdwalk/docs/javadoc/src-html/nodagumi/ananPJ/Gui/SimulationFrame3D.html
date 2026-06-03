@@ -1,0 +1,1709 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">package nodagumi.ananPJ.Gui;</a>
+<span class="sourceLineNo">002</span><a id="line.2"></a>
+<span class="sourceLineNo">003</span><a id="line.3">import java.awt.image.BufferedImage;</a>
+<span class="sourceLineNo">004</span><a id="line.4">import java.io.File;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import java.io.FileReader;</a>
+<span class="sourceLineNo">006</span><a id="line.6">import java.io.FileWriter;</a>
+<span class="sourceLineNo">007</span><a id="line.7">import java.io.IOException;</a>
+<span class="sourceLineNo">008</span><a id="line.8">import java.time.LocalTime;</a>
+<span class="sourceLineNo">009</span><a id="line.9">import java.time.format.DateTimeFormatter;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import java.util.ArrayList;</a>
+<span class="sourceLineNo">011</span><a id="line.11">import java.util.Arrays;</a>
+<span class="sourceLineNo">012</span><a id="line.12">import java.util.HashMap;</a>
+<span class="sourceLineNo">013</span><a id="line.13">import java.util.Map;</a>
+<span class="sourceLineNo">014</span><a id="line.14">import java.util.Observable;</a>
+<span class="sourceLineNo">015</span><a id="line.15">import java.util.Observer;</a>
+<span class="sourceLineNo">016</span><a id="line.16"></a>
+<span class="sourceLineNo">017</span><a id="line.17">import javax.imageio.ImageIO;</a>
+<span class="sourceLineNo">018</span><a id="line.18"></a>
+<span class="sourceLineNo">019</span><a id="line.19">import javafx.application.Platform;</a>
+<span class="sourceLineNo">020</span><a id="line.20">import javafx.beans.value.ChangeListener;</a>
+<span class="sourceLineNo">021</span><a id="line.21">import javafx.beans.value.ObservableValue;</a>
+<span class="sourceLineNo">022</span><a id="line.22">import javafx.concurrent.Task;</a>
+<span class="sourceLineNo">023</span><a id="line.23">import javafx.embed.swing.SwingFXUtils;</a>
+<span class="sourceLineNo">024</span><a id="line.24">import javafx.geometry.HPos;</a>
+<span class="sourceLineNo">025</span><a id="line.25">import javafx.geometry.Insets;</a>
+<span class="sourceLineNo">026</span><a id="line.26">import javafx.geometry.Point3D;</a>
+<span class="sourceLineNo">027</span><a id="line.27">import javafx.geometry.Pos;</a>
+<span class="sourceLineNo">028</span><a id="line.28">import javafx.geometry.Rectangle2D;</a>
+<span class="sourceLineNo">029</span><a id="line.29">import javafx.scene.Node;</a>
+<span class="sourceLineNo">030</span><a id="line.30">import javafx.scene.Scene;</a>
+<span class="sourceLineNo">031</span><a id="line.31">import javafx.scene.control.Alert;</a>
+<span class="sourceLineNo">032</span><a id="line.32">import javafx.scene.control.Alert.AlertType;</a>
+<span class="sourceLineNo">033</span><a id="line.33">import javafx.scene.control.Button;</a>
+<span class="sourceLineNo">034</span><a id="line.34">import javafx.scene.control.ButtonType;</a>
+<span class="sourceLineNo">035</span><a id="line.35">import javafx.scene.control.CheckBox;</a>
+<span class="sourceLineNo">036</span><a id="line.36">import javafx.scene.control.CheckMenuItem;</a>
+<span class="sourceLineNo">037</span><a id="line.37">import javafx.scene.control.Label;</a>
+<span class="sourceLineNo">038</span><a id="line.38">import javafx.scene.control.Menu;</a>
+<span class="sourceLineNo">039</span><a id="line.39">import javafx.scene.control.MenuBar;</a>
+<span class="sourceLineNo">040</span><a id="line.40">import javafx.scene.control.MenuItem;</a>
+<span class="sourceLineNo">041</span><a id="line.41">import javafx.scene.control.RadioButton;</a>
+<span class="sourceLineNo">042</span><a id="line.42">import javafx.scene.control.ScrollBar;</a>
+<span class="sourceLineNo">043</span><a id="line.43">import javafx.scene.control.ScrollPane;</a>
+<span class="sourceLineNo">044</span><a id="line.44">import javafx.scene.control.Separator;</a>
+<span class="sourceLineNo">045</span><a id="line.45">import javafx.scene.control.Spinner;</a>
+<span class="sourceLineNo">046</span><a id="line.46">import javafx.scene.control.SpinnerValueFactory;</a>
+<span class="sourceLineNo">047</span><a id="line.47">import javafx.scene.control.Tab;</a>
+<span class="sourceLineNo">048</span><a id="line.48">import javafx.scene.control.TabPane;</a>
+<span class="sourceLineNo">049</span><a id="line.49">import javafx.scene.control.TextArea;</a>
+<span class="sourceLineNo">050</span><a id="line.50">import javafx.scene.control.ToggleButton;</a>
+<span class="sourceLineNo">051</span><a id="line.51">import javafx.scene.control.ToggleGroup;</a>
+<span class="sourceLineNo">052</span><a id="line.52">import javafx.scene.control.Tooltip;</a>
+<span class="sourceLineNo">053</span><a id="line.53">import javafx.scene.image.Image;</a>
+<span class="sourceLineNo">054</span><a id="line.54">import javafx.scene.image.ImageView;</a>
+<span class="sourceLineNo">055</span><a id="line.55">import javafx.scene.image.WritableImage;</a>
+<span class="sourceLineNo">056</span><a id="line.56">import javafx.scene.input.KeyCode;</a>
+<span class="sourceLineNo">057</span><a id="line.57">import javafx.scene.input.KeyCombination;</a>
+<span class="sourceLineNo">058</span><a id="line.58">import javafx.scene.layout.Border;</a>
+<span class="sourceLineNo">059</span><a id="line.59">import javafx.scene.layout.BorderPane;</a>
+<span class="sourceLineNo">060</span><a id="line.60">import javafx.scene.layout.BorderStroke;</a>
+<span class="sourceLineNo">061</span><a id="line.61">import javafx.scene.layout.BorderStrokeStyle;</a>
+<span class="sourceLineNo">062</span><a id="line.62">import javafx.scene.layout.BorderWidths;</a>
+<span class="sourceLineNo">063</span><a id="line.63">import javafx.scene.layout.CornerRadii;</a>
+<span class="sourceLineNo">064</span><a id="line.64">import javafx.scene.layout.FlowPane;</a>
+<span class="sourceLineNo">065</span><a id="line.65">import javafx.scene.layout.GridPane;</a>
+<span class="sourceLineNo">066</span><a id="line.66">import javafx.scene.layout.Pane;</a>
+<span class="sourceLineNo">067</span><a id="line.67">import javafx.scene.layout.StackPane;</a>
+<span class="sourceLineNo">068</span><a id="line.68">import javafx.scene.layout.VBox;</a>
+<span class="sourceLineNo">069</span><a id="line.69">import javafx.scene.paint.Color;</a>
+<span class="sourceLineNo">070</span><a id="line.70">import javafx.scene.text.Font;</a>
+<span class="sourceLineNo">071</span><a id="line.71">import javafx.scene.text.FontWeight;</a>
+<span class="sourceLineNo">072</span><a id="line.72">import javafx.scene.transform.Translate;</a>
+<span class="sourceLineNo">073</span><a id="line.73">import javafx.scene.web.WebView;</a>
+<span class="sourceLineNo">074</span><a id="line.74">import javafx.stage.FileChooser;</a>
+<span class="sourceLineNo">075</span><a id="line.75">import javafx.stage.FileChooser.ExtensionFilter;</a>
+<span class="sourceLineNo">076</span><a id="line.76">import javafx.stage.Screen;</a>
+<span class="sourceLineNo">077</span><a id="line.77">import javafx.stage.Stage;</a>
+<span class="sourceLineNo">078</span><a id="line.78">import javafx.util.converter.LocalTimeStringConverter;</a>
+<span class="sourceLineNo">079</span><a id="line.79"></a>
+<span class="sourceLineNo">080</span><a id="line.80">import com.vladsch.flexmark.ext.tables.TablesExtension;</a>
+<span class="sourceLineNo">081</span><a id="line.81">import com.vladsch.flexmark.html.HtmlRenderer;</a>
+<span class="sourceLineNo">082</span><a id="line.82">import com.vladsch.flexmark.parser.Parser;</a>
+<span class="sourceLineNo">083</span><a id="line.83">import com.vladsch.flexmark.parser.ParserEmulationProfile;</a>
+<span class="sourceLineNo">084</span><a id="line.84">import com.vladsch.flexmark.util.options.MutableDataSet;</a>
+<span class="sourceLineNo">085</span><a id="line.85"></a>
+<span class="sourceLineNo">086</span><a id="line.86">import net.arnx.jsonic.JSON;</a>
+<span class="sourceLineNo">087</span><a id="line.87"></a>
+<span class="sourceLineNo">088</span><a id="line.88">import nodagumi.ananPJ.Agents.AgentBase;</a>
+<span class="sourceLineNo">089</span><a id="line.89">import nodagumi.ananPJ.CrowdWalkLauncher;</a>
+<span class="sourceLineNo">090</span><a id="line.90">import nodagumi.ananPJ.Gui.GsiTile;</a>
+<span class="sourceLineNo">091</span><a id="line.91">import nodagumi.ananPJ.GuiSimulationLauncher3D;</a>
+<span class="sourceLineNo">092</span><a id="line.92">import nodagumi.ananPJ.NetworkMap.MapPartGroup;</a>
+<span class="sourceLineNo">093</span><a id="line.93">import nodagumi.ananPJ.NetworkMap.NetworkMap;</a>
+<span class="sourceLineNo">094</span><a id="line.94">import nodagumi.ananPJ.NetworkMap.Link.*;</a>
+<span class="sourceLineNo">095</span><a id="line.95">import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;</a>
+<span class="sourceLineNo">096</span><a id="line.96">import nodagumi.ananPJ.NetworkMap.Node.*;</a>
+<span class="sourceLineNo">097</span><a id="line.97">import nodagumi.ananPJ.NetworkMap.Area.MapArea;</a>
+<span class="sourceLineNo">098</span><a id="line.98">import nodagumi.ananPJ.NetworkMap.Area.MapAreaRectangle;</a>
+<span class="sourceLineNo">099</span><a id="line.99">import nodagumi.ananPJ.NetworkMap.OBNode;</a>
+<span class="sourceLineNo">100</span><a id="line.100">import nodagumi.ananPJ.NetworkMap.OBNode.NType;</a>
+<span class="sourceLineNo">101</span><a id="line.101">import nodagumi.ananPJ.misc.CrowdWalkPropertiesHandler;</a>
+<span class="sourceLineNo">102</span><a id="line.102">import nodagumi.ananPJ.misc.SimTime;</a>
+<span class="sourceLineNo">103</span><a id="line.103">import nodagumi.ananPJ.navigation.NavigationHint;</a>
+<span class="sourceLineNo">104</span><a id="line.104">import nodagumi.ananPJ.Scenario.*;</a>
+<span class="sourceLineNo">105</span><a id="line.105">import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;</a>
+<span class="sourceLineNo">106</span><a id="line.106">import nodagumi.ananPJ.Simulator.PollutionHandler.*;</a>
+<span class="sourceLineNo">107</span><a id="line.107">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">108</span><a id="line.108"></a>
+<span class="sourceLineNo">109</span><a id="line.109">/**</a>
+<span class="sourceLineNo">110</span><a id="line.110"> * 3D シミュレーションウィンドウ</a>
+<span class="sourceLineNo">111</span><a id="line.111"> */</a>
+<span class="sourceLineNo">112</span><a id="line.112">public class SimulationFrame3D extends Stage implements Observer {</a>
+<span class="sourceLineNo">113</span><a id="line.113">    private class TimeSpinnerValueFactory extends SpinnerValueFactory&lt;LocalTime&gt; {</a>
+<span class="sourceLineNo">114</span><a id="line.114">        private LocalTime maxValue;</a>
+<span class="sourceLineNo">115</span><a id="line.115">        private LocalTime minValue;</a>
+<span class="sourceLineNo">116</span><a id="line.116"></a>
+<span class="sourceLineNo">117</span><a id="line.117">        public TimeSpinnerValueFactory(LocalTime min, LocalTime max, LocalTime initialValue) {</a>
+<span class="sourceLineNo">118</span><a id="line.118">            minValue = min;</a>
+<span class="sourceLineNo">119</span><a id="line.119">            maxValue = max;</a>
+<span class="sourceLineNo">120</span><a id="line.120">            setValue(initialValue);</a>
+<span class="sourceLineNo">121</span><a id="line.121">            setConverter(new LocalTimeStringConverter(DateTimeFormatter.ofPattern("HH:mm:ss"), null));</a>
+<span class="sourceLineNo">122</span><a id="line.122">        }</a>
+<span class="sourceLineNo">123</span><a id="line.123"></a>
+<span class="sourceLineNo">124</span><a id="line.124">        public void decrement(int steps) {</a>
+<span class="sourceLineNo">125</span><a id="line.125">            LocalTime time = (LocalTime)getValue();</a>
+<span class="sourceLineNo">126</span><a id="line.126">            if (time.isAfter(minValue)) {</a>
+<span class="sourceLineNo">127</span><a id="line.127">                setValue(time.minusSeconds(steps));</a>
+<span class="sourceLineNo">128</span><a id="line.128">            }</a>
+<span class="sourceLineNo">129</span><a id="line.129">        }</a>
+<span class="sourceLineNo">130</span><a id="line.130"></a>
+<span class="sourceLineNo">131</span><a id="line.131">        public void increment(int steps) {</a>
+<span class="sourceLineNo">132</span><a id="line.132">            LocalTime time = (LocalTime)getValue();</a>
+<span class="sourceLineNo">133</span><a id="line.133">            if (time.isBefore(maxValue)) {</a>
+<span class="sourceLineNo">134</span><a id="line.134">                setValue(time.plusSeconds(steps));</a>
+<span class="sourceLineNo">135</span><a id="line.135">            }</a>
+<span class="sourceLineNo">136</span><a id="line.136">        }</a>
+<span class="sourceLineNo">137</span><a id="line.137">    }</a>
+<span class="sourceLineNo">138</span><a id="line.138"></a>
+<span class="sourceLineNo">139</span><a id="line.139">    /**</a>
+<span class="sourceLineNo">140</span><a id="line.140">     * ヘルプ表示用コンテンツのアドレス</a>
+<span class="sourceLineNo">141</span><a id="line.141">     */</a>
+<span class="sourceLineNo">142</span><a id="line.142">    public static final String HTML_TEMPLATE = "/doc/template.html";</a>
+<span class="sourceLineNo">143</span><a id="line.143">    public static final String QUICK_REFERENCE = "/doc/quick_reference_simulator_3d.md";</a>
+<span class="sourceLineNo">144</span><a id="line.144"></a>
+<span class="sourceLineNo">145</span><a id="line.145">    /**</a>
+<span class="sourceLineNo">146</span><a id="line.146">     * シミュレーションウィンドウ</a>
+<span class="sourceLineNo">147</span><a id="line.147">     */</a>
+<span class="sourceLineNo">148</span><a id="line.148">    private Stage frame;</a>
+<span class="sourceLineNo">149</span><a id="line.149"></a>
+<span class="sourceLineNo">150</span><a id="line.150">    /**</a>
+<span class="sourceLineNo">151</span><a id="line.151">     * シミュレーションパネル</a>
+<span class="sourceLineNo">152</span><a id="line.152">     */</a>
+<span class="sourceLineNo">153</span><a id="line.153">    private SimulationPanel3D panel;</a>
+<span class="sourceLineNo">154</span><a id="line.154"></a>
+<span class="sourceLineNo">155</span><a id="line.155">    /**</a>
+<span class="sourceLineNo">156</span><a id="line.156">     * ランチャー</a>
+<span class="sourceLineNo">157</span><a id="line.157">     */</a>
+<span class="sourceLineNo">158</span><a id="line.158">    private GuiSimulationLauncher3D launcher;</a>
+<span class="sourceLineNo">159</span><a id="line.159"></a>
+<span class="sourceLineNo">160</span><a id="line.160">    /**</a>
+<span class="sourceLineNo">161</span><a id="line.161">     * 地図データ。</a>
+<span class="sourceLineNo">162</span><a id="line.162">     */</a>
+<span class="sourceLineNo">163</span><a id="line.163">    private NetworkMap networkMap;</a>
+<span class="sourceLineNo">164</span><a id="line.164"></a>
+<span class="sourceLineNo">165</span><a id="line.165">    /**</a>
+<span class="sourceLineNo">166</span><a id="line.166">     * 領域</a>
+<span class="sourceLineNo">167</span><a id="line.167">     */</a>
+<span class="sourceLineNo">168</span><a id="line.168">    private ArrayList&lt;MapArea&gt; areas;</a>
+<span class="sourceLineNo">169</span><a id="line.169"></a>
+<span class="sourceLineNo">170</span><a id="line.170">    /**</a>
+<span class="sourceLineNo">171</span><a id="line.171">     * カメラワーク</a>
+<span class="sourceLineNo">172</span><a id="line.172">     */</a>
+<span class="sourceLineNo">173</span><a id="line.173">    private ArrayList&lt;CameraShot&gt; camerawork = new ArrayList&lt;CameraShot&gt;();</a>
+<span class="sourceLineNo">174</span><a id="line.174"></a>
+<span class="sourceLineNo">175</span><a id="line.175">    /**</a>
+<span class="sourceLineNo">176</span><a id="line.176">     * シミュレーションのサイクル間のスリープ値</a>
+<span class="sourceLineNo">177</span><a id="line.177">     */</a>
+<span class="sourceLineNo">178</span><a id="line.178">    private int deferFactor = 0;</a>
+<span class="sourceLineNo">179</span><a id="line.179"></a>
+<span class="sourceLineNo">180</span><a id="line.180">    /**</a>
+<span class="sourceLineNo">181</span><a id="line.181">     * 読み込むカメラワークデータのファイル名</a>
+<span class="sourceLineNo">182</span><a id="line.182">     */</a>
+<span class="sourceLineNo">183</span><a id="line.183">    private String cameraworkFile = null;</a>
+<span class="sourceLineNo">184</span><a id="line.184"></a>
+<span class="sourceLineNo">185</span><a id="line.185">    /**</a>
+<span class="sourceLineNo">186</span><a id="line.186">     * 一時停止させる時刻</a>
+<span class="sourceLineNo">187</span><a id="line.187">     */</a>
+<span class="sourceLineNo">188</span><a id="line.188">    private SimTime pauseTime = new SimTime();</a>
+<span class="sourceLineNo">189</span><a id="line.189"></a>
+<span class="sourceLineNo">190</span><a id="line.190">    /* コントロールボタンパネルを構成する UI コントロール */</a>
+<span class="sourceLineNo">191</span><a id="line.191"></a>
+<span class="sourceLineNo">192</span><a id="line.192">    private ImageView startIcon;</a>
+<span class="sourceLineNo">193</span><a id="line.193">    private ImageView pauseIcon;</a>
+<span class="sourceLineNo">194</span><a id="line.194">    private ToggleButton start_button = null;</a>
+<span class="sourceLineNo">195</span><a id="line.195">    private Button step_button = null;</a>
+<span class="sourceLineNo">196</span><a id="line.196">    private Label simulationDeferFactorValue;</a>
+<span class="sourceLineNo">197</span><a id="line.197"></a>
+<span class="sourceLineNo">198</span><a id="line.198">    /**</a>
+<span class="sourceLineNo">199</span><a id="line.199">     * タブパネル</a>
+<span class="sourceLineNo">200</span><a id="line.200">     */</a>
+<span class="sourceLineNo">201</span><a id="line.201">    private TabPane tabPane = new TabPane();</a>
+<span class="sourceLineNo">202</span><a id="line.202"></a>
+<span class="sourceLineNo">203</span><a id="line.203">    /* Control タブを構成する UI コントロール */</a>
+<span class="sourceLineNo">204</span><a id="line.204"></a>
+<span class="sourceLineNo">205</span><a id="line.205">    private Tab controlTab = new Tab("Control");</a>
+<span class="sourceLineNo">206</span><a id="line.206">    private Label clock_label = new Label("00:00:00");</a>
+<span class="sourceLineNo">207</span><a id="line.207">    private Label time_label = new Label("NOT STARTED");</a>
+<span class="sourceLineNo">208</span><a id="line.208">    private Label evacuatedCount_label = new Label("NOT STARTED");</a>
+<span class="sourceLineNo">209</span><a id="line.209">    private Button resetButton = new Button("Reset");</a>
+<span class="sourceLineNo">210</span><a id="line.210">    private Spinner&lt;Integer&gt; intSpinner = new Spinner&lt;&gt;(0, 60 * 60 * 72, 0);</a>
+<span class="sourceLineNo">211</span><a id="line.211">    private Spinner&lt;LocalTime&gt; timeSpinner = null;</a>
+<span class="sourceLineNo">212</span><a id="line.212"></a>
+<span class="sourceLineNo">213</span><a id="line.213">    /* View タブを構成する UI コントロール */</a>
+<span class="sourceLineNo">214</span><a id="line.214"></a>
+<span class="sourceLineNo">215</span><a id="line.215">    private Tab viewTab = new Tab("View");</a>
+<span class="sourceLineNo">216</span><a id="line.216">    private ScrollBar verticalScaleControl = new ScrollBar();</a>
+<span class="sourceLineNo">217</span><a id="line.217">    private Label verticalScaleValue;</a>
+<span class="sourceLineNo">218</span><a id="line.218">    private ScrollBar agent_size_control = new ScrollBar();</a>
+<span class="sourceLineNo">219</span><a id="line.219">    private Label agent_size_value;</a>
+<span class="sourceLineNo">220</span><a id="line.220">    private CheckBox record_snapshots = new CheckBox("Record simulation screen");</a>
+<span class="sourceLineNo">221</span><a id="line.221">    private CheckBox viewSynchronizedCheckBox = new CheckBox("View-calculation synchronized");</a>
+<span class="sourceLineNo">222</span><a id="line.222">    private CheckBox exit_with_simulation_finished_cb = new CheckBox("Exit with simulation finished");</a>
+<span class="sourceLineNo">223</span><a id="line.223">    private Button centerinButton = new Button("Centering");</a>
+<span class="sourceLineNo">224</span><a id="line.224">    private Button centerinWithScalingButton = new Button("Centering with scaling");</a>
+<span class="sourceLineNo">225</span><a id="line.225"></a>
+<span class="sourceLineNo">226</span><a id="line.226">    /* Camera タブを構成する UI コントロール */</a>
+<span class="sourceLineNo">227</span><a id="line.227"></a>
+<span class="sourceLineNo">228</span><a id="line.228">    private Tab cameraTab = new Tab("Camera");</a>
+<span class="sourceLineNo">229</span><a id="line.229">    private boolean forceUpdateCamerawork = true;</a>
+<span class="sourceLineNo">230</span><a id="line.230">    private boolean viewpointChangeInhibited = false;</a>
+<span class="sourceLineNo">231</span><a id="line.231">    private CheckBox replayCheckBox = new CheckBox();</a>
+<span class="sourceLineNo">232</span><a id="line.232">    private TextArea cameraworkArea = new TextArea();</a>
+<span class="sourceLineNo">233</span><a id="line.233">    private Button recordButton = new Button("Record");</a>
+<span class="sourceLineNo">234</span><a id="line.234">    private Button loadCameraworkButton = new Button("Load");</a>
+<span class="sourceLineNo">235</span><a id="line.235">    private Button saveCameraworkButton = new Button("Save as");</a>
+<span class="sourceLineNo">236</span><a id="line.236"></a>
+<span class="sourceLineNo">237</span><a id="line.237">    /* Status タブを構成する UI コントロール */</a>
+<span class="sourceLineNo">238</span><a id="line.238"></a>
+<span class="sourceLineNo">239</span><a id="line.239">    private Tab statusTab = new Tab("Status");</a>
+<span class="sourceLineNo">240</span><a id="line.240">    private TextArea indicationArea = new TextArea("Information");</a>
+<span class="sourceLineNo">241</span><a id="line.241"></a>
+<span class="sourceLineNo">242</span><a id="line.242">    /* ステータスバーを構成する UI コントロール */</a>
+<span class="sourceLineNo">243</span><a id="line.243"></a>
+<span class="sourceLineNo">244</span><a id="line.244">    private Label status = new Label("NOT STARTED");</a>
+<span class="sourceLineNo">245</span><a id="line.245"></a>
+<span class="sourceLineNo">246</span><a id="line.246">    /**</a>
+<span class="sourceLineNo">247</span><a id="line.247">     * ヘルプ表示用</a>
+<span class="sourceLineNo">248</span><a id="line.248">     */</a>
+<span class="sourceLineNo">249</span><a id="line.249">    private Parser parser;</a>
+<span class="sourceLineNo">250</span><a id="line.250">    private HtmlRenderer renderer;</a>
+<span class="sourceLineNo">251</span><a id="line.251">    private Stage helpStage = new Stage();</a>
+<span class="sourceLineNo">252</span><a id="line.252">    private WebView webView = new WebView();</a>
+<span class="sourceLineNo">253</span><a id="line.253">    private double helpZoom = 1.0;</a>
+<span class="sourceLineNo">254</span><a id="line.254"></a>
+<span class="sourceLineNo">255</span><a id="line.255">    /* スクリーンショット保存用スレッド数を管理するためのカウンタ制御 */</a>
+<span class="sourceLineNo">256</span><a id="line.256"></a>
+<span class="sourceLineNo">257</span><a id="line.257">    private int saveThreadCount = 0;</a>
+<span class="sourceLineNo">258</span><a id="line.258">    synchronized public int getSaveThreadCount() { return saveThreadCount; }</a>
+<span class="sourceLineNo">259</span><a id="line.259">    synchronized public void incSaveThreadCount() { saveThreadCount++; }</a>
+<span class="sourceLineNo">260</span><a id="line.260">    synchronized public void decSaveThreadCount() { saveThreadCount--; }</a>
+<span class="sourceLineNo">261</span><a id="line.261"></a>
+<span class="sourceLineNo">262</span><a id="line.262">    /**</a>
+<span class="sourceLineNo">263</span><a id="line.263">     * コンストラクタ</a>
+<span class="sourceLineNo">264</span><a id="line.264">     */</a>
+<span class="sourceLineNo">265</span><a id="line.265">    public SimulationFrame3D(String title, int width, int height, GuiSimulationLauncher3D launcher,</a>
+<span class="sourceLineNo">266</span><a id="line.266">            final CrowdWalkPropertiesHandler properties, ArrayList&lt;GsiTile&gt; mapTiles) {</a>
+<span class="sourceLineNo">267</span><a id="line.267">        frame = this;</a>
+<span class="sourceLineNo">268</span><a id="line.268">        this.launcher = launcher;</a>
+<span class="sourceLineNo">269</span><a id="line.269">        networkMap = launcher.getMap();</a>
+<span class="sourceLineNo">270</span><a id="line.270"></a>
+<span class="sourceLineNo">271</span><a id="line.271">        init(properties);</a>
+<span class="sourceLineNo">272</span><a id="line.272"></a>
+<span class="sourceLineNo">273</span><a id="line.273">        // メニューの準備</a>
+<span class="sourceLineNo">274</span><a id="line.274">        Node menuBar = createMenu();</a>
+<span class="sourceLineNo">275</span><a id="line.275"></a>
+<span class="sourceLineNo">276</span><a id="line.276">        // シミュレーションパネルの準備</a>
+<span class="sourceLineNo">277</span><a id="line.277">        Coastline coastline = launcher.getCoastline();</a>
+<span class="sourceLineNo">278</span><a id="line.278">        ArrayList&lt;HashMap&gt; linkAppearance = launcher.loadLinkAppearance();</a>
+<span class="sourceLineNo">279</span><a id="line.279">        ArrayList&lt;HashMap&gt; nodeAppearance = launcher.loadNodeAppearance();</a>
+<span class="sourceLineNo">280</span><a id="line.280">        panel = new SimulationPanel3D(width, height, networkMap, launcher.getVerticalScale(), properties, mapTiles, coastline, linkAppearance, nodeAppearance);</a>
+<span class="sourceLineNo">281</span><a id="line.281">        panel.setPrefSize(width, height);</a>
+<span class="sourceLineNo">282</span><a id="line.282">        panel.setShow3dPolygon(launcher.isShow3dPolygon());</a>
+<span class="sourceLineNo">283</span><a id="line.283">        panel.setShowBackgroundMap(launcher.isShowBackgroundMap());</a>
+<span class="sourceLineNo">284</span><a id="line.284">        panel.setChangeAgentColorDependingOnSpeed(launcher.isChangeAgentColorDependingOnSpeed());</a>
+<span class="sourceLineNo">285</span><a id="line.285">        panel.setShowStatusPosition(launcher.getShowStatusPosition().toLowerCase());</a>
+<span class="sourceLineNo">286</span><a id="line.286">        panel.setShowStatus(launcher.isShowStatus());</a>
+<span class="sourceLineNo">287</span><a id="line.287">        panel.setShowLogo(launcher.isShowLogo());</a>
+<span class="sourceLineNo">288</span><a id="line.288">        panel.addObserver(this);</a>
+<span class="sourceLineNo">289</span><a id="line.289">        ChangeListener listener = new ChangeListener() {</a>
+<span class="sourceLineNo">290</span><a id="line.290">            @Override</a>
+<span class="sourceLineNo">291</span><a id="line.291">            public void changed(ObservableValue observable, Object oldValue, Object newValue) {</a>
+<span class="sourceLineNo">292</span><a id="line.292">                String label = String.format("Record simulation screen (%d x %d)",</a>
+<span class="sourceLineNo">293</span><a id="line.293">                        ((Double)panel.getWidth()).intValue(), ((Double)panel.getHeight()).intValue());</a>
+<span class="sourceLineNo">294</span><a id="line.294">                record_snapshots.setText(label);</a>
+<span class="sourceLineNo">295</span><a id="line.295">            }</a>
+<span class="sourceLineNo">296</span><a id="line.296">        };</a>
+<span class="sourceLineNo">297</span><a id="line.297">        panel.widthProperty().addListener(listener);</a>
+<span class="sourceLineNo">298</span><a id="line.298">        panel.heightProperty().addListener(listener);</a>
+<span class="sourceLineNo">299</span><a id="line.299"></a>
+<span class="sourceLineNo">300</span><a id="line.300">        // タブパネルの準備</a>
+<span class="sourceLineNo">301</span><a id="line.301">        controlTab.setContent(createControlPane());</a>
+<span class="sourceLineNo">302</span><a id="line.302">        controlTab.setClosable(false);</a>
+<span class="sourceLineNo">303</span><a id="line.303">        viewTab.setContent(createViewPane(! (mapTiles == null || mapTiles.isEmpty()), ! (coastline == null || coastline.getOuterBoundaries().isEmpty())));</a>
+<span class="sourceLineNo">304</span><a id="line.304">        viewTab.setClosable(false);</a>
+<span class="sourceLineNo">305</span><a id="line.305">        cameraTab.setContent(createCameraPane());</a>
+<span class="sourceLineNo">306</span><a id="line.306">        cameraTab.setClosable(false);</a>
+<span class="sourceLineNo">307</span><a id="line.307">        statusTab.setContent(createStatusPane());</a>
+<span class="sourceLineNo">308</span><a id="line.308">        statusTab.setClosable(false);</a>
+<span class="sourceLineNo">309</span><a id="line.309">        tabPane.getTabs().addAll(controlTab, viewTab, cameraTab, statusTab);</a>
+<span class="sourceLineNo">310</span><a id="line.310"></a>
+<span class="sourceLineNo">311</span><a id="line.311">        // コントロールボタンパネルの準備</a>
+<span class="sourceLineNo">312</span><a id="line.312">        Pane controlButtonPane = createControlButtonPane();</a>
+<span class="sourceLineNo">313</span><a id="line.313"></a>
+<span class="sourceLineNo">314</span><a id="line.314">        // ステータスバーの準備</a>
+<span class="sourceLineNo">315</span><a id="line.315">        status.setPadding(new Insets(4));</a>
+<span class="sourceLineNo">316</span><a id="line.316"></a>
+<span class="sourceLineNo">317</span><a id="line.317">        BorderPane rightPane = new BorderPane();</a>
+<span class="sourceLineNo">318</span><a id="line.318">        rightPane.setCenter(tabPane);</a>
+<span class="sourceLineNo">319</span><a id="line.319">        rightPane.setBottom(controlButtonPane);</a>
+<span class="sourceLineNo">320</span><a id="line.320"></a>
+<span class="sourceLineNo">321</span><a id="line.321">        BorderPane borderPane = new BorderPane();</a>
+<span class="sourceLineNo">322</span><a id="line.322">        borderPane.setTop(menuBar);</a>
+<span class="sourceLineNo">323</span><a id="line.323">        borderPane.setCenter(panel);</a>
+<span class="sourceLineNo">324</span><a id="line.324">        borderPane.setRight(rightPane);</a>
+<span class="sourceLineNo">325</span><a id="line.325">        borderPane.setBottom(status);</a>
+<span class="sourceLineNo">326</span><a id="line.326"></a>
+<span class="sourceLineNo">327</span><a id="line.327">        Scene scene = new Scene(borderPane);</a>
+<span class="sourceLineNo">328</span><a id="line.328">        scene.getStylesheets().add("stylesheet.css");</a>
+<span class="sourceLineNo">329</span><a id="line.329">        setTitle(title);</a>
+<span class="sourceLineNo">330</span><a id="line.330">        setScene(scene);</a>
+<span class="sourceLineNo">331</span><a id="line.331"></a>
+<span class="sourceLineNo">332</span><a id="line.332">        // ウィンドウイベントのハンドリング</a>
+<span class="sourceLineNo">333</span><a id="line.333">        setOnShown(e -&gt; {</a>
+<span class="sourceLineNo">334</span><a id="line.334">            if (launcher.isAutoSimulationStart()) {</a>
+<span class="sourceLineNo">335</span><a id="line.335">                Platform.runLater(() -&gt; {</a>
+<span class="sourceLineNo">336</span><a id="line.336">                    if (! getStartButton().isSelected()) {</a>
+<span class="sourceLineNo">337</span><a id="line.337">                        Itk.logInfo("auto simulation start");</a>
+<span class="sourceLineNo">338</span><a id="line.338">                        getStartButton().fire();</a>
+<span class="sourceLineNo">339</span><a id="line.339">                    }</a>
+<span class="sourceLineNo">340</span><a id="line.340">                });</a>
+<span class="sourceLineNo">341</span><a id="line.341">            }</a>
+<span class="sourceLineNo">342</span><a id="line.342">        });</a>
+<span class="sourceLineNo">343</span><a id="line.343">        setOnHiding(e -&gt; {</a>
+<span class="sourceLineNo">344</span><a id="line.344">            if (launcher.isRunning()) {</a>
+<span class="sourceLineNo">345</span><a id="line.345">                launcher.pause();</a>
+<span class="sourceLineNo">346</span><a id="line.346">            }</a>
+<span class="sourceLineNo">347</span><a id="line.347">            launcher.saveSimulatorPosition((int)getX(), (int)getY());</a>
+<span class="sourceLineNo">348</span><a id="line.348">        });</a>
+<span class="sourceLineNo">349</span><a id="line.349">        setOnHidden(e -&gt; {</a>
+<span class="sourceLineNo">350</span><a id="line.350">            helpStage.close();</a>
+<span class="sourceLineNo">351</span><a id="line.351">            launcher.quit();</a>
+<span class="sourceLineNo">352</span><a id="line.352">        });</a>
+<span class="sourceLineNo">353</span><a id="line.353">    }</a>
+<span class="sourceLineNo">354</span><a id="line.354"></a>
+<span class="sourceLineNo">355</span><a id="line.355">    /**</a>
+<span class="sourceLineNo">356</span><a id="line.356">     * 初期設定</a>
+<span class="sourceLineNo">357</span><a id="line.357">     */</a>
+<span class="sourceLineNo">358</span><a id="line.358">    private void init(CrowdWalkPropertiesHandler properties) {</a>
+<span class="sourceLineNo">359</span><a id="line.359">        deferFactor = launcher.getDeferFactor();</a>
+<span class="sourceLineNo">360</span><a id="line.360">        areas = launcher.getMap().getAreas();</a>
+<span class="sourceLineNo">361</span><a id="line.361"></a>
+<span class="sourceLineNo">362</span><a id="line.362">        if (properties.getPropertiesFile() != null) {</a>
+<span class="sourceLineNo">363</span><a id="line.363">            try {</a>
+<span class="sourceLineNo">364</span><a id="line.364">                String filePath = properties.getFilePath("camera_file", null);</a>
+<span class="sourceLineNo">365</span><a id="line.365">                if (filePath != null) {</a>
+<span class="sourceLineNo">366</span><a id="line.366">                    if (filePath.toLowerCase().endsWith(".json")) {</a>
+<span class="sourceLineNo">367</span><a id="line.367">                        loadCamerawork(filePath);</a>
+<span class="sourceLineNo">368</span><a id="line.368">                    } else {</a>
+<span class="sourceLineNo">369</span><a id="line.369">                        Itk.logError("camera_file should be a json file with .json suffix." ) ;</a>
+<span class="sourceLineNo">370</span><a id="line.370">                        Itk.quitByError() ;</a>
+<span class="sourceLineNo">371</span><a id="line.371">                    }</a>
+<span class="sourceLineNo">372</span><a id="line.372">                }</a>
+<span class="sourceLineNo">373</span><a id="line.373">            } catch (Exception e) {</a>
+<span class="sourceLineNo">374</span><a id="line.374">                Itk.quitWithStackTrace(e) ;</a>
+<span class="sourceLineNo">375</span><a id="line.375">            }</a>
+<span class="sourceLineNo">376</span><a id="line.376">        }</a>
+<span class="sourceLineNo">377</span><a id="line.377"></a>
+<span class="sourceLineNo">378</span><a id="line.378">        // ヘルプ画面の準備</a>
+<span class="sourceLineNo">379</span><a id="line.379"></a>
+<span class="sourceLineNo">380</span><a id="line.380">        MutableDataSet options = new MutableDataSet();</a>
+<span class="sourceLineNo">381</span><a id="line.381">        options.setFrom(ParserEmulationProfile.MARKDOWN);</a>
+<span class="sourceLineNo">382</span><a id="line.382">        options.set(Parser.EXTENSIONS, Arrays.asList(</a>
+<span class="sourceLineNo">383</span><a id="line.383">            TablesExtension.create()</a>
+<span class="sourceLineNo">384</span><a id="line.384">        ));</a>
+<span class="sourceLineNo">385</span><a id="line.385">        parser = Parser.builder(options).build();</a>
+<span class="sourceLineNo">386</span><a id="line.386">        renderer = HtmlRenderer.builder(options).build();</a>
+<span class="sourceLineNo">387</span><a id="line.387"></a>
+<span class="sourceLineNo">388</span><a id="line.388">        webView.setOnKeyPressed(event -&gt; {</a>
+<span class="sourceLineNo">389</span><a id="line.389">            if (event.isControlDown()) {</a>
+<span class="sourceLineNo">390</span><a id="line.390">                if (event.getCode() == KeyCode.W) {</a>
+<span class="sourceLineNo">391</span><a id="line.391">                    helpStage.close();</a>
+<span class="sourceLineNo">392</span><a id="line.392">                } else if (event.getCode() == KeyCode.PLUS || event.getCode() == KeyCode.UP) {</a>
+<span class="sourceLineNo">393</span><a id="line.393">                    helpZoom += 0.1;</a>
+<span class="sourceLineNo">394</span><a id="line.394">                    webView.setZoom(helpZoom);</a>
+<span class="sourceLineNo">395</span><a id="line.395">                } else if (event.getCode() == KeyCode.MINUS || event.getCode() == KeyCode.DOWN) {</a>
+<span class="sourceLineNo">396</span><a id="line.396">                    helpZoom -= 0.1;</a>
+<span class="sourceLineNo">397</span><a id="line.397">                    webView.setZoom(helpZoom);</a>
+<span class="sourceLineNo">398</span><a id="line.398">                } else if (event.getCode() == KeyCode.DIGIT0) {</a>
+<span class="sourceLineNo">399</span><a id="line.399">                    helpZoom = 1.0;</a>
+<span class="sourceLineNo">400</span><a id="line.400">                    webView.setZoom(helpZoom);</a>
+<span class="sourceLineNo">401</span><a id="line.401">                }</a>
+<span class="sourceLineNo">402</span><a id="line.402">            }</a>
+<span class="sourceLineNo">403</span><a id="line.403">        });</a>
+<span class="sourceLineNo">404</span><a id="line.404"></a>
+<span class="sourceLineNo">405</span><a id="line.405">        Button okButton = new Button("  OK  ");</a>
+<span class="sourceLineNo">406</span><a id="line.406">        okButton.setOnAction(event -&gt; helpStage.close());</a>
+<span class="sourceLineNo">407</span><a id="line.407">        BorderPane buttonPane = new BorderPane();</a>
+<span class="sourceLineNo">408</span><a id="line.408">        buttonPane.setPadding(new Insets(4, 8, 4, 8));</a>
+<span class="sourceLineNo">409</span><a id="line.409">        buttonPane.setRight(okButton);</a>
+<span class="sourceLineNo">410</span><a id="line.410"></a>
+<span class="sourceLineNo">411</span><a id="line.411">        BorderPane borderPane = new BorderPane();</a>
+<span class="sourceLineNo">412</span><a id="line.412">        borderPane.setCenter(webView);</a>
+<span class="sourceLineNo">413</span><a id="line.413">        borderPane.setBottom(buttonPane);</a>
+<span class="sourceLineNo">414</span><a id="line.414"></a>
+<span class="sourceLineNo">415</span><a id="line.415">        Scene scene = new Scene(borderPane);</a>
+<span class="sourceLineNo">416</span><a id="line.416">        scene.getStylesheets().add("stylesheet.css");</a>
+<span class="sourceLineNo">417</span><a id="line.417">        helpStage.setScene(scene);</a>
+<span class="sourceLineNo">418</span><a id="line.418">    }</a>
+<span class="sourceLineNo">419</span><a id="line.419"></a>
+<span class="sourceLineNo">420</span><a id="line.420">    /**</a>
+<span class="sourceLineNo">421</span><a id="line.421">     * メニューを作成する</a>
+<span class="sourceLineNo">422</span><a id="line.422">     */</a>
+<span class="sourceLineNo">423</span><a id="line.423">    private Node createMenu() {</a>
+<span class="sourceLineNo">424</span><a id="line.424">        MenuBar menuBar = new MenuBar();</a>
+<span class="sourceLineNo">425</span><a id="line.425"></a>
+<span class="sourceLineNo">426</span><a id="line.426">        //// File menu ////</a>
+<span class="sourceLineNo">427</span><a id="line.427"></a>
+<span class="sourceLineNo">428</span><a id="line.428">        Menu fileMenu = new Menu("File");</a>
+<span class="sourceLineNo">429</span><a id="line.429"></a>
+<span class="sourceLineNo">430</span><a id="line.430">        MenuItem miClose = new MenuItem("Close");</a>
+<span class="sourceLineNo">431</span><a id="line.431">        miClose.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">432</span><a id="line.432">            if (launcher.isRunning()) {</a>
+<span class="sourceLineNo">433</span><a id="line.433">                launcher.pause();</a>
+<span class="sourceLineNo">434</span><a id="line.434">            }</a>
+<span class="sourceLineNo">435</span><a id="line.435">            launcher.saveSimulatorPosition((int)getX(), (int)getY());</a>
+<span class="sourceLineNo">436</span><a id="line.436">            frame.close();</a>
+<span class="sourceLineNo">437</span><a id="line.437">        });</a>
+<span class="sourceLineNo">438</span><a id="line.438">        miClose.setAccelerator(KeyCombination.valueOf("Ctrl+W"));</a>
+<span class="sourceLineNo">439</span><a id="line.439"></a>
+<span class="sourceLineNo">440</span><a id="line.440">        fileMenu.getItems().addAll(miClose);</a>
+<span class="sourceLineNo">441</span><a id="line.441"></a>
+<span class="sourceLineNo">442</span><a id="line.442">        //// View menu ////</a>
+<span class="sourceLineNo">443</span><a id="line.443"></a>
+<span class="sourceLineNo">444</span><a id="line.444">        Menu viewMenu = new Menu("View");</a>
+<span class="sourceLineNo">445</span><a id="line.445"></a>
+<span class="sourceLineNo">446</span><a id="line.446">        Menu menuShowBackgroundImage = new Menu("Show background image");</a>
+<span class="sourceLineNo">447</span><a id="line.447">        for (MapPartGroup group : networkMap.getGroups()) {</a>
+<span class="sourceLineNo">448</span><a id="line.448">            String fileName = group.getImageFileName();</a>
+<span class="sourceLineNo">449</span><a id="line.449">            if (fileName == null || fileName.isEmpty()) {</a>
+<span class="sourceLineNo">450</span><a id="line.450">                continue;</a>
+<span class="sourceLineNo">451</span><a id="line.451">            }</a>
+<span class="sourceLineNo">452</span><a id="line.452">            CheckMenuItem menuItem = new CheckMenuItem(group.getTagString());</a>
+<span class="sourceLineNo">453</span><a id="line.453">            menuItem.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">454</span><a id="line.454">                panel.setBackgroundImageVisible(group, ! panel.isBackgroundImageVisible(group));</a>
+<span class="sourceLineNo">455</span><a id="line.455">                menuItem.setSelected(panel.isBackgroundImageVisible(group));</a>
+<span class="sourceLineNo">456</span><a id="line.456">            });</a>
+<span class="sourceLineNo">457</span><a id="line.457">            menuShowBackgroundImage.getItems().add(menuItem);</a>
+<span class="sourceLineNo">458</span><a id="line.458">        }</a>
+<span class="sourceLineNo">459</span><a id="line.459"></a>
+<span class="sourceLineNo">460</span><a id="line.460">        viewMenu.getItems().addAll(menuShowBackgroundImage);</a>
+<span class="sourceLineNo">461</span><a id="line.461"></a>
+<span class="sourceLineNo">462</span><a id="line.462">        //// Help menu ////</a>
+<span class="sourceLineNo">463</span><a id="line.463"></a>
+<span class="sourceLineNo">464</span><a id="line.464">        Menu helpMenu = new Menu("Help");</a>
+<span class="sourceLineNo">465</span><a id="line.465"></a>
+<span class="sourceLineNo">466</span><a id="line.466">        MenuItem miQuickReference = new MenuItem("Quick reference");</a>
+<span class="sourceLineNo">467</span><a id="line.467">        miQuickReference.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">468</span><a id="line.468">            helpStage.setTitle("Help - Quick reference");</a>
+<span class="sourceLineNo">469</span><a id="line.469">            helpStage.setWidth(980);</a>
+<span class="sourceLineNo">470</span><a id="line.470">            helpStage.setHeight(Math.min(Screen.getPrimary().getVisualBounds().getHeight(), 1200));</a>
+<span class="sourceLineNo">471</span><a id="line.471">            String template = ObstructerBase.resourceToString(HTML_TEMPLATE);</a>
+<span class="sourceLineNo">472</span><a id="line.472">            com.vladsch.flexmark.ast.Node document = parser.parse(ObstructerBase.resourceToString(QUICK_REFERENCE));</a>
+<span class="sourceLineNo">473</span><a id="line.473">            String html = template.replace("__TITLE__", "クイック・リファレンス").replace("__HTML_BODY__", renderer.render(document));</a>
+<span class="sourceLineNo">474</span><a id="line.474">            webView.getEngine().loadContent(html);</a>
+<span class="sourceLineNo">475</span><a id="line.475">            helpStage.show();</a>
+<span class="sourceLineNo">476</span><a id="line.476">            helpStage.toFront();</a>
+<span class="sourceLineNo">477</span><a id="line.477">        });</a>
+<span class="sourceLineNo">478</span><a id="line.478"></a>
+<span class="sourceLineNo">479</span><a id="line.479">        MenuItem miVersion = new MenuItem("About version");</a>
+<span class="sourceLineNo">480</span><a id="line.480">        miVersion.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">481</span><a id="line.481">            Alert alert = new Alert(AlertType.NONE, CrowdWalkLauncher.getVersion(), ButtonType.OK);</a>
+<span class="sourceLineNo">482</span><a id="line.482">            alert.initOwner(frame);</a>
+<span class="sourceLineNo">483</span><a id="line.483">            alert.setTitle("About version");</a>
+<span class="sourceLineNo">484</span><a id="line.484">            alert.setHeaderText("CrowdWalk Version");</a>
+<span class="sourceLineNo">485</span><a id="line.485">            alert.setResizable(true);</a>
+<span class="sourceLineNo">486</span><a id="line.486">            alert.getDialogPane().setPrefSize(600, 240);</a>
+<span class="sourceLineNo">487</span><a id="line.487">            alert.showAndWait();</a>
+<span class="sourceLineNo">488</span><a id="line.488">        });</a>
+<span class="sourceLineNo">489</span><a id="line.489"></a>
+<span class="sourceLineNo">490</span><a id="line.490">        helpMenu.getItems().addAll(miQuickReference, miVersion);</a>
+<span class="sourceLineNo">491</span><a id="line.491"></a>
+<span class="sourceLineNo">492</span><a id="line.492">        menuBar.getMenus().addAll(fileMenu, viewMenu, helpMenu);</a>
+<span class="sourceLineNo">493</span><a id="line.493"></a>
+<span class="sourceLineNo">494</span><a id="line.494">        return menuBar;</a>
+<span class="sourceLineNo">495</span><a id="line.495">    }</a>
+<span class="sourceLineNo">496</span><a id="line.496"></a>
+<span class="sourceLineNo">497</span><a id="line.497">    /**</a>
+<span class="sourceLineNo">498</span><a id="line.498">     * コントロールボタンパネルを作成する</a>
+<span class="sourceLineNo">499</span><a id="line.499">     */</a>
+<span class="sourceLineNo">500</span><a id="line.500">    private Pane createControlButtonPane() {</a>
+<span class="sourceLineNo">501</span><a id="line.501">        Image start_icon = new Image(getClass().getResourceAsStream("/img/start.png"));</a>
+<span class="sourceLineNo">502</span><a id="line.502">        startIcon = new ImageView(start_icon);</a>
+<span class="sourceLineNo">503</span><a id="line.503">        startIcon.setViewport(new Rectangle2D(-10, 0, 32, 12));</a>
+<span class="sourceLineNo">504</span><a id="line.504">        Image pause_icon = new Image(getClass().getResourceAsStream("/img/pause.png"));</a>
+<span class="sourceLineNo">505</span><a id="line.505">        pauseIcon = new ImageView(pause_icon);</a>
+<span class="sourceLineNo">506</span><a id="line.506">        pauseIcon.setViewport(new Rectangle2D(-10, 0, 32, 12));</a>
+<span class="sourceLineNo">507</span><a id="line.507">        Image step_icon = new Image(getClass().getResourceAsStream("/img/step.png"));</a>
+<span class="sourceLineNo">508</span><a id="line.508">        ImageView stepIcon = new ImageView(step_icon);</a>
+<span class="sourceLineNo">509</span><a id="line.509">        stepIcon.setViewport(new Rectangle2D(-7, 0, 32, 12));</a>
+<span class="sourceLineNo">510</span><a id="line.510"></a>
+<span class="sourceLineNo">511</span><a id="line.511">        start_button = new ToggleButton();</a>
+<span class="sourceLineNo">512</span><a id="line.512">        start_button.setGraphic(startIcon);</a>
+<span class="sourceLineNo">513</span><a id="line.513">        start_button.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">514</span><a id="line.514">            if (start_button.isSelected()) {</a>
+<span class="sourceLineNo">515</span><a id="line.515">                start_button.setGraphic(pauseIcon);</a>
+<span class="sourceLineNo">516</span><a id="line.516">                verticalScaleControl.setDisable(true);</a>
+<span class="sourceLineNo">517</span><a id="line.517">                resetButton.setDisable(true);</a>
+<span class="sourceLineNo">518</span><a id="line.518">                launcher.start();</a>
+<span class="sourceLineNo">519</span><a id="line.519">            } else {</a>
+<span class="sourceLineNo">520</span><a id="line.520">                start_button.setGraphic(startIcon);</a>
+<span class="sourceLineNo">521</span><a id="line.521">                launcher.pause();</a>
+<span class="sourceLineNo">522</span><a id="line.522">                verticalScaleControl.setDisable(false);</a>
+<span class="sourceLineNo">523</span><a id="line.523">                resetButton.setDisable(false);</a>
+<span class="sourceLineNo">524</span><a id="line.524">            }</a>
+<span class="sourceLineNo">525</span><a id="line.525">            update_buttons();</a>
+<span class="sourceLineNo">526</span><a id="line.526">        });</a>
+<span class="sourceLineNo">527</span><a id="line.527"></a>
+<span class="sourceLineNo">528</span><a id="line.528">        step_button = new Button();</a>
+<span class="sourceLineNo">529</span><a id="line.529">        step_button.setGraphic(stepIcon);</a>
+<span class="sourceLineNo">530</span><a id="line.530">        step_button.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">531</span><a id="line.531">            start_button.setDisable(true);</a>
+<span class="sourceLineNo">532</span><a id="line.532">            step_button.setDisable(true);</a>
+<span class="sourceLineNo">533</span><a id="line.533">            // ボタンクリックでいきなりプログラムが終了することがないようにするため</a>
+<span class="sourceLineNo">534</span><a id="line.534">            if (exit_with_simulation_finished_cb.isSelected()) {</a>
+<span class="sourceLineNo">535</span><a id="line.535">                exit_with_simulation_finished_cb.fire();</a>
+<span class="sourceLineNo">536</span><a id="line.536">            }</a>
+<span class="sourceLineNo">537</span><a id="line.537"></a>
+<span class="sourceLineNo">538</span><a id="line.538">            // 別スレッドでステップ実行</a>
+<span class="sourceLineNo">539</span><a id="line.539">            Task&lt;Boolean&gt; task = new Task&lt;Boolean&gt;() {</a>
+<span class="sourceLineNo">540</span><a id="line.540">                @Override</a>
+<span class="sourceLineNo">541</span><a id="line.541">                protected Boolean call() throws Exception {</a>
+<span class="sourceLineNo">542</span><a id="line.542">                    launcher.step();</a>
+<span class="sourceLineNo">543</span><a id="line.543">                    Platform.runLater(() -&gt; start_button.setDisable(false));</a>
+<span class="sourceLineNo">544</span><a id="line.544">                    return true; </a>
+<span class="sourceLineNo">545</span><a id="line.545">                }</a>
+<span class="sourceLineNo">546</span><a id="line.546">            };</a>
+<span class="sourceLineNo">547</span><a id="line.547">            Thread thread = new Thread(task);</a>
+<span class="sourceLineNo">548</span><a id="line.548">            thread.setDaemon(true);</a>
+<span class="sourceLineNo">549</span><a id="line.549">            thread.start();</a>
+<span class="sourceLineNo">550</span><a id="line.550">        });</a>
+<span class="sourceLineNo">551</span><a id="line.551"></a>
+<span class="sourceLineNo">552</span><a id="line.552">        Label label = new Label("wait");</a>
+<span class="sourceLineNo">553</span><a id="line.553"></a>
+<span class="sourceLineNo">554</span><a id="line.554">        ScrollBar deferFactorControl = new ScrollBar();</a>
+<span class="sourceLineNo">555</span><a id="line.555">        deferFactorControl.setPrefSize(200, 20);</a>
+<span class="sourceLineNo">556</span><a id="line.556">        deferFactorControl.setMax(300);</a>
+<span class="sourceLineNo">557</span><a id="line.557">        deferFactorControl.setValue(deferFactor);</a>
+<span class="sourceLineNo">558</span><a id="line.558">        deferFactorControl.valueProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">559</span><a id="line.559">            setSimulationDeferFactor(newValue.intValue());</a>
+<span class="sourceLineNo">560</span><a id="line.560">            simulationDeferFactorValue.setText("" + deferFactor);</a>
+<span class="sourceLineNo">561</span><a id="line.561">        });</a>
+<span class="sourceLineNo">562</span><a id="line.562"></a>
+<span class="sourceLineNo">563</span><a id="line.563">        simulationDeferFactorValue = new Label("" + deferFactor);</a>
+<span class="sourceLineNo">564</span><a id="line.564">        simulationDeferFactorValue.setAlignment(Pos.CENTER_RIGHT);</a>
+<span class="sourceLineNo">565</span><a id="line.565"></a>
+<span class="sourceLineNo">566</span><a id="line.566">        FlowPane innerPane = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">567</span><a id="line.567">        BorderStroke borderStroke = new BorderStroke(Color.LIGHTGREY, BorderStrokeStyle.SOLID, new CornerRadii(2), BorderWidths.DEFAULT);</a>
+<span class="sourceLineNo">568</span><a id="line.568">        innerPane.setBorder(new Border(borderStroke));</a>
+<span class="sourceLineNo">569</span><a id="line.569">        innerPane.setPadding(new Insets(8, 0, 8, 0));</a>
+<span class="sourceLineNo">570</span><a id="line.570">        innerPane.setAlignment(Pos.CENTER);</a>
+<span class="sourceLineNo">571</span><a id="line.571">        innerPane.getChildren().addAll(start_button, step_button, label, deferFactorControl, simulationDeferFactorValue);</a>
+<span class="sourceLineNo">572</span><a id="line.572"></a>
+<span class="sourceLineNo">573</span><a id="line.573">        StackPane pane = new StackPane();</a>
+<span class="sourceLineNo">574</span><a id="line.574">        pane.setPadding(new Insets(0, 8, 0, 8));</a>
+<span class="sourceLineNo">575</span><a id="line.575">        pane.getChildren().add(innerPane);</a>
+<span class="sourceLineNo">576</span><a id="line.576"></a>
+<span class="sourceLineNo">577</span><a id="line.577">        return pane;</a>
+<span class="sourceLineNo">578</span><a id="line.578">    }</a>
+<span class="sourceLineNo">579</span><a id="line.579"></a>
+<span class="sourceLineNo">580</span><a id="line.580">    /**</a>
+<span class="sourceLineNo">581</span><a id="line.581">     * スタートボタンを返す</a>
+<span class="sourceLineNo">582</span><a id="line.582">     */</a>
+<span class="sourceLineNo">583</span><a id="line.583">    public ToggleButton getStartButton() {</a>
+<span class="sourceLineNo">584</span><a id="line.584">        return start_button;</a>
+<span class="sourceLineNo">585</span><a id="line.585">    }</a>
+<span class="sourceLineNo">586</span><a id="line.586"></a>
+<span class="sourceLineNo">587</span><a id="line.587">    /**</a>
+<span class="sourceLineNo">588</span><a id="line.588">     * ボタン類のアップデート</a>
+<span class="sourceLineNo">589</span><a id="line.589">     */</a>
+<span class="sourceLineNo">590</span><a id="line.590">    public void update_buttons() {</a>
+<span class="sourceLineNo">591</span><a id="line.591">        step_button.setDisable(launcher.isRunning());</a>
+<span class="sourceLineNo">592</span><a id="line.592">    }</a>
+<span class="sourceLineNo">593</span><a id="line.593"></a>
+<span class="sourceLineNo">594</span><a id="line.594">    /**</a>
+<span class="sourceLineNo">595</span><a id="line.595">     * シミュレーション遅延の制御（画面）</a>
+<span class="sourceLineNo">596</span><a id="line.596">     */</a>
+<span class="sourceLineNo">597</span><a id="line.597">    public void setSimulationDeferFactor(int deferFactor) {</a>
+<span class="sourceLineNo">598</span><a id="line.598">        this.deferFactor = deferFactor;</a>
+<span class="sourceLineNo">599</span><a id="line.599">        launcher.getSimulator().setSimulationDeferFactor(deferFactor);</a>
+<span class="sourceLineNo">600</span><a id="line.600">    }</a>
+<span class="sourceLineNo">601</span><a id="line.601"></a>
+<span class="sourceLineNo">602</span><a id="line.602">    /**</a>
+<span class="sourceLineNo">603</span><a id="line.603">     * Control タブを作成する</a>
+<span class="sourceLineNo">604</span><a id="line.604">     */</a>
+<span class="sourceLineNo">605</span><a id="line.605">    private Pane createControlPane() {</a>
+<span class="sourceLineNo">606</span><a id="line.606">        /* title &amp; clock */</a>
+<span class="sourceLineNo">607</span><a id="line.607"></a>
+<span class="sourceLineNo">608</span><a id="line.608">        GridPane gridPane = new GridPane();</a>
+<span class="sourceLineNo">609</span><a id="line.609">        gridPane.setPadding(new Insets(0, 0, 8, 0));</a>
+<span class="sourceLineNo">610</span><a id="line.610">        Insets insets = new Insets(3, 8, 3, 12);</a>
+<span class="sourceLineNo">611</span><a id="line.611"></a>
+<span class="sourceLineNo">612</span><a id="line.612">        Label label_Properties = createLabel("Properties", insets);</a>
+<span class="sourceLineNo">613</span><a id="line.613">        gridPane.add(label_Properties, 0, 0);</a>
+<span class="sourceLineNo">614</span><a id="line.614">        gridPane.setHalignment(label_Properties, HPos.RIGHT);</a>
+<span class="sourceLineNo">615</span><a id="line.615">        if (launcher.getPropertiesFile() != null) {</a>
+<span class="sourceLineNo">616</span><a id="line.616">            File propertiesFile = new File(launcher.getPropertiesFile());</a>
+<span class="sourceLineNo">617</span><a id="line.617">            gridPane.add(createLabel(propertiesFile.getName(), insets), 1, 0);</a>
+<span class="sourceLineNo">618</span><a id="line.618">        } else {</a>
+<span class="sourceLineNo">619</span><a id="line.619">            gridPane.add(createLabel("No properties file", insets), 1, 0);</a>
+<span class="sourceLineNo">620</span><a id="line.620">        }</a>
+<span class="sourceLineNo">621</span><a id="line.621"></a>
+<span class="sourceLineNo">622</span><a id="line.622">        Label label_Map = createLabel("Map", insets);</a>
+<span class="sourceLineNo">623</span><a id="line.623">        gridPane.add(label_Map, 0, 1);</a>
+<span class="sourceLineNo">624</span><a id="line.624">        gridPane.setHalignment(label_Map, HPos.RIGHT);</a>
+<span class="sourceLineNo">625</span><a id="line.625">        if (launcher.getNetworkMapFile() != null) {</a>
+<span class="sourceLineNo">626</span><a id="line.626">            File map_file = new File(launcher.getNetworkMapFile());</a>
+<span class="sourceLineNo">627</span><a id="line.627">            gridPane.add(createLabel(map_file.getName(), insets), 1, 1);</a>
+<span class="sourceLineNo">628</span><a id="line.628">        } else {</a>
+<span class="sourceLineNo">629</span><a id="line.629">            gridPane.add(createLabel("No map file", insets), 1, 1);</a>
+<span class="sourceLineNo">630</span><a id="line.630">        }</a>
+<span class="sourceLineNo">631</span><a id="line.631"></a>
+<span class="sourceLineNo">632</span><a id="line.632">        Label label_Agent = createLabel("Generation", insets);</a>
+<span class="sourceLineNo">633</span><a id="line.633">        gridPane.add(label_Agent, 0, 2);</a>
+<span class="sourceLineNo">634</span><a id="line.634">        gridPane.setHalignment(label_Agent, HPos.RIGHT);</a>
+<span class="sourceLineNo">635</span><a id="line.635">        if (launcher.getGenerationFile() != null) {</a>
+<span class="sourceLineNo">636</span><a id="line.636">            File generation_file = new File(launcher.getGenerationFile());</a>
+<span class="sourceLineNo">637</span><a id="line.637">            gridPane.add(createLabel(generation_file.getName(), insets), 1, 2);</a>
+<span class="sourceLineNo">638</span><a id="line.638">        } else {</a>
+<span class="sourceLineNo">639</span><a id="line.639">            gridPane.add(createLabel("No generation file", insets), 1, 2);</a>
+<span class="sourceLineNo">640</span><a id="line.640">        }</a>
+<span class="sourceLineNo">641</span><a id="line.641"></a>
+<span class="sourceLineNo">642</span><a id="line.642">        Label label_Scenario = createLabel("Scenario", insets);</a>
+<span class="sourceLineNo">643</span><a id="line.643">        gridPane.add(label_Scenario, 0, 3);</a>
+<span class="sourceLineNo">644</span><a id="line.644">        gridPane.setHalignment(label_Scenario, HPos.RIGHT);</a>
+<span class="sourceLineNo">645</span><a id="line.645">        if (launcher.getScenarioFile() != null) {</a>
+<span class="sourceLineNo">646</span><a id="line.646">            File scenario_file = new File(launcher.getScenarioFile());</a>
+<span class="sourceLineNo">647</span><a id="line.647">            gridPane.add(createLabel(scenario_file.getName(), insets), 1, 3);</a>
+<span class="sourceLineNo">648</span><a id="line.648">        } else {</a>
+<span class="sourceLineNo">649</span><a id="line.649">            gridPane.add(createLabel("No scenario file", insets), 1, 3);</a>
+<span class="sourceLineNo">650</span><a id="line.650">        }</a>
+<span class="sourceLineNo">651</span><a id="line.651"></a>
+<span class="sourceLineNo">652</span><a id="line.652">        Label label_Pollution = createLabel("Pollution", insets);</a>
+<span class="sourceLineNo">653</span><a id="line.653">        gridPane.add(label_Pollution, 0, 4);</a>
+<span class="sourceLineNo">654</span><a id="line.654">        gridPane.setHalignment(label_Pollution, HPos.RIGHT);</a>
+<span class="sourceLineNo">655</span><a id="line.655">        if (launcher.getPollutionFile() != null) {</a>
+<span class="sourceLineNo">656</span><a id="line.656">            File pollution_file = new File(launcher.getPollutionFile());</a>
+<span class="sourceLineNo">657</span><a id="line.657">            gridPane.add(createLabel(pollution_file.getName(), insets), 1, 4);</a>
+<span class="sourceLineNo">658</span><a id="line.658">        } else {</a>
+<span class="sourceLineNo">659</span><a id="line.659">            gridPane.add(createLabel("No pollution file", insets), 1, 4);</a>
+<span class="sourceLineNo">660</span><a id="line.660">        }</a>
+<span class="sourceLineNo">661</span><a id="line.661"></a>
+<span class="sourceLineNo">662</span><a id="line.662">        clock_label.setPadding(new Insets(4, 8, 4, 12));</a>
+<span class="sourceLineNo">663</span><a id="line.663">        clock_label.setFont(Font.font("Verdana", FontWeight.BOLD, 15));</a>
+<span class="sourceLineNo">664</span><a id="line.664">        gridPane.add(clock_label, 0, 5);</a>
+<span class="sourceLineNo">665</span><a id="line.665">        gridPane.setHalignment(clock_label, HPos.RIGHT);</a>
+<span class="sourceLineNo">666</span><a id="line.666">        time_label.setPadding(new Insets(4, 8, 4, 12));</a>
+<span class="sourceLineNo">667</span><a id="line.667">        gridPane.add(time_label, 1, 5);</a>
+<span class="sourceLineNo">668</span><a id="line.668"></a>
+<span class="sourceLineNo">669</span><a id="line.669">        evacuatedCount_label.setPadding(new Insets(2, 8, 3, 12));</a>
+<span class="sourceLineNo">670</span><a id="line.670">        gridPane.add(evacuatedCount_label, 0, 6, 2, 1);</a>
+<span class="sourceLineNo">671</span><a id="line.671"></a>
+<span class="sourceLineNo">672</span><a id="line.672">        /* scenarios */</a>
+<span class="sourceLineNo">673</span><a id="line.673"></a>
+<span class="sourceLineNo">674</span><a id="line.674">        GridPane scenarioPane = new GridPane();</a>
+<span class="sourceLineNo">675</span><a id="line.675">        scenarioPane.setAlignment(Pos.CENTER);</a>
+<span class="sourceLineNo">676</span><a id="line.676">        scenarioPane.setHgap(10);</a>
+<span class="sourceLineNo">677</span><a id="line.677">        scenarioPane.setVgap(10);</a>
+<span class="sourceLineNo">678</span><a id="line.678">        int row = 0;</a>
+<span class="sourceLineNo">679</span><a id="line.679">        for (final EventBase event : launcher.getSimulator().getScenario().eventList) {</a>
+<span class="sourceLineNo">680</span><a id="line.680">            ToggleGroup group = new ToggleGroup();</a>
+<span class="sourceLineNo">681</span><a id="line.681"></a>
+<span class="sourceLineNo">682</span><a id="line.682">            RadioButton radio_button = new RadioButton("enabled");</a>
+<span class="sourceLineNo">683</span><a id="line.683">            radio_button.setToggleGroup(group);</a>
+<span class="sourceLineNo">684</span><a id="line.684">            radio_button.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">685</span><a id="line.685">                event.occur(SimTime.Ending, networkMap);</a>
+<span class="sourceLineNo">686</span><a id="line.686">            });</a>
+<span class="sourceLineNo">687</span><a id="line.687">            scenarioPane.add(radio_button, 0, row);</a>
+<span class="sourceLineNo">688</span><a id="line.688"></a>
+<span class="sourceLineNo">689</span><a id="line.689">            radio_button = new RadioButton("disabled | auto:");</a>
+<span class="sourceLineNo">690</span><a id="line.690">            radio_button.setToggleGroup(group);</a>
+<span class="sourceLineNo">691</span><a id="line.691">            radio_button.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">692</span><a id="line.692">                event.unoccur(SimTime.Ending, networkMap);</a>
+<span class="sourceLineNo">693</span><a id="line.693">            });</a>
+<span class="sourceLineNo">694</span><a id="line.694">            scenarioPane.add(radio_button, 1, row);</a>
+<span class="sourceLineNo">695</span><a id="line.695"></a>
+<span class="sourceLineNo">696</span><a id="line.696">            radio_button = new RadioButton(event.atTime.getAbsoluteTimeString());</a>
+<span class="sourceLineNo">697</span><a id="line.697">            radio_button.setToggleGroup(group);</a>
+<span class="sourceLineNo">698</span><a id="line.698">            radio_button.setSelected(true);</a>
+<span class="sourceLineNo">699</span><a id="line.699">            scenarioPane.add(radio_button, 2, row);</a>
+<span class="sourceLineNo">700</span><a id="line.700"></a>
+<span class="sourceLineNo">701</span><a id="line.701">            String eventName = event.getClass().getName().replaceAll("^.*\\.|Event$", "");</a>
+<span class="sourceLineNo">702</span><a id="line.702">            scenarioPane.add(new Label(eventName), 3, row);</a>
+<span class="sourceLineNo">703</span><a id="line.703">            if (eventName.equals("Initiate")) {</a>
+<span class="sourceLineNo">704</span><a id="line.704">                // ここで pauseTime の初期値を設定する</a>
+<span class="sourceLineNo">705</span><a id="line.705">                pauseTime.copyFrom(event.atTime);</a>
+<span class="sourceLineNo">706</span><a id="line.706">            }</a>
+<span class="sourceLineNo">707</span><a id="line.707"></a>
+<span class="sourceLineNo">708</span><a id="line.708">            row++;</a>
+<span class="sourceLineNo">709</span><a id="line.709">        }</a>
+<span class="sourceLineNo">710</span><a id="line.710"></a>
+<span class="sourceLineNo">711</span><a id="line.711">        ScrollPane scroller = new ScrollPane();</a>
+<span class="sourceLineNo">712</span><a id="line.712">        scroller.setPrefSize(400, 160);</a>
+<span class="sourceLineNo">713</span><a id="line.713">        scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);</a>
+<span class="sourceLineNo">714</span><a id="line.714">        scroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);</a>
+<span class="sourceLineNo">715</span><a id="line.715">        scroller.setFitToWidth(true);</a>
+<span class="sourceLineNo">716</span><a id="line.716">        scroller.setFitToHeight(true);</a>
+<span class="sourceLineNo">717</span><a id="line.717">        scroller.setContent(scenarioPane);</a>
+<span class="sourceLineNo">718</span><a id="line.718"></a>
+<span class="sourceLineNo">719</span><a id="line.719">        VBox bottomPanel = new VBox(8);</a>
+<span class="sourceLineNo">720</span><a id="line.720">        bottomPanel.setPadding(new Insets(4, 0, 0, 0));</a>
+<span class="sourceLineNo">721</span><a id="line.721"></a>
+<span class="sourceLineNo">722</span><a id="line.722">        /* Pause */</a>
+<span class="sourceLineNo">723</span><a id="line.723"></a>
+<span class="sourceLineNo">724</span><a id="line.724">        final FlowPane pausePanel = new FlowPane(10, 0);</a>
+<span class="sourceLineNo">725</span><a id="line.725">        BorderStroke borderStroke = new BorderStroke(Color.LIGHTGREY, BorderStrokeStyle.SOLID, new CornerRadii(2), BorderWidths.DEFAULT);</a>
+<span class="sourceLineNo">726</span><a id="line.726">        pausePanel.setBorder(new Border(borderStroke));</a>
+<span class="sourceLineNo">727</span><a id="line.727">        pausePanel.setPadding(new Insets(4, 0, 4, 12));</a>
+<span class="sourceLineNo">728</span><a id="line.728"></a>
+<span class="sourceLineNo">729</span><a id="line.729">        Label pauseLabel = new Label("Pause");</a>
+<span class="sourceLineNo">730</span><a id="line.730"></a>
+<span class="sourceLineNo">731</span><a id="line.731">        final SpinnerValueFactory.IntegerSpinnerValueFactory intSpinnerValueFactory = (SpinnerValueFactory.IntegerSpinnerValueFactory)intSpinner.getValueFactory();</a>
+<span class="sourceLineNo">732</span><a id="line.732"></a>
+<span class="sourceLineNo">733</span><a id="line.733">        ToggleGroup pauseGroup = new ToggleGroup();</a>
+<span class="sourceLineNo">734</span><a id="line.734">        RadioButton timeButton = new RadioButton("time");</a>
+<span class="sourceLineNo">735</span><a id="line.735">        timeButton.setToggleGroup(pauseGroup);</a>
+<span class="sourceLineNo">736</span><a id="line.736">        timeButton.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">737</span><a id="line.737">            launcher.setPauseEnabled(true);</a>
+<span class="sourceLineNo">738</span><a id="line.738">            intSpinner.setVisible(false);</a>
+<span class="sourceLineNo">739</span><a id="line.739">            timeSpinner.setDisable(false);</a>
+<span class="sourceLineNo">740</span><a id="line.740">            timeSpinner.setVisible(true);</a>
+<span class="sourceLineNo">741</span><a id="line.741">            pauseTime.setTickCount(timeSpinner.getValue().toSecondOfDay() - pauseTime.getOriginTimeInt());</a>
+<span class="sourceLineNo">742</span><a id="line.742">            intSpinnerValueFactory.setValue(pauseTime.getTickCount());</a>
+<span class="sourceLineNo">743</span><a id="line.743">        });</a>
+<span class="sourceLineNo">744</span><a id="line.744"></a>
+<span class="sourceLineNo">745</span><a id="line.745">        RadioButton tickCountButton = new RadioButton("elapsed");</a>
+<span class="sourceLineNo">746</span><a id="line.746">        tickCountButton.setToggleGroup(pauseGroup);</a>
+<span class="sourceLineNo">747</span><a id="line.747">        tickCountButton.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">748</span><a id="line.748">            launcher.setPauseEnabled(true);</a>
+<span class="sourceLineNo">749</span><a id="line.749">            timeSpinner.setVisible(false);</a>
+<span class="sourceLineNo">750</span><a id="line.750">            intSpinner.setDisable(false);</a>
+<span class="sourceLineNo">751</span><a id="line.751">            intSpinner.setVisible(true);</a>
+<span class="sourceLineNo">752</span><a id="line.752">        });</a>
+<span class="sourceLineNo">753</span><a id="line.753"></a>
+<span class="sourceLineNo">754</span><a id="line.754">        RadioButton disabledButton = new RadioButton("disabled");</a>
+<span class="sourceLineNo">755</span><a id="line.755">        disabledButton.setToggleGroup(pauseGroup);</a>
+<span class="sourceLineNo">756</span><a id="line.756">        disabledButton.setSelected(true);</a>
+<span class="sourceLineNo">757</span><a id="line.757">        disabledButton.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">758</span><a id="line.758">            launcher.setPauseEnabled(false);</a>
+<span class="sourceLineNo">759</span><a id="line.759">            timeSpinner.setDisable(true);</a>
+<span class="sourceLineNo">760</span><a id="line.760">            intSpinner.setDisable(true);</a>
+<span class="sourceLineNo">761</span><a id="line.761">        });</a>
+<span class="sourceLineNo">762</span><a id="line.762"></a>
+<span class="sourceLineNo">763</span><a id="line.763">        LocalTime maxTime = LocalTime.of(23, 59, 59);</a>
+<span class="sourceLineNo">764</span><a id="line.764">        LocalTime initialTime = LocalTime.parse(pauseTime.getAbsoluteTimeString());</a>
+<span class="sourceLineNo">765</span><a id="line.765">        final TimeSpinnerValueFactory timeSpinnerValueFactory = new TimeSpinnerValueFactory(initialTime, maxTime, initialTime);</a>
+<span class="sourceLineNo">766</span><a id="line.766">        timeSpinner = new Spinner&lt;LocalTime&gt;(timeSpinnerValueFactory);</a>
+<span class="sourceLineNo">767</span><a id="line.767">        timeSpinner.setEditable(true);</a>
+<span class="sourceLineNo">768</span><a id="line.768">        timeSpinner.setDisable(true);</a>
+<span class="sourceLineNo">769</span><a id="line.769">        timeSpinner.getEditor().setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">770</span><a id="line.770">            String text = timeSpinner.getEditor().getCharacters().toString();</a>
+<span class="sourceLineNo">771</span><a id="line.771">            try {</a>
+<span class="sourceLineNo">772</span><a id="line.772">                LocalTime time = LocalTime.parse(text);</a>
+<span class="sourceLineNo">773</span><a id="line.773">                timeSpinnerValueFactory.setValue(time);</a>
+<span class="sourceLineNo">774</span><a id="line.774">                pauseTime.setTickCount(timeSpinner.getValue().toSecondOfDay() - pauseTime.getOriginTimeInt());</a>
+<span class="sourceLineNo">775</span><a id="line.775">                intSpinnerValueFactory.setValue(pauseTime.getTickCount());</a>
+<span class="sourceLineNo">776</span><a id="line.776">            } catch(java.time.format.DateTimeParseException ex) {}</a>
+<span class="sourceLineNo">777</span><a id="line.777">        });</a>
+<span class="sourceLineNo">778</span><a id="line.778">        timeSpinner.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">779</span><a id="line.779">            pauseTime.setTickCount(timeSpinner.getValue().toSecondOfDay() - pauseTime.getOriginTimeInt());</a>
+<span class="sourceLineNo">780</span><a id="line.780">            intSpinnerValueFactory.setValue(pauseTime.getTickCount());</a>
+<span class="sourceLineNo">781</span><a id="line.781">        });</a>
+<span class="sourceLineNo">782</span><a id="line.782"></a>
+<span class="sourceLineNo">783</span><a id="line.783">        intSpinner.getValueFactory().setValue(pauseTime.getTickCount());</a>
+<span class="sourceLineNo">784</span><a id="line.784">        // int maxValue = 60 * 60 * 24 - (pauseTime.getOriginTimeInt() + pauseTime.getTickCount()) - 1; // 23:59:59</a>
+<span class="sourceLineNo">785</span><a id="line.785">        int maxValue = 60 * 60 * 72;</a>
+<span class="sourceLineNo">786</span><a id="line.786">        intSpinnerValueFactory.setMax(Math.max(maxValue, 0));</a>
+<span class="sourceLineNo">787</span><a id="line.787">        intSpinner.getValueFactory().setWrapAround(false);</a>
+<span class="sourceLineNo">788</span><a id="line.788">        intSpinner.setVisible(false);</a>
+<span class="sourceLineNo">789</span><a id="line.789">        intSpinner.setEditable(true);</a>
+<span class="sourceLineNo">790</span><a id="line.790">        intSpinner.setDisable(true);</a>
+<span class="sourceLineNo">791</span><a id="line.791">        intSpinner.getEditor().setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">792</span><a id="line.792">            String text = intSpinner.getEditor().getCharacters().toString();</a>
+<span class="sourceLineNo">793</span><a id="line.793">            try {</a>
+<span class="sourceLineNo">794</span><a id="line.794">                intSpinnerValueFactory.setValue(Integer.parseInt(text));</a>
+<span class="sourceLineNo">795</span><a id="line.795">                setPauseTime(timeSpinnerValueFactory);</a>
+<span class="sourceLineNo">796</span><a id="line.796">            } catch(NumberFormatException ex) {}</a>
+<span class="sourceLineNo">797</span><a id="line.797">        });</a>
+<span class="sourceLineNo">798</span><a id="line.798">        intSpinner.getValueFactory().valueProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">799</span><a id="line.799">            setPauseTime(timeSpinnerValueFactory);</a>
+<span class="sourceLineNo">800</span><a id="line.800">        });</a>
+<span class="sourceLineNo">801</span><a id="line.801"></a>
+<span class="sourceLineNo">802</span><a id="line.802">        StackPane spinnerPanel = new StackPane();</a>
+<span class="sourceLineNo">803</span><a id="line.803">        spinnerPanel.getChildren().addAll(timeSpinner, intSpinner);</a>
+<span class="sourceLineNo">804</span><a id="line.804"></a>
+<span class="sourceLineNo">805</span><a id="line.805">        pausePanel.getChildren().addAll(pauseLabel, timeButton, tickCountButton, disabledButton, spinnerPanel);</a>
+<span class="sourceLineNo">806</span><a id="line.806">        // 時刻刻み幅が1秒以外の時は一時停止機能を無効にする</a>
+<span class="sourceLineNo">807</span><a id="line.807">        if (pauseTime.getTickUnit() != 1.0) {</a>
+<span class="sourceLineNo">808</span><a id="line.808">            pausePanel.setDisable(true);</a>
+<span class="sourceLineNo">809</span><a id="line.809">        }</a>
+<span class="sourceLineNo">810</span><a id="line.810">        bottomPanel.getChildren().add(pausePanel);</a>
+<span class="sourceLineNo">811</span><a id="line.811"></a>
+<span class="sourceLineNo">812</span><a id="line.812">        /* Reset button */</a>
+<span class="sourceLineNo">813</span><a id="line.813"></a>
+<span class="sourceLineNo">814</span><a id="line.814">        if (launcher.getPropertiesFile() == null) {</a>
+<span class="sourceLineNo">815</span><a id="line.815">            // エディタから起動した場合は名前を変える</a>
+<span class="sourceLineNo">816</span><a id="line.816">            resetButton.setText("Reset with latest state");</a>
+<span class="sourceLineNo">817</span><a id="line.817">        }</a>
+<span class="sourceLineNo">818</span><a id="line.818">        resetButton.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">819</span><a id="line.819">            launcher.setResetting(true);</a>
+<span class="sourceLineNo">820</span><a id="line.820">            if (launcher.isRunning()) {</a>
+<span class="sourceLineNo">821</span><a id="line.821">                launcher.pause();</a>
+<span class="sourceLineNo">822</span><a id="line.822">            }</a>
+<span class="sourceLineNo">823</span><a id="line.823">            frame.close();</a>
+<span class="sourceLineNo">824</span><a id="line.824">        });</a>
+<span class="sourceLineNo">825</span><a id="line.825"></a>
+<span class="sourceLineNo">826</span><a id="line.826">        FlowPane resetPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">827</span><a id="line.827">        resetPanel.setAlignment(Pos.CENTER);</a>
+<span class="sourceLineNo">828</span><a id="line.828">        resetPanel.getChildren().add(resetButton);</a>
+<span class="sourceLineNo">829</span><a id="line.829">        bottomPanel.getChildren().add(resetPanel);</a>
+<span class="sourceLineNo">830</span><a id="line.830"></a>
+<span class="sourceLineNo">831</span><a id="line.831">        BorderPane controlPane = new BorderPane();</a>
+<span class="sourceLineNo">832</span><a id="line.832">        controlPane.setPadding(new Insets(8, 8, 16, 8));</a>
+<span class="sourceLineNo">833</span><a id="line.833">        controlPane.setTop(gridPane);</a>
+<span class="sourceLineNo">834</span><a id="line.834">        controlPane.setCenter(scroller);</a>
+<span class="sourceLineNo">835</span><a id="line.835">        controlPane.setBottom(bottomPanel);</a>
+<span class="sourceLineNo">836</span><a id="line.836"></a>
+<span class="sourceLineNo">837</span><a id="line.837">        return controlPane;</a>
+<span class="sourceLineNo">838</span><a id="line.838">    }</a>
+<span class="sourceLineNo">839</span><a id="line.839"></a>
+<span class="sourceLineNo">840</span><a id="line.840">    /**</a>
+<span class="sourceLineNo">841</span><a id="line.841">     * 一時停止時刻の設定</a>
+<span class="sourceLineNo">842</span><a id="line.842">     */</a>
+<span class="sourceLineNo">843</span><a id="line.843">    private void setPauseTime(TimeSpinnerValueFactory timeSpinnerValueFactory) {</a>
+<span class="sourceLineNo">844</span><a id="line.844">        pauseTime.setTickCount(intSpinner.getValue());</a>
+<span class="sourceLineNo">845</span><a id="line.845">        int secondOfDay = pauseTime.getOriginTimeInt() + pauseTime.getTickCount();</a>
+<span class="sourceLineNo">846</span><a id="line.846">        timeSpinnerValueFactory.setValue(LocalTime.ofSecondOfDay(Math.min(secondOfDay, 60 * 60 * 24 - 1)));</a>
+<span class="sourceLineNo">847</span><a id="line.847">    }</a>
+<span class="sourceLineNo">848</span><a id="line.848"></a>
+<span class="sourceLineNo">849</span><a id="line.849">    /**</a>
+<span class="sourceLineNo">850</span><a id="line.850">     * padding 付きで Label を生成する</a>
+<span class="sourceLineNo">851</span><a id="line.851">     */</a>
+<span class="sourceLineNo">852</span><a id="line.852">    public Label createLabel(String text, Insets insets) {</a>
+<span class="sourceLineNo">853</span><a id="line.853">        Label label = new Label(text);</a>
+<span class="sourceLineNo">854</span><a id="line.854">        label.setPadding(insets);</a>
+<span class="sourceLineNo">855</span><a id="line.855">        label.setFont(Font.font("Verdana", 12));</a>
+<span class="sourceLineNo">856</span><a id="line.856">        return label;</a>
+<span class="sourceLineNo">857</span><a id="line.857">    }</a>
+<span class="sourceLineNo">858</span><a id="line.858"></a>
+<span class="sourceLineNo">859</span><a id="line.859">    /**</a>
+<span class="sourceLineNo">860</span><a id="line.860">     * 時計表示</a>
+<span class="sourceLineNo">861</span><a id="line.861">     */</a>
+<span class="sourceLineNo">862</span><a id="line.862">    public void displayClock(SimTime currentTime) {</a>
+<span class="sourceLineNo">863</span><a id="line.863">        time_label.setText(String.format("Elapsed: %5.2fsec", currentTime.getRelativeTime()));</a>
+<span class="sourceLineNo">864</span><a id="line.864">        clock_label.setText(currentTime.getAbsoluteTimeString());</a>
+<span class="sourceLineNo">865</span><a id="line.865">    }</a>
+<span class="sourceLineNo">866</span><a id="line.866"></a>
+<span class="sourceLineNo">867</span><a id="line.867">    /**</a>
+<span class="sourceLineNo">868</span><a id="line.868">     * evacuation count ラベルを更新する</a>
+<span class="sourceLineNo">869</span><a id="line.869">     */</a>
+<span class="sourceLineNo">870</span><a id="line.870">    public void updateEvacuatedCount(String text) {</a>
+<span class="sourceLineNo">871</span><a id="line.871">        evacuatedCount_label.setText(text);</a>
+<span class="sourceLineNo">872</span><a id="line.872">    }</a>
+<span class="sourceLineNo">873</span><a id="line.873"></a>
+<span class="sourceLineNo">874</span><a id="line.874">    /**</a>
+<span class="sourceLineNo">875</span><a id="line.875">     * View タブを作成する</a>
+<span class="sourceLineNo">876</span><a id="line.876">     */</a>
+<span class="sourceLineNo">877</span><a id="line.877">    private Pane createViewPane(boolean backgroundMapEnabled, boolean theSeaEnabled) {</a>
+<span class="sourceLineNo">878</span><a id="line.878">        // 垂直スケール</a>
+<span class="sourceLineNo">879</span><a id="line.879"></a>
+<span class="sourceLineNo">880</span><a id="line.880">        Label label = new Label("Vertical scale");</a>
+<span class="sourceLineNo">881</span><a id="line.881">        label.setPrefWidth(90);</a>
+<span class="sourceLineNo">882</span><a id="line.882"></a>
+<span class="sourceLineNo">883</span><a id="line.883">        verticalScaleControl.setPrefSize(250, 20);</a>
+<span class="sourceLineNo">884</span><a id="line.884">        verticalScaleControl.setMax(10.0);</a>
+<span class="sourceLineNo">885</span><a id="line.885">        verticalScaleControl.setValue(launcher.getVerticalScale());</a>
+<span class="sourceLineNo">886</span><a id="line.886">        verticalScaleControl.setUnitIncrement(0.1);</a>
+<span class="sourceLineNo">887</span><a id="line.887">        verticalScaleControl.setBlockIncrement(1.0);</a>
+<span class="sourceLineNo">888</span><a id="line.888">        verticalScaleControl.valueProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">889</span><a id="line.889">            verticalScaleValue.setText(String.format("%2.1f", newValue.doubleValue()));</a>
+<span class="sourceLineNo">890</span><a id="line.890">        });</a>
+<span class="sourceLineNo">891</span><a id="line.891">        verticalScaleControl.setOnMouseClicked(event -&gt; {</a>
+<span class="sourceLineNo">892</span><a id="line.892">            panel.changeVerticalScale(verticalScaleControl.getValue(), getAgentSize(), frame);</a>
+<span class="sourceLineNo">893</span><a id="line.893">        });</a>
+<span class="sourceLineNo">894</span><a id="line.894">        verticalScaleControl.setOnMouseReleased(event -&gt; {</a>
+<span class="sourceLineNo">895</span><a id="line.895">            panel.changeVerticalScale(verticalScaleControl.getValue(), getAgentSize(), frame);</a>
+<span class="sourceLineNo">896</span><a id="line.896">        });</a>
+<span class="sourceLineNo">897</span><a id="line.897"></a>
+<span class="sourceLineNo">898</span><a id="line.898">        verticalScaleValue = new Label("" + verticalScaleControl.getValue());</a>
+<span class="sourceLineNo">899</span><a id="line.899">        verticalScaleValue.setAlignment(Pos.CENTER_RIGHT);</a>
+<span class="sourceLineNo">900</span><a id="line.900"></a>
+<span class="sourceLineNo">901</span><a id="line.901">        FlowPane verticalScalePane = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">902</span><a id="line.902">        verticalScalePane.getChildren().addAll(label, verticalScaleControl, verticalScaleValue);</a>
+<span class="sourceLineNo">903</span><a id="line.903"></a>
+<span class="sourceLineNo">904</span><a id="line.904">        // エージェントサイズ</a>
+<span class="sourceLineNo">905</span><a id="line.905"></a>
+<span class="sourceLineNo">906</span><a id="line.906">        label = new Label("Agent size");</a>
+<span class="sourceLineNo">907</span><a id="line.907">        label.setPrefWidth(90);</a>
+<span class="sourceLineNo">908</span><a id="line.908"></a>
+<span class="sourceLineNo">909</span><a id="line.909">        agent_size_control.setPrefSize(250, 20);</a>
+<span class="sourceLineNo">910</span><a id="line.910">        agent_size_control.setMax(30.0);</a>
+<span class="sourceLineNo">911</span><a id="line.911">        agent_size_control.setValue(launcher.getAgentSize());</a>
+<span class="sourceLineNo">912</span><a id="line.912">        agent_size_control.setUnitIncrement(0.1);</a>
+<span class="sourceLineNo">913</span><a id="line.913">        agent_size_control.setBlockIncrement(1.0);</a>
+<span class="sourceLineNo">914</span><a id="line.914">        agent_size_control.valueProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">915</span><a id="line.915">            agent_size_value.setText(String.format("%2.1f", newValue.doubleValue()));</a>
+<span class="sourceLineNo">916</span><a id="line.916">            panel.changeAgentSize(newValue.doubleValue());</a>
+<span class="sourceLineNo">917</span><a id="line.917">        });</a>
+<span class="sourceLineNo">918</span><a id="line.918"></a>
+<span class="sourceLineNo">919</span><a id="line.919">        agent_size_value = new Label("" + agent_size_control.getValue());</a>
+<span class="sourceLineNo">920</span><a id="line.920">        agent_size_value.setAlignment(Pos.CENTER_RIGHT);</a>
+<span class="sourceLineNo">921</span><a id="line.921"></a>
+<span class="sourceLineNo">922</span><a id="line.922">        FlowPane agentSizePane = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">923</span><a id="line.923">        agentSizePane.getChildren().addAll(label, agent_size_control, agent_size_value);</a>
+<span class="sourceLineNo">924</span><a id="line.924"></a>
+<span class="sourceLineNo">925</span><a id="line.925">        //// Checkboxes ////</a>
+<span class="sourceLineNo">926</span><a id="line.926"></a>
+<span class="sourceLineNo">927</span><a id="line.927">        VBox checkboxPanel = new VBox(14);</a>
+<span class="sourceLineNo">928</span><a id="line.928">        checkboxPanel.setPadding(new Insets(0, 4, 0, 4));</a>
+<span class="sourceLineNo">929</span><a id="line.929">        checkboxPanel.getChildren().addAll(verticalScalePane, agentSizePane, new Separator());</a>
+<span class="sourceLineNo">930</span><a id="line.930"></a>
+<span class="sourceLineNo">931</span><a id="line.931">        // ノード表示の ON/OFF</a>
+<span class="sourceLineNo">932</span><a id="line.932">        CheckBox showNodesCheckBox = new CheckBox("Show nodes");</a>
+<span class="sourceLineNo">933</span><a id="line.933">        showNodesCheckBox.setSelected(true);</a>
+<span class="sourceLineNo">934</span><a id="line.934">        showNodesCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">935</span><a id="line.935">            panel.setShowNodes(newValue);</a>
+<span class="sourceLineNo">936</span><a id="line.936">        });</a>
+<span class="sourceLineNo">937</span><a id="line.937"></a>
+<span class="sourceLineNo">938</span><a id="line.938">        FlowPane showNodesPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">939</span><a id="line.939">        showNodesPanel.getChildren().addAll(showNodesCheckBox);</a>
+<span class="sourceLineNo">940</span><a id="line.940">        checkboxPanel.getChildren().add(showNodesPanel);</a>
+<span class="sourceLineNo">941</span><a id="line.941"></a>
+<span class="sourceLineNo">942</span><a id="line.942">        // リンク表示の ON/OFF</a>
+<span class="sourceLineNo">943</span><a id="line.943">        CheckBox showLinksCheckBox = new CheckBox("Show links");</a>
+<span class="sourceLineNo">944</span><a id="line.944">        showLinksCheckBox.setSelected(true);</a>
+<span class="sourceLineNo">945</span><a id="line.945">        showLinksCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">946</span><a id="line.946">            panel.setShowLinks(newValue);</a>
+<span class="sourceLineNo">947</span><a id="line.947">        });</a>
+<span class="sourceLineNo">948</span><a id="line.948"></a>
+<span class="sourceLineNo">949</span><a id="line.949">        FlowPane showLinksPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">950</span><a id="line.950">        showLinksPanel.getChildren().addAll(showLinksCheckBox);</a>
+<span class="sourceLineNo">951</span><a id="line.951">        checkboxPanel.getChildren().add(showLinksPanel);</a>
+<span class="sourceLineNo">952</span><a id="line.952"></a>
+<span class="sourceLineNo">953</span><a id="line.953">        // エリア表示の ON/OFF</a>
+<span class="sourceLineNo">954</span><a id="line.954">        CheckBox showAreasCheckBox = new CheckBox("Show areas");</a>
+<span class="sourceLineNo">955</span><a id="line.955">        showAreasCheckBox.setSelected(launcher.getPollutionFile() != null);</a>
+<span class="sourceLineNo">956</span><a id="line.956">        showAreasCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">957</span><a id="line.957">            panel.setShowAreas(newValue);</a>
+<span class="sourceLineNo">958</span><a id="line.958">        });</a>
+<span class="sourceLineNo">959</span><a id="line.959"></a>
+<span class="sourceLineNo">960</span><a id="line.960">        // エリアの配置を確認できる様にする</a>
+<span class="sourceLineNo">961</span><a id="line.961">        CheckBox showOutlineCheckBox = new CheckBox("Show outline of areas");</a>
+<span class="sourceLineNo">962</span><a id="line.962">        showOutlineCheckBox.setSelected(false);</a>
+<span class="sourceLineNo">963</span><a id="line.963">        showOutlineCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">964</span><a id="line.964">            panel.setShowAreasOutline(newValue);</a>
+<span class="sourceLineNo">965</span><a id="line.965">        });</a>
+<span class="sourceLineNo">966</span><a id="line.966"></a>
+<span class="sourceLineNo">967</span><a id="line.967">        FlowPane showAreaPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">968</span><a id="line.968">        showAreaPanel.setDisable(launcher.getPollutionFile() == null);</a>
+<span class="sourceLineNo">969</span><a id="line.969">        showAreaPanel.getChildren().addAll(showAreasCheckBox, showOutlineCheckBox);</a>
+<span class="sourceLineNo">970</span><a id="line.970">        checkboxPanel.getChildren().add(showAreaPanel);</a>
+<span class="sourceLineNo">971</span><a id="line.971"></a>
+<span class="sourceLineNo">972</span><a id="line.972">        // エージェント表示の ON/OFF</a>
+<span class="sourceLineNo">973</span><a id="line.973">        CheckBox showAgentsCheckBox = new CheckBox("Show agents");</a>
+<span class="sourceLineNo">974</span><a id="line.974">        showAgentsCheckBox.setSelected(true);</a>
+<span class="sourceLineNo">975</span><a id="line.975">        showAgentsCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">976</span><a id="line.976">            panel.setShowAgents(newValue);</a>
+<span class="sourceLineNo">977</span><a id="line.977">        });</a>
+<span class="sourceLineNo">978</span><a id="line.978"></a>
+<span class="sourceLineNo">979</span><a id="line.979">        FlowPane showAgentPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">980</span><a id="line.980">        showAgentPanel.getChildren().addAll(showAgentsCheckBox);</a>
+<span class="sourceLineNo">981</span><a id="line.981">        checkboxPanel.getChildren().add(showAgentPanel);</a>
+<span class="sourceLineNo">982</span><a id="line.982"></a>
+<span class="sourceLineNo">983</span><a id="line.983">        // ポリゴン表示の ON/OFF</a>
+<span class="sourceLineNo">984</span><a id="line.984">        CheckBox showPolygonCheckBox = new CheckBox("Show polygons");</a>
+<span class="sourceLineNo">985</span><a id="line.985">        showPolygonCheckBox.setSelected(launcher.isShow3dPolygon() &amp;&amp; (! panel.getPolygonLinks().isEmpty() || ! networkMap.getPolygons().isEmpty()));</a>
+<span class="sourceLineNo">986</span><a id="line.986">        showPolygonCheckBox.setDisable(panel.getPolygonLinks().isEmpty() &amp;&amp; networkMap.getPolygons().isEmpty());</a>
+<span class="sourceLineNo">987</span><a id="line.987">        showPolygonCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">988</span><a id="line.988">            panel.setShow3dPolygon(newValue);</a>
+<span class="sourceLineNo">989</span><a id="line.989">        });</a>
+<span class="sourceLineNo">990</span><a id="line.990"></a>
+<span class="sourceLineNo">991</span><a id="line.991">        // 海面表示の ON/OFF</a>
+<span class="sourceLineNo">992</span><a id="line.992">        CheckBox showTheSeaCheckBox = new CheckBox("Show the sea");</a>
+<span class="sourceLineNo">993</span><a id="line.993">        showTheSeaCheckBox.setSelected(theSeaEnabled &amp;&amp; launcher.isShowTheSea());</a>
+<span class="sourceLineNo">994</span><a id="line.994">        showTheSeaCheckBox.setDisable(! theSeaEnabled);</a>
+<span class="sourceLineNo">995</span><a id="line.995">        showTheSeaCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">996</span><a id="line.996">            panel.setShowTheSea(newValue);</a>
+<span class="sourceLineNo">997</span><a id="line.997">        });</a>
+<span class="sourceLineNo">998</span><a id="line.998"></a>
+<span class="sourceLineNo">999</span><a id="line.999">        FlowPane showPolygonPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">1000</span><a id="line.1000">        showPolygonPanel.getChildren().addAll(showPolygonCheckBox, showTheSeaCheckBox);</a>
+<span class="sourceLineNo">1001</span><a id="line.1001">        checkboxPanel.getChildren().add(showPolygonPanel);</a>
+<span class="sourceLineNo">1002</span><a id="line.1002"></a>
+<span class="sourceLineNo">1003</span><a id="line.1003">        // 背景地図表示の ON/OFF</a>
+<span class="sourceLineNo">1004</span><a id="line.1004">        CheckBox showBackgroundMapCheckBox = new CheckBox("Show background map");</a>
+<span class="sourceLineNo">1005</span><a id="line.1005">        showBackgroundMapCheckBox.setSelected(backgroundMapEnabled &amp;&amp; launcher.isShowBackgroundMap());</a>
+<span class="sourceLineNo">1006</span><a id="line.1006">        showBackgroundMapCheckBox.setDisable(! backgroundMapEnabled);</a>
+<span class="sourceLineNo">1007</span><a id="line.1007">        showBackgroundMapCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">1008</span><a id="line.1008">            panel.setShowBackgroundMap(newValue);</a>
+<span class="sourceLineNo">1009</span><a id="line.1009">        });</a>
+<span class="sourceLineNo">1010</span><a id="line.1010">        checkboxPanel.getChildren().add(showBackgroundMapCheckBox);</a>
+<span class="sourceLineNo">1011</span><a id="line.1011"></a>
+<span class="sourceLineNo">1012</span><a id="line.1012">        // スクリーンショットを撮る</a>
+<span class="sourceLineNo">1013</span><a id="line.1013">        record_snapshots.setSelected(launcher.isRecordSimulationScreen());</a>
+<span class="sourceLineNo">1014</span><a id="line.1014">        record_snapshots.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">1015</span><a id="line.1015">            launcher.setRecordSimulationScreen(newValue);</a>
+<span class="sourceLineNo">1016</span><a id="line.1016">        });</a>
+<span class="sourceLineNo">1017</span><a id="line.1017">        checkboxPanel.getChildren().add(record_snapshots);</a>
+<span class="sourceLineNo">1018</span><a id="line.1018"></a>
+<span class="sourceLineNo">1019</span><a id="line.1019">        // 歩行速度に応じてエージェントの色を変える</a>
+<span class="sourceLineNo">1020</span><a id="line.1020">        CheckBox change_agent_color_depending_on_speed_cb = new CheckBox("Change agent color depending on speed");</a>
+<span class="sourceLineNo">1021</span><a id="line.1021">        change_agent_color_depending_on_speed_cb.setSelected(launcher.isChangeAgentColorDependingOnSpeed());</a>
+<span class="sourceLineNo">1022</span><a id="line.1022">        change_agent_color_depending_on_speed_cb.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">1023</span><a id="line.1023">            panel.setChangeAgentColorDependingOnSpeed(newValue);</a>
+<span class="sourceLineNo">1024</span><a id="line.1024">            panel.updateAgentsColor();</a>
+<span class="sourceLineNo">1025</span><a id="line.1025">        });</a>
+<span class="sourceLineNo">1026</span><a id="line.1026">        checkboxPanel.getChildren().add(change_agent_color_depending_on_speed_cb);</a>
+<span class="sourceLineNo">1027</span><a id="line.1027"></a>
+<span class="sourceLineNo">1028</span><a id="line.1028">        // シミュレーションビュー上に進捗状況のテキストを重ねて表示する。及び表示位置の選択</a>
+<span class="sourceLineNo">1029</span><a id="line.1029"></a>
+<span class="sourceLineNo">1030</span><a id="line.1030">        boolean showStatus = launcher.isShowStatus();</a>
+<span class="sourceLineNo">1031</span><a id="line.1031">        final CheckBox show_status_cb = new CheckBox("Show status");</a>
+<span class="sourceLineNo">1032</span><a id="line.1032">        final RadioButton top_rb = new RadioButton("Top");</a>
+<span class="sourceLineNo">1033</span><a id="line.1033">        final RadioButton bottom_rb = new RadioButton("Bottom");</a>
+<span class="sourceLineNo">1034</span><a id="line.1034">        show_status_cb.setSelected(showStatus);</a>
+<span class="sourceLineNo">1035</span><a id="line.1035">        show_status_cb.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">1036</span><a id="line.1036">            panel.setShowStatus(newValue);</a>
+<span class="sourceLineNo">1037</span><a id="line.1037">            top_rb.setDisable(! newValue);</a>
+<span class="sourceLineNo">1038</span><a id="line.1038">            bottom_rb.setDisable(! newValue);</a>
+<span class="sourceLineNo">1039</span><a id="line.1039">        });</a>
+<span class="sourceLineNo">1040</span><a id="line.1040"></a>
+<span class="sourceLineNo">1041</span><a id="line.1041">        ToggleGroup group = new ToggleGroup();</a>
+<span class="sourceLineNo">1042</span><a id="line.1042">        String showStatusPosition = launcher.getShowStatusPosition().toLowerCase();</a>
+<span class="sourceLineNo">1043</span><a id="line.1043"></a>
+<span class="sourceLineNo">1044</span><a id="line.1044">        top_rb.setSelected(showStatusPosition.equals("top"));</a>
+<span class="sourceLineNo">1045</span><a id="line.1045">        top_rb.setDisable(! showStatus);</a>
+<span class="sourceLineNo">1046</span><a id="line.1046">        top_rb.setToggleGroup(group);</a>
+<span class="sourceLineNo">1047</span><a id="line.1047">        top_rb.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1048</span><a id="line.1048">            panel.setShowStatusPosition("top");</a>
+<span class="sourceLineNo">1049</span><a id="line.1049">        });</a>
+<span class="sourceLineNo">1050</span><a id="line.1050"></a>
+<span class="sourceLineNo">1051</span><a id="line.1051">        bottom_rb.setSelected(! showStatusPosition.equals("top"));</a>
+<span class="sourceLineNo">1052</span><a id="line.1052">        bottom_rb.setDisable(! showStatus);</a>
+<span class="sourceLineNo">1053</span><a id="line.1053">        bottom_rb.setToggleGroup(group);</a>
+<span class="sourceLineNo">1054</span><a id="line.1054">        bottom_rb.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1055</span><a id="line.1055">            panel.setShowStatusPosition("bottom");</a>
+<span class="sourceLineNo">1056</span><a id="line.1056">        });</a>
+<span class="sourceLineNo">1057</span><a id="line.1057"></a>
+<span class="sourceLineNo">1058</span><a id="line.1058">        // AIST ロゴの表示</a>
+<span class="sourceLineNo">1059</span><a id="line.1059">        CheckBox show_logo_cb = new CheckBox("Show logo");</a>
+<span class="sourceLineNo">1060</span><a id="line.1060">        show_logo_cb.setSelected(launcher.isShowLogo());</a>
+<span class="sourceLineNo">1061</span><a id="line.1061">        show_logo_cb.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">1062</span><a id="line.1062">            panel.setShowLogo(newValue);</a>
+<span class="sourceLineNo">1063</span><a id="line.1063">        });</a>
+<span class="sourceLineNo">1064</span><a id="line.1064"></a>
+<span class="sourceLineNo">1065</span><a id="line.1065">        FlowPane showStatusPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">1066</span><a id="line.1066">        showStatusPanel.getChildren().addAll(show_status_cb, top_rb, bottom_rb, new Label(" "), show_logo_cb);</a>
+<span class="sourceLineNo">1067</span><a id="line.1067">        checkboxPanel.getChildren().add(showStatusPanel);</a>
+<span class="sourceLineNo">1068</span><a id="line.1068"></a>
+<span class="sourceLineNo">1069</span><a id="line.1069">        // 表示の更新が完了するのを待ってから次のステップに進む</a>
+<span class="sourceLineNo">1070</span><a id="line.1070">        viewSynchronizedCheckBox.setSelected(true);</a>
+<span class="sourceLineNo">1071</span><a id="line.1071">        checkboxPanel.getChildren().add(viewSynchronizedCheckBox);</a>
+<span class="sourceLineNo">1072</span><a id="line.1072"></a>
+<span class="sourceLineNo">1073</span><a id="line.1073">        // シミュレーション終了と同時にプログラムを終了する</a>
+<span class="sourceLineNo">1074</span><a id="line.1074">        exit_with_simulation_finished_cb.setSelected(launcher.isExitWithSimulationFinished());</a>
+<span class="sourceLineNo">1075</span><a id="line.1075">        exit_with_simulation_finished_cb.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">1076</span><a id="line.1076">            launcher.setExitWithSimulationFinished(newValue);</a>
+<span class="sourceLineNo">1077</span><a id="line.1077">        });</a>
+<span class="sourceLineNo">1078</span><a id="line.1078">        checkboxPanel.getChildren().add(exit_with_simulation_finished_cb);</a>
+<span class="sourceLineNo">1079</span><a id="line.1079"></a>
+<span class="sourceLineNo">1080</span><a id="line.1080">        // Centering with scaling の際にマージンを加える</a>
+<span class="sourceLineNo">1081</span><a id="line.1081">        CheckBox marginAddedCheckBox = new CheckBox("Add centering margin");</a>
+<span class="sourceLineNo">1082</span><a id="line.1082">        marginAddedCheckBox.setSelected(panel.isMarginAdded());</a>
+<span class="sourceLineNo">1083</span><a id="line.1083">        marginAddedCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">1084</span><a id="line.1084">            panel.setMarginAdded(newValue);</a>
+<span class="sourceLineNo">1085</span><a id="line.1085">        });</a>
+<span class="sourceLineNo">1086</span><a id="line.1086">        checkboxPanel.getChildren().add(marginAddedCheckBox);</a>
+<span class="sourceLineNo">1087</span><a id="line.1087"></a>
+<span class="sourceLineNo">1088</span><a id="line.1088">        // ロケーションボタン</a>
+<span class="sourceLineNo">1089</span><a id="line.1089"></a>
+<span class="sourceLineNo">1090</span><a id="line.1090">        centerinButton.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1091</span><a id="line.1091">            panel.centering(false, panel.getWidth(), panel.getHeight());</a>
+<span class="sourceLineNo">1092</span><a id="line.1092">        });</a>
+<span class="sourceLineNo">1093</span><a id="line.1093"></a>
+<span class="sourceLineNo">1094</span><a id="line.1094">        centerinWithScalingButton.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1095</span><a id="line.1095">            panel.centering(true, panel.getWidth(), panel.getHeight());</a>
+<span class="sourceLineNo">1096</span><a id="line.1096">        });</a>
+<span class="sourceLineNo">1097</span><a id="line.1097"></a>
+<span class="sourceLineNo">1098</span><a id="line.1098">        FlowPane locationPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">1099</span><a id="line.1099">        locationPanel.setPadding(new Insets(0, 0, 8, 0));</a>
+<span class="sourceLineNo">1100</span><a id="line.1100">        locationPanel.setAlignment(Pos.CENTER);</a>
+<span class="sourceLineNo">1101</span><a id="line.1101">        locationPanel.getChildren().addAll(centerinButton, centerinWithScalingButton);</a>
+<span class="sourceLineNo">1102</span><a id="line.1102"></a>
+<span class="sourceLineNo">1103</span><a id="line.1103">        BorderPane viewPane = new BorderPane();</a>
+<span class="sourceLineNo">1104</span><a id="line.1104">        viewPane.setPadding(new Insets(8));</a>
+<span class="sourceLineNo">1105</span><a id="line.1105">        viewPane.setCenter(checkboxPanel);</a>
+<span class="sourceLineNo">1106</span><a id="line.1106">        viewPane.setBottom(locationPanel);</a>
+<span class="sourceLineNo">1107</span><a id="line.1107"></a>
+<span class="sourceLineNo">1108</span><a id="line.1108">        return viewPane;</a>
+<span class="sourceLineNo">1109</span><a id="line.1109">    }</a>
+<span class="sourceLineNo">1110</span><a id="line.1110"></a>
+<span class="sourceLineNo">1111</span><a id="line.1111">    /**</a>
+<span class="sourceLineNo">1112</span><a id="line.1112">     * Camera タブを作成する</a>
+<span class="sourceLineNo">1113</span><a id="line.1113">     */</a>
+<span class="sourceLineNo">1114</span><a id="line.1114">    private Pane createCameraPane() {</a>
+<span class="sourceLineNo">1115</span><a id="line.1115">        // Replay ON/OFF</a>
+<span class="sourceLineNo">1116</span><a id="line.1116"></a>
+<span class="sourceLineNo">1117</span><a id="line.1117">        if (cameraworkFile != null) {</a>
+<span class="sourceLineNo">1118</span><a id="line.1118">            File file = new File(cameraworkFile);</a>
+<span class="sourceLineNo">1119</span><a id="line.1119">            replayCheckBox.setText("Replay - " + file.getName());</a>
+<span class="sourceLineNo">1120</span><a id="line.1120">            replayCheckBox.setSelected(true);</a>
+<span class="sourceLineNo">1121</span><a id="line.1121">            Platform.runLater(() -&gt; {</a>
+<span class="sourceLineNo">1122</span><a id="line.1122">                setViewpointChangeInhibited(true);</a>
+<span class="sourceLineNo">1123</span><a id="line.1123">            });</a>
+<span class="sourceLineNo">1124</span><a id="line.1124">        } else {</a>
+<span class="sourceLineNo">1125</span><a id="line.1125">            replayCheckBox.setText("Replay");</a>
+<span class="sourceLineNo">1126</span><a id="line.1126">            replayCheckBox.setDisable(true);</a>
+<span class="sourceLineNo">1127</span><a id="line.1127">        }</a>
+<span class="sourceLineNo">1128</span><a id="line.1128">        replayCheckBox.selectedProperty().addListener((ov, oldValue, newValue) -&gt; {</a>
+<span class="sourceLineNo">1129</span><a id="line.1129">            if (newValue) {</a>
+<span class="sourceLineNo">1130</span><a id="line.1130">                forceUpdateCamerawork = true;</a>
+<span class="sourceLineNo">1131</span><a id="line.1131">                setViewpointChangeInhibited(true);</a>
+<span class="sourceLineNo">1132</span><a id="line.1132">            } else {</a>
+<span class="sourceLineNo">1133</span><a id="line.1133">                setViewpointChangeInhibited(false);</a>
+<span class="sourceLineNo">1134</span><a id="line.1134">            }</a>
+<span class="sourceLineNo">1135</span><a id="line.1135">        });</a>
+<span class="sourceLineNo">1136</span><a id="line.1136"></a>
+<span class="sourceLineNo">1137</span><a id="line.1137">        FlowPane replayPanel = new FlowPane();</a>
+<span class="sourceLineNo">1138</span><a id="line.1138">        replayPanel.setPadding(new Insets(8, 0, 8, 4));</a>
+<span class="sourceLineNo">1139</span><a id="line.1139">        replayPanel.getChildren().add(replayCheckBox);</a>
+<span class="sourceLineNo">1140</span><a id="line.1140"></a>
+<span class="sourceLineNo">1141</span><a id="line.1141">        // カメラワークデータ表示</a>
+<span class="sourceLineNo">1142</span><a id="line.1142"></a>
+<span class="sourceLineNo">1143</span><a id="line.1143">        cameraworkArea.setEditable(false);</a>
+<span class="sourceLineNo">1144</span><a id="line.1144">        cameraworkArea.setWrapText(true);</a>
+<span class="sourceLineNo">1145</span><a id="line.1145">        if (cameraworkFile != null) {</a>
+<span class="sourceLineNo">1146</span><a id="line.1146">            for (CameraShot cameraShot : camerawork) {</a>
+<span class="sourceLineNo">1147</span><a id="line.1147">                cameraworkArea.appendText(cameraShot.toString());</a>
+<span class="sourceLineNo">1148</span><a id="line.1148">                cameraworkArea.appendText("\n");</a>
+<span class="sourceLineNo">1149</span><a id="line.1149">            }</a>
+<span class="sourceLineNo">1150</span><a id="line.1150">        }</a>
+<span class="sourceLineNo">1151</span><a id="line.1151"></a>
+<span class="sourceLineNo">1152</span><a id="line.1152">        // コントロールボタン</a>
+<span class="sourceLineNo">1153</span><a id="line.1153"></a>
+<span class="sourceLineNo">1154</span><a id="line.1154">        recordButton.setTooltip(new Tooltip("Add current camera position to camerawork list"));</a>
+<span class="sourceLineNo">1155</span><a id="line.1155">        recordButton.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1156</span><a id="line.1156">            recordCamerawork();</a>
+<span class="sourceLineNo">1157</span><a id="line.1157">        });</a>
+<span class="sourceLineNo">1158</span><a id="line.1158"></a>
+<span class="sourceLineNo">1159</span><a id="line.1159">        loadCameraworkButton.setTooltip(new Tooltip("Load camerawork list."));</a>
+<span class="sourceLineNo">1160</span><a id="line.1160">        loadCameraworkButton.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1161</span><a id="line.1161">            FileChooser fileChooser = new FileChooser();</a>
+<span class="sourceLineNo">1162</span><a id="line.1162">            fileChooser.setTitle("Open Camerawork File");</a>
+<span class="sourceLineNo">1163</span><a id="line.1163">            // TODO: fileChooser.setInitialDirectory(プロパティファイルのディレクトリ);</a>
+<span class="sourceLineNo">1164</span><a id="line.1164">            fileChooser.getExtensionFilters().addAll(</a>
+<span class="sourceLineNo">1165</span><a id="line.1165">                    new ExtensionFilter("JSON Files", "*.json"),</a>
+<span class="sourceLineNo">1166</span><a id="line.1166">                    new ExtensionFilter("All Files", "*.*"));</a>
+<span class="sourceLineNo">1167</span><a id="line.1167">            File file = fileChooser.showOpenDialog(frame);</a>
+<span class="sourceLineNo">1168</span><a id="line.1168">            if (file == null) {</a>
+<span class="sourceLineNo">1169</span><a id="line.1169">                return;</a>
+<span class="sourceLineNo">1170</span><a id="line.1170">            }</a>
+<span class="sourceLineNo">1171</span><a id="line.1171">            try {</a>
+<span class="sourceLineNo">1172</span><a id="line.1172">                loadCamerawork(file.getCanonicalPath());</a>
+<span class="sourceLineNo">1173</span><a id="line.1173">            } catch (IOException ex) {</a>
+<span class="sourceLineNo">1174</span><a id="line.1174">                Itk.quitWithStackTrace(ex) ;</a>
+<span class="sourceLineNo">1175</span><a id="line.1175">            }</a>
+<span class="sourceLineNo">1176</span><a id="line.1176">            // TODO: 相対ディレクトリパスを付加する</a>
+<span class="sourceLineNo">1177</span><a id="line.1177">            replayCheckBox.setText("Replay - " + file.getName());</a>
+<span class="sourceLineNo">1178</span><a id="line.1178">            replayCheckBox.setDisable(false);</a>
+<span class="sourceLineNo">1179</span><a id="line.1179">            cameraworkArea.setText("");</a>
+<span class="sourceLineNo">1180</span><a id="line.1180">            for (CameraShot cameraShot : camerawork) {</a>
+<span class="sourceLineNo">1181</span><a id="line.1181">                cameraworkArea.appendText(cameraShot.toString());</a>
+<span class="sourceLineNo">1182</span><a id="line.1182">                cameraworkArea.appendText("\n");</a>
+<span class="sourceLineNo">1183</span><a id="line.1183">            }</a>
+<span class="sourceLineNo">1184</span><a id="line.1184">        });</a>
+<span class="sourceLineNo">1185</span><a id="line.1185"></a>
+<span class="sourceLineNo">1186</span><a id="line.1186">        saveCameraworkButton.setTooltip(new Tooltip("Save current camerawork list."));</a>
+<span class="sourceLineNo">1187</span><a id="line.1187">        saveCameraworkButton.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1188</span><a id="line.1188">            saveCamerawork();</a>
+<span class="sourceLineNo">1189</span><a id="line.1189">        });</a>
+<span class="sourceLineNo">1190</span><a id="line.1190"></a>
+<span class="sourceLineNo">1191</span><a id="line.1191">        FlowPane controlButtonPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">1192</span><a id="line.1192">        controlButtonPanel.setPadding(new Insets(8, 0, 8, 0));</a>
+<span class="sourceLineNo">1193</span><a id="line.1193">        controlButtonPanel.setAlignment(Pos.CENTER);</a>
+<span class="sourceLineNo">1194</span><a id="line.1194">        controlButtonPanel.getChildren().addAll(recordButton, loadCameraworkButton, saveCameraworkButton);</a>
+<span class="sourceLineNo">1195</span><a id="line.1195"></a>
+<span class="sourceLineNo">1196</span><a id="line.1196">        BorderPane cameraPane = new BorderPane();</a>
+<span class="sourceLineNo">1197</span><a id="line.1197">        cameraPane.setPadding(new Insets(8));</a>
+<span class="sourceLineNo">1198</span><a id="line.1198">        cameraPane.setTop(replayPanel);</a>
+<span class="sourceLineNo">1199</span><a id="line.1199">        cameraPane.setCenter(cameraworkArea);</a>
+<span class="sourceLineNo">1200</span><a id="line.1200">        cameraPane.setBottom(controlButtonPanel);</a>
+<span class="sourceLineNo">1201</span><a id="line.1201"></a>
+<span class="sourceLineNo">1202</span><a id="line.1202">        return cameraPane;</a>
+<span class="sourceLineNo">1203</span><a id="line.1203">    }</a>
+<span class="sourceLineNo">1204</span><a id="line.1204"></a>
+<span class="sourceLineNo">1205</span><a id="line.1205">    /**</a>
+<span class="sourceLineNo">1206</span><a id="line.1206">     * Status タブを作成する</a>
+<span class="sourceLineNo">1207</span><a id="line.1207">     */</a>
+<span class="sourceLineNo">1208</span><a id="line.1208">    private Pane createStatusPane() {</a>
+<span class="sourceLineNo">1209</span><a id="line.1209">        // 調査対象選択ラジオボタンパネル</a>
+<span class="sourceLineNo">1210</span><a id="line.1210"></a>
+<span class="sourceLineNo">1211</span><a id="line.1211">        ToggleGroup group = new ToggleGroup();</a>
+<span class="sourceLineNo">1212</span><a id="line.1212"></a>
+<span class="sourceLineNo">1213</span><a id="line.1213">        RadioButton noEffectRb = new RadioButton("None");</a>
+<span class="sourceLineNo">1214</span><a id="line.1214">        noEffectRb.setSelected(true);</a>
+<span class="sourceLineNo">1215</span><a id="line.1215">        noEffectRb.setToggleGroup(group);</a>
+<span class="sourceLineNo">1216</span><a id="line.1216">        noEffectRb.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1217</span><a id="line.1217">            panel.hoverOff();</a>
+<span class="sourceLineNo">1218</span><a id="line.1218">            panel.setHoverMode("None");</a>
+<span class="sourceLineNo">1219</span><a id="line.1219">        });</a>
+<span class="sourceLineNo">1220</span><a id="line.1220"></a>
+<span class="sourceLineNo">1221</span><a id="line.1221">        RadioButton nodeRb = new RadioButton("Node");</a>
+<span class="sourceLineNo">1222</span><a id="line.1222">        nodeRb.setSelected(false);</a>
+<span class="sourceLineNo">1223</span><a id="line.1223">        nodeRb.setToggleGroup(group);</a>
+<span class="sourceLineNo">1224</span><a id="line.1224">        nodeRb.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1225</span><a id="line.1225">            panel.hoverOff();</a>
+<span class="sourceLineNo">1226</span><a id="line.1226">            panel.setHoverMode("Node");</a>
+<span class="sourceLineNo">1227</span><a id="line.1227">        });</a>
+<span class="sourceLineNo">1228</span><a id="line.1228"></a>
+<span class="sourceLineNo">1229</span><a id="line.1229">        RadioButton linkRb = new RadioButton("Link");</a>
+<span class="sourceLineNo">1230</span><a id="line.1230">        linkRb.setSelected(false);</a>
+<span class="sourceLineNo">1231</span><a id="line.1231">        linkRb.setToggleGroup(group);</a>
+<span class="sourceLineNo">1232</span><a id="line.1232">        linkRb.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1233</span><a id="line.1233">            panel.hoverOff();</a>
+<span class="sourceLineNo">1234</span><a id="line.1234">            panel.setHoverMode("Link");</a>
+<span class="sourceLineNo">1235</span><a id="line.1235">        });</a>
+<span class="sourceLineNo">1236</span><a id="line.1236"></a>
+<span class="sourceLineNo">1237</span><a id="line.1237">        RadioButton areaRb = new RadioButton("Area");</a>
+<span class="sourceLineNo">1238</span><a id="line.1238">        areaRb.setSelected(false);</a>
+<span class="sourceLineNo">1239</span><a id="line.1239">        areaRb.setToggleGroup(group);</a>
+<span class="sourceLineNo">1240</span><a id="line.1240">        areaRb.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1241</span><a id="line.1241">            panel.hoverOff();</a>
+<span class="sourceLineNo">1242</span><a id="line.1242">            panel.setHoverMode("Area");</a>
+<span class="sourceLineNo">1243</span><a id="line.1243">        });</a>
+<span class="sourceLineNo">1244</span><a id="line.1244">        areaRb.setDisable(launcher.getPollutionFile() == null);</a>
+<span class="sourceLineNo">1245</span><a id="line.1245"></a>
+<span class="sourceLineNo">1246</span><a id="line.1246">        RadioButton agentRb = new RadioButton("Agent");</a>
+<span class="sourceLineNo">1247</span><a id="line.1247">        agentRb.setSelected(false);</a>
+<span class="sourceLineNo">1248</span><a id="line.1248">        agentRb.setToggleGroup(group);</a>
+<span class="sourceLineNo">1249</span><a id="line.1249">        agentRb.setOnAction(e -&gt; {</a>
+<span class="sourceLineNo">1250</span><a id="line.1250">            panel.hoverOff();</a>
+<span class="sourceLineNo">1251</span><a id="line.1251">            panel.setHoverMode("Agent");</a>
+<span class="sourceLineNo">1252</span><a id="line.1252">        });</a>
+<span class="sourceLineNo">1253</span><a id="line.1253"></a>
+<span class="sourceLineNo">1254</span><a id="line.1254">        FlowPane targetPanel = new FlowPane(12, 0);</a>
+<span class="sourceLineNo">1255</span><a id="line.1255">        targetPanel.setPadding(new Insets(8, 0, 8, 0));</a>
+<span class="sourceLineNo">1256</span><a id="line.1256">        targetPanel.setAlignment(Pos.CENTER);</a>
+<span class="sourceLineNo">1257</span><a id="line.1257">        targetPanel.getChildren().addAll(new Label("Mode: "), noEffectRb, nodeRb, linkRb, areaRb, agentRb);</a>
+<span class="sourceLineNo">1258</span><a id="line.1258"></a>
+<span class="sourceLineNo">1259</span><a id="line.1259">        Label attentionLabel = new Label("Attention: the display gets blurred when \"Link\" is selected.");</a>
+<span class="sourceLineNo">1260</span><a id="line.1260">        attentionLabel.setTextFill(Color.RED);</a>
+<span class="sourceLineNo">1261</span><a id="line.1261"></a>
+<span class="sourceLineNo">1262</span><a id="line.1262">        FlowPane labelPanel = new FlowPane();</a>
+<span class="sourceLineNo">1263</span><a id="line.1263">        labelPanel.setPadding(new Insets(0, 0, 8, 0));</a>
+<span class="sourceLineNo">1264</span><a id="line.1264">        labelPanel.setAlignment(Pos.CENTER);</a>
+<span class="sourceLineNo">1265</span><a id="line.1265">        labelPanel.getChildren().add(attentionLabel);</a>
+<span class="sourceLineNo">1266</span><a id="line.1266"></a>
+<span class="sourceLineNo">1267</span><a id="line.1267">        VBox _targetPanel = new VBox();</a>
+<span class="sourceLineNo">1268</span><a id="line.1268">        _targetPanel.getChildren().addAll(targetPanel, labelPanel);</a>
+<span class="sourceLineNo">1269</span><a id="line.1269"></a>
+<span class="sourceLineNo">1270</span><a id="line.1270">        // 情報表示エリア</a>
+<span class="sourceLineNo">1271</span><a id="line.1271"></a>
+<span class="sourceLineNo">1272</span><a id="line.1272">        indicationArea.setEditable(false);</a>
+<span class="sourceLineNo">1273</span><a id="line.1273">        indicationArea.setWrapText(true);</a>
+<span class="sourceLineNo">1274</span><a id="line.1274"></a>
+<span class="sourceLineNo">1275</span><a id="line.1275">        BorderPane statusPane = new BorderPane();</a>
+<span class="sourceLineNo">1276</span><a id="line.1276">        statusPane.setPadding(new Insets(8, 8, 16, 8));</a>
+<span class="sourceLineNo">1277</span><a id="line.1277">        statusPane.setTop(_targetPanel);</a>
+<span class="sourceLineNo">1278</span><a id="line.1278">        statusPane.setCenter(indicationArea);</a>
+<span class="sourceLineNo">1279</span><a id="line.1279"></a>
+<span class="sourceLineNo">1280</span><a id="line.1280">        return statusPane;</a>
+<span class="sourceLineNo">1281</span><a id="line.1281">    }</a>
+<span class="sourceLineNo">1282</span><a id="line.1282"></a>
+<span class="sourceLineNo">1283</span><a id="line.1283">    /**</a>
+<span class="sourceLineNo">1284</span><a id="line.1284">     * シミュレーションパネルでピッキング中のオブジェクトがクリックされた</a>
+<span class="sourceLineNo">1285</span><a id="line.1285">     */</a>
+<span class="sourceLineNo">1286</span><a id="line.1286">    public void update(Observable o, Object arg) {</a>
+<span class="sourceLineNo">1287</span><a id="line.1287">        if (arg == null) {</a>
+<span class="sourceLineNo">1288</span><a id="line.1288">            Itk.logWarn("null received.") ;</a>
+<span class="sourceLineNo">1289</span><a id="line.1289">            return;</a>
+<span class="sourceLineNo">1290</span><a id="line.1290">        }</a>
+<span class="sourceLineNo">1291</span><a id="line.1291">        OBNode obNode = (OBNode)arg;</a>
+<span class="sourceLineNo">1292</span><a id="line.1292">        String text = "";</a>
+<span class="sourceLineNo">1293</span><a id="line.1293">        NType type = obNode.getNodeType();</a>
+<span class="sourceLineNo">1294</span><a id="line.1294">        switch (type) {</a>
+<span class="sourceLineNo">1295</span><a id="line.1295">        case NODE:</a>
+<span class="sourceLineNo">1296</span><a id="line.1296">        case LINK:</a>
+<span class="sourceLineNo">1297</span><a id="line.1297">        case AGENT:</a>
+<span class="sourceLineNo">1298</span><a id="line.1298">        case AREA:</a>
+<span class="sourceLineNo">1299</span><a id="line.1299">            text = obNode.getStatusText();</a>
+<span class="sourceLineNo">1300</span><a id="line.1300">            break;</a>
+<span class="sourceLineNo">1301</span><a id="line.1301">        default:</a>
+<span class="sourceLineNo">1302</span><a id="line.1302">            Itk.logWarn("Illegal type object",obNode.toString());</a>
+<span class="sourceLineNo">1303</span><a id="line.1303">            break;</a>
+<span class="sourceLineNo">1304</span><a id="line.1304">        }</a>
+<span class="sourceLineNo">1305</span><a id="line.1305">        indicationArea.setText(text);</a>
+<span class="sourceLineNo">1306</span><a id="line.1306">        Platform.runLater(() -&gt; {</a>
+<span class="sourceLineNo">1307</span><a id="line.1307">            tabPane.getSelectionModel().select(statusTab);</a>
+<span class="sourceLineNo">1308</span><a id="line.1308">        });</a>
+<span class="sourceLineNo">1309</span><a id="line.1309">    }</a>
+<span class="sourceLineNo">1310</span><a id="line.1310"></a>
+<span class="sourceLineNo">1311</span><a id="line.1311">    /**</a>
+<span class="sourceLineNo">1312</span><a id="line.1312">     * a shot of camerawork</a>
+<span class="sourceLineNo">1313</span><a id="line.1313">     */</a>
+<span class="sourceLineNo">1314</span><a id="line.1314">    public class CameraShot {</a>
+<span class="sourceLineNo">1315</span><a id="line.1315">        public double time;</a>
+<span class="sourceLineNo">1316</span><a id="line.1316">        public double agentSize;</a>
+<span class="sourceLineNo">1317</span><a id="line.1317">        public Point3D translate;</a>
+<span class="sourceLineNo">1318</span><a id="line.1318">        public Point3D pivot;</a>
+<span class="sourceLineNo">1319</span><a id="line.1319">        public double rotateX;</a>
+<span class="sourceLineNo">1320</span><a id="line.1320">        public double rotateZ;</a>
+<span class="sourceLineNo">1321</span><a id="line.1321">        public double zoom;</a>
+<span class="sourceLineNo">1322</span><a id="line.1322">        public double[] matrix = new double[16];</a>
+<span class="sourceLineNo">1323</span><a id="line.1323"></a>
+<span class="sourceLineNo">1324</span><a id="line.1324">        public CameraShot(double time, double agentSize, Point3D translate, Point3D pivot, double rotateX, double rotateZ, double zoom) {</a>
+<span class="sourceLineNo">1325</span><a id="line.1325">            this.time = time;</a>
+<span class="sourceLineNo">1326</span><a id="line.1326">            this.agentSize = agentSize;</a>
+<span class="sourceLineNo">1327</span><a id="line.1327">            this.translate = new Point3D(translate.getX(), translate.getY(), translate.getZ());</a>
+<span class="sourceLineNo">1328</span><a id="line.1328">            this.pivot = new Point3D(pivot.getX(), pivot.getY(), pivot.getZ());</a>
+<span class="sourceLineNo">1329</span><a id="line.1329">            this.rotateX = rotateX;</a>
+<span class="sourceLineNo">1330</span><a id="line.1330">            this.rotateZ = rotateZ;</a>
+<span class="sourceLineNo">1331</span><a id="line.1331">            this.zoom = zoom;</a>
+<span class="sourceLineNo">1332</span><a id="line.1332">        }</a>
+<span class="sourceLineNo">1333</span><a id="line.1333"></a>
+<span class="sourceLineNo">1334</span><a id="line.1334">        public CameraShot(double time, double agentSize, Translate translate, Point3D pivot, double rotateX, double rotateZ, double zoom) {</a>
+<span class="sourceLineNo">1335</span><a id="line.1335">            this.time = time;</a>
+<span class="sourceLineNo">1336</span><a id="line.1336">            this.agentSize = agentSize;</a>
+<span class="sourceLineNo">1337</span><a id="line.1337">            this.translate = new Point3D(translate.getX(), translate.getY(), translate.getZ());</a>
+<span class="sourceLineNo">1338</span><a id="line.1338">            this.pivot = new Point3D(pivot.getX(), pivot.getY(), pivot.getZ());</a>
+<span class="sourceLineNo">1339</span><a id="line.1339">            this.rotateX = rotateX;</a>
+<span class="sourceLineNo">1340</span><a id="line.1340">            this.rotateZ = rotateZ;</a>
+<span class="sourceLineNo">1341</span><a id="line.1341">            this.zoom = zoom;</a>
+<span class="sourceLineNo">1342</span><a id="line.1342">        }</a>
+<span class="sourceLineNo">1343</span><a id="line.1343"></a>
+<span class="sourceLineNo">1344</span><a id="line.1344">        public CameraShot(Map&lt;String, Object&gt; values) {</a>
+<span class="sourceLineNo">1345</span><a id="line.1345">            time = getDouble(values, "time", 0.0);</a>
+<span class="sourceLineNo">1346</span><a id="line.1346">            agentSize = getDouble(values, "agentSize", launcher.getAgentSize());</a>
+<span class="sourceLineNo">1347</span><a id="line.1347">            translate = new Point3D(getDouble(values, "translateX", 0.0), getDouble(values, "translateY", 0.0), getDouble(values, "translateZ", 0.0));</a>
+<span class="sourceLineNo">1348</span><a id="line.1348">            pivot = new Point3D(getDouble(values, "pivotX", 0.0), getDouble(values, "pivotY", 0.0), getDouble(values, "pivotZ", 0.0));</a>
+<span class="sourceLineNo">1349</span><a id="line.1349">            rotateX = getDouble(values, "rotateX", 0.0);</a>
+<span class="sourceLineNo">1350</span><a id="line.1350">            rotateZ = getDouble(values, "rotateZ", 0.0);</a>
+<span class="sourceLineNo">1351</span><a id="line.1351">            zoom = getDouble(values, "zoom", 1.0);</a>
+<span class="sourceLineNo">1352</span><a id="line.1352">        }</a>
+<span class="sourceLineNo">1353</span><a id="line.1353"></a>
+<span class="sourceLineNo">1354</span><a id="line.1354">        public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">1355</span><a id="line.1355">            if (obj == this) {</a>
+<span class="sourceLineNo">1356</span><a id="line.1356">                return true;</a>
+<span class="sourceLineNo">1357</span><a id="line.1357">            } else if (obj == null || ! (obj instanceof CameraShot)) {</a>
+<span class="sourceLineNo">1358</span><a id="line.1358">                return false;</a>
+<span class="sourceLineNo">1359</span><a id="line.1359">            }</a>
+<span class="sourceLineNo">1360</span><a id="line.1360">            return obj.hashCode() == this.hashCode();</a>
+<span class="sourceLineNo">1361</span><a id="line.1361">        }</a>
+<span class="sourceLineNo">1362</span><a id="line.1362"></a>
+<span class="sourceLineNo">1363</span><a id="line.1363">        public int hashCode() {</a>
+<span class="sourceLineNo">1364</span><a id="line.1364">            return toString().hashCode();</a>
+<span class="sourceLineNo">1365</span><a id="line.1365">        }</a>
+<span class="sourceLineNo">1366</span><a id="line.1366"></a>
+<span class="sourceLineNo">1367</span><a id="line.1367">        public double getDouble(Map&lt;String, Object&gt; values, String key, double defaultValue) {</a>
+<span class="sourceLineNo">1368</span><a id="line.1368">            Object object = values.get(key);</a>
+<span class="sourceLineNo">1369</span><a id="line.1369">            if (object != null) {</a>
+<span class="sourceLineNo">1370</span><a id="line.1370">                return Double.parseDouble(object.toString());</a>
+<span class="sourceLineNo">1371</span><a id="line.1371">            }</a>
+<span class="sourceLineNo">1372</span><a id="line.1372">            return defaultValue;</a>
+<span class="sourceLineNo">1373</span><a id="line.1373">        }</a>
+<span class="sourceLineNo">1374</span><a id="line.1374"></a>
+<span class="sourceLineNo">1375</span><a id="line.1375">        public Map&lt;String, Object&gt; getMapObject() {</a>
+<span class="sourceLineNo">1376</span><a id="line.1376">            HashMap&lt;String, Object&gt; map = new HashMap&lt;String, Object&gt;();</a>
+<span class="sourceLineNo">1377</span><a id="line.1377">            map.put("time", new Double(time));</a>
+<span class="sourceLineNo">1378</span><a id="line.1378">            map.put("agentSize", new Double(agentSize));</a>
+<span class="sourceLineNo">1379</span><a id="line.1379">            map.put("translateX", new Double(translate.getX()));</a>
+<span class="sourceLineNo">1380</span><a id="line.1380">            map.put("translateY", new Double(translate.getY()));</a>
+<span class="sourceLineNo">1381</span><a id="line.1381">            map.put("translateZ", new Double(translate.getZ()));</a>
+<span class="sourceLineNo">1382</span><a id="line.1382">            map.put("pivotX", new Double(pivot.getX()));</a>
+<span class="sourceLineNo">1383</span><a id="line.1383">            map.put("pivotY", new Double(pivot.getY()));</a>
+<span class="sourceLineNo">1384</span><a id="line.1384">            map.put("pivotZ", new Double(pivot.getZ()));</a>
+<span class="sourceLineNo">1385</span><a id="line.1385">            map.put("rotateX", new Double(rotateX));</a>
+<span class="sourceLineNo">1386</span><a id="line.1386">            map.put("rotateZ", new Double(rotateZ));</a>
+<span class="sourceLineNo">1387</span><a id="line.1387">            map.put("zoom", new Double(zoom));</a>
+<span class="sourceLineNo">1388</span><a id="line.1388">            return map;</a>
+<span class="sourceLineNo">1389</span><a id="line.1389">        }</a>
+<span class="sourceLineNo">1390</span><a id="line.1390"></a>
+<span class="sourceLineNo">1391</span><a id="line.1391">        public String toString() {</a>
+<span class="sourceLineNo">1392</span><a id="line.1392">            StringBuilder buff = new StringBuilder();</a>
+<span class="sourceLineNo">1393</span><a id="line.1393">            buff.append("time: ").append(time).append(", ");</a>
+<span class="sourceLineNo">1394</span><a id="line.1394">            buff.append("agent_size: ").append(agentSize).append(", ");</a>
+<span class="sourceLineNo">1395</span><a id="line.1395">            buff.append("translate: (").append(translate.getX()).append(", ").append(translate.getY()).append(", ").append(translate.getZ()).append("), ");</a>
+<span class="sourceLineNo">1396</span><a id="line.1396">            buff.append("pivot: (").append(pivot.getX()).append(", ").append(pivot.getY()).append(", ").append(pivot.getZ()).append("), ");</a>
+<span class="sourceLineNo">1397</span><a id="line.1397">            buff.append("rotateX: ").append(rotateX).append(", ");</a>
+<span class="sourceLineNo">1398</span><a id="line.1398">            buff.append("rotateZ: ").append(rotateZ).append(", ");</a>
+<span class="sourceLineNo">1399</span><a id="line.1399">            buff.append("zoom: ").append(zoom);</a>
+<span class="sourceLineNo">1400</span><a id="line.1400">            return buff.toString();</a>
+<span class="sourceLineNo">1401</span><a id="line.1401">        }</a>
+<span class="sourceLineNo">1402</span><a id="line.1402">    }</a>
+<span class="sourceLineNo">1403</span><a id="line.1403"></a>
+<span class="sourceLineNo">1404</span><a id="line.1404">    /**</a>
+<span class="sourceLineNo">1405</span><a id="line.1405">     * カメラワークの記録</a>
+<span class="sourceLineNo">1406</span><a id="line.1406">     */</a>
+<span class="sourceLineNo">1407</span><a id="line.1407">    public void recordCamerawork() {</a>
+<span class="sourceLineNo">1408</span><a id="line.1408">        double currentTime = launcher.getSimulator().currentTime.getRelativeTime();</a>
+<span class="sourceLineNo">1409</span><a id="line.1409">        int lastIndex = camerawork.size() - 1;</a>
+<span class="sourceLineNo">1410</span><a id="line.1410">        if (lastIndex &gt;= 0 &amp;&amp; camerawork.get(lastIndex).time &gt;= currentTime) {</a>
+<span class="sourceLineNo">1411</span><a id="line.1411">            Alert alert = new Alert(AlertType.NONE, "Invalid operation", ButtonType.CLOSE);</a>
+<span class="sourceLineNo">1412</span><a id="line.1412">            alert.initOwner(frame);</a>
+<span class="sourceLineNo">1413</span><a id="line.1413">            alert.setTitle("Warning");</a>
+<span class="sourceLineNo">1414</span><a id="line.1414">            alert.showAndWait();</a>
+<span class="sourceLineNo">1415</span><a id="line.1415">            return;</a>
+<span class="sourceLineNo">1416</span><a id="line.1416">        }</a>
+<span class="sourceLineNo">1417</span><a id="line.1417">        CameraShot cameraShot = new CameraShot(currentTime, getAgentSize(), panel.getTranslate(), panel.getPivotOfScale(), panel.getRotateX(), panel.getRotateZ(), panel.getZoomScale());</a>
+<span class="sourceLineNo">1418</span><a id="line.1418">        camerawork.add(cameraShot);</a>
+<span class="sourceLineNo">1419</span><a id="line.1419">        cameraworkArea.appendText(cameraShot.toString());</a>
+<span class="sourceLineNo">1420</span><a id="line.1420">        cameraworkArea.appendText("\n");</a>
+<span class="sourceLineNo">1421</span><a id="line.1421">    }</a>
+<span class="sourceLineNo">1422</span><a id="line.1422"></a>
+<span class="sourceLineNo">1423</span><a id="line.1423">    /**</a>
+<span class="sourceLineNo">1424</span><a id="line.1424">     * カメラワークデータを読み込む</a>
+<span class="sourceLineNo">1425</span><a id="line.1425">     */</a>
+<span class="sourceLineNo">1426</span><a id="line.1426">    public void loadCamerawork(String filePath) {</a>
+<span class="sourceLineNo">1427</span><a id="line.1427">        File file = new File(filePath);</a>
+<span class="sourceLineNo">1428</span><a id="line.1428">        if (! file.exists()) {</a>
+<span class="sourceLineNo">1429</span><a id="line.1429">            Itk.logError_("Camerawork file does not exist", filePath);</a>
+<span class="sourceLineNo">1430</span><a id="line.1430">            Itk.quitByError() ;</a>
+<span class="sourceLineNo">1431</span><a id="line.1431">        }</a>
+<span class="sourceLineNo">1432</span><a id="line.1432"></a>
+<span class="sourceLineNo">1433</span><a id="line.1433">        Itk.logInfo("Load camerawork file", filePath);</a>
+<span class="sourceLineNo">1434</span><a id="line.1434">        try {</a>
+<span class="sourceLineNo">1435</span><a id="line.1435">            JSON json = new JSON(JSON.Mode.TRADITIONAL);</a>
+<span class="sourceLineNo">1436</span><a id="line.1436">            ArrayList&lt;Map&lt;String, Object&gt;&gt; jsonObject = json.parse(new FileReader(filePath));</a>
+<span class="sourceLineNo">1437</span><a id="line.1437">            camerawork.clear();</a>
+<span class="sourceLineNo">1438</span><a id="line.1438">            for (Map&lt;String, Object&gt; object : jsonObject) {</a>
+<span class="sourceLineNo">1439</span><a id="line.1439">                camerawork.add(new CameraShot(object));</a>
+<span class="sourceLineNo">1440</span><a id="line.1440">            }</a>
+<span class="sourceLineNo">1441</span><a id="line.1441">        } catch (IOException e) {</a>
+<span class="sourceLineNo">1442</span><a id="line.1442">            Itk.quitWithStackTrace(e) ;</a>
+<span class="sourceLineNo">1443</span><a id="line.1443">        }</a>
+<span class="sourceLineNo">1444</span><a id="line.1444">        cameraworkFile = filePath;</a>
+<span class="sourceLineNo">1445</span><a id="line.1445">    }</a>
+<span class="sourceLineNo">1446</span><a id="line.1446"></a>
+<span class="sourceLineNo">1447</span><a id="line.1447">    /**</a>
+<span class="sourceLineNo">1448</span><a id="line.1448">     * カメラワークデータを保存する</a>
+<span class="sourceLineNo">1449</span><a id="line.1449">     */</a>
+<span class="sourceLineNo">1450</span><a id="line.1450">    public void saveCamerawork() {</a>
+<span class="sourceLineNo">1451</span><a id="line.1451">        FileChooser fileChooser = new FileChooser();</a>
+<span class="sourceLineNo">1452</span><a id="line.1452">        fileChooser.setTitle("Save camera position list");</a>
+<span class="sourceLineNo">1453</span><a id="line.1453">        // TODO: fileChooser.setInitialDirectory(プロパティファイルのディレクトリ);</a>
+<span class="sourceLineNo">1454</span><a id="line.1454">        fileChooser.getExtensionFilters().addAll(</a>
+<span class="sourceLineNo">1455</span><a id="line.1455">                new ExtensionFilter("JSON Files", "*.json"),</a>
+<span class="sourceLineNo">1456</span><a id="line.1456">                new ExtensionFilter("All Files", "*.*"));</a>
+<span class="sourceLineNo">1457</span><a id="line.1457">        File file = fileChooser.showSaveDialog(frame);</a>
+<span class="sourceLineNo">1458</span><a id="line.1458">        if (file == null) {</a>
+<span class="sourceLineNo">1459</span><a id="line.1459">            return;</a>
+<span class="sourceLineNo">1460</span><a id="line.1460">        }</a>
+<span class="sourceLineNo">1461</span><a id="line.1461">        String filePath = null;</a>
+<span class="sourceLineNo">1462</span><a id="line.1462">        try {</a>
+<span class="sourceLineNo">1463</span><a id="line.1463">            filePath = file.getCanonicalPath();</a>
+<span class="sourceLineNo">1464</span><a id="line.1464">        } catch (IOException ex) {</a>
+<span class="sourceLineNo">1465</span><a id="line.1465">            Itk.quitWithStackTrace(ex) ;</a>
+<span class="sourceLineNo">1466</span><a id="line.1466">        }</a>
+<span class="sourceLineNo">1467</span><a id="line.1467"></a>
+<span class="sourceLineNo">1468</span><a id="line.1468">        Itk.logInfo("Save camerawork file", filePath);</a>
+<span class="sourceLineNo">1469</span><a id="line.1469">        ArrayList&lt;Map&lt;String, Object&gt;&gt; jsonObject = new ArrayList&lt;Map&lt;String, Object&gt;&gt;();</a>
+<span class="sourceLineNo">1470</span><a id="line.1470">        for (CameraShot cameraShot : camerawork) {</a>
+<span class="sourceLineNo">1471</span><a id="line.1471">            jsonObject.add(cameraShot.getMapObject());</a>
+<span class="sourceLineNo">1472</span><a id="line.1472">        }</a>
+<span class="sourceLineNo">1473</span><a id="line.1473">        try {</a>
+<span class="sourceLineNo">1474</span><a id="line.1474">            JSON.encode(jsonObject, new FileWriter(file));</a>
+<span class="sourceLineNo">1475</span><a id="line.1475">        } catch (IOException e) {</a>
+<span class="sourceLineNo">1476</span><a id="line.1476">            Itk.dumpStackTraceOf(e) ;</a>
+<span class="sourceLineNo">1477</span><a id="line.1477">        }</a>
+<span class="sourceLineNo">1478</span><a id="line.1478">    }</a>
+<span class="sourceLineNo">1479</span><a id="line.1479"></a>
+<span class="sourceLineNo">1480</span><a id="line.1480">    /**</a>
+<span class="sourceLineNo">1481</span><a id="line.1481">     * カメラワークを更新する</a>
+<span class="sourceLineNo">1482</span><a id="line.1482">     */</a>
+<span class="sourceLineNo">1483</span><a id="line.1483">    public void updateCamerawork(SimTime updateTime) {</a>
+<span class="sourceLineNo">1484</span><a id="line.1484">        if (replayCheckBox.isSelected() &amp;&amp; camerawork.size() &gt; 0) {</a>
+<span class="sourceLineNo">1485</span><a id="line.1485">            double time = updateTime.getRelativeTime();</a>
+<span class="sourceLineNo">1486</span><a id="line.1486">            CameraShot last_camera = null;</a>
+<span class="sourceLineNo">1487</span><a id="line.1487">            CameraShot next_camera = null;</a>
+<span class="sourceLineNo">1488</span><a id="line.1488">            for (CameraShot camera : camerawork) {</a>
+<span class="sourceLineNo">1489</span><a id="line.1489">                if (camera.time &gt; time) {</a>
+<span class="sourceLineNo">1490</span><a id="line.1490">                    next_camera = camera;</a>
+<span class="sourceLineNo">1491</span><a id="line.1491">                    break;</a>
+<span class="sourceLineNo">1492</span><a id="line.1492">                }</a>
+<span class="sourceLineNo">1493</span><a id="line.1493">                last_camera = camera;</a>
+<span class="sourceLineNo">1494</span><a id="line.1494">            }</a>
+<span class="sourceLineNo">1495</span><a id="line.1495">            // 最初の CameraShot の time が 0.0 ではなく、まだその time に達していない場合</a>
+<span class="sourceLineNo">1496</span><a id="line.1496">            if (last_camera == null) {</a>
+<span class="sourceLineNo">1497</span><a id="line.1497">                if (next_camera.agentSize != getAgentSize()) {</a>
+<span class="sourceLineNo">1498</span><a id="line.1498">                    agent_size_control.setValue(next_camera.agentSize);</a>
+<span class="sourceLineNo">1499</span><a id="line.1499">                }</a>
+<span class="sourceLineNo">1500</span><a id="line.1500">                panel.updateTransform(next_camera.translate, next_camera.pivot, next_camera.rotateX, next_camera.rotateZ, next_camera.zoom);</a>
+<span class="sourceLineNo">1501</span><a id="line.1501">            }</a>
+<span class="sourceLineNo">1502</span><a id="line.1502">            // 最後の CameraShot とそれ以降</a>
+<span class="sourceLineNo">1503</span><a id="line.1503">            else if (next_camera == null) {</a>
+<span class="sourceLineNo">1504</span><a id="line.1504">                if (last_camera.time &lt; time &amp;&amp; ! forceUpdateCamerawork) {</a>
+<span class="sourceLineNo">1505</span><a id="line.1505">                    return;</a>
+<span class="sourceLineNo">1506</span><a id="line.1506">                }</a>
+<span class="sourceLineNo">1507</span><a id="line.1507">                if (last_camera.agentSize != getAgentSize()) {</a>
+<span class="sourceLineNo">1508</span><a id="line.1508">                    agent_size_control.setValue(last_camera.agentSize);</a>
+<span class="sourceLineNo">1509</span><a id="line.1509">                }</a>
+<span class="sourceLineNo">1510</span><a id="line.1510">                panel.updateTransform(last_camera.translate, last_camera.pivot, last_camera.rotateX, last_camera.rotateZ, last_camera.zoom);</a>
+<span class="sourceLineNo">1511</span><a id="line.1511">            }</a>
+<span class="sourceLineNo">1512</span><a id="line.1512">            // 上の条件以外</a>
+<span class="sourceLineNo">1513</span><a id="line.1513">            else {</a>
+<span class="sourceLineNo">1514</span><a id="line.1514">                if (time &gt; last_camera.time &amp;&amp; ! forceUpdateCamerawork) {</a>
+<span class="sourceLineNo">1515</span><a id="line.1515">                    double nextCameraTime = next_camera.time;   // 一時退避</a>
+<span class="sourceLineNo">1516</span><a id="line.1516">                    next_camera.time = last_camera.time;</a>
+<span class="sourceLineNo">1517</span><a id="line.1517">                    if (last_camera.equals(next_camera)) {</a>
+<span class="sourceLineNo">1518</span><a id="line.1518">                        next_camera.time = nextCameraTime;</a>
+<span class="sourceLineNo">1519</span><a id="line.1519">                        return;</a>
+<span class="sourceLineNo">1520</span><a id="line.1520">                    }</a>
+<span class="sourceLineNo">1521</span><a id="line.1521">                    next_camera.time = nextCameraTime;</a>
+<span class="sourceLineNo">1522</span><a id="line.1522">                }</a>
+<span class="sourceLineNo">1523</span><a id="line.1523">                double ratio = (time - last_camera.time) / (next_camera.time - last_camera.time);</a>
+<span class="sourceLineNo">1524</span><a id="line.1524"></a>
+<span class="sourceLineNo">1525</span><a id="line.1525">                double agent_size = (next_camera.agentSize - last_camera.agentSize) * ratio + last_camera.agentSize;</a>
+<span class="sourceLineNo">1526</span><a id="line.1526">                if (agent_size != getAgentSize()) {</a>
+<span class="sourceLineNo">1527</span><a id="line.1527">                    agent_size_control.setValue(agent_size);</a>
+<span class="sourceLineNo">1528</span><a id="line.1528">                }</a>
+<span class="sourceLineNo">1529</span><a id="line.1529"></a>
+<span class="sourceLineNo">1530</span><a id="line.1530">                Point3D translate = next_camera.translate.subtract(last_camera.translate).multiply(ratio).add(last_camera.translate);</a>
+<span class="sourceLineNo">1531</span><a id="line.1531">                Point3D pivot = next_camera.pivot.subtract(last_camera.pivot).multiply(ratio).add(last_camera.pivot);</a>
+<span class="sourceLineNo">1532</span><a id="line.1532">                double rotateX = (next_camera.rotateX - last_camera.rotateX) * ratio + last_camera.rotateX;</a>
+<span class="sourceLineNo">1533</span><a id="line.1533">                double drot = next_camera.rotateZ - last_camera.rotateZ;</a>
+<span class="sourceLineNo">1534</span><a id="line.1534">                // 補完する角度が180度を超えている場合は、(360度- 角度)の遷移と判断する</a>
+<span class="sourceLineNo">1535</span><a id="line.1535">                if (drot &gt; 180.0 || drot &lt;= -180.0) {</a>
+<span class="sourceLineNo">1536</span><a id="line.1536">                    if (Math.signum(drot) == 1.0) {</a>
+<span class="sourceLineNo">1537</span><a id="line.1537">                        drot -= 360.0;</a>
+<span class="sourceLineNo">1538</span><a id="line.1538">                    } else {</a>
+<span class="sourceLineNo">1539</span><a id="line.1539">                        drot += 360.0;</a>
+<span class="sourceLineNo">1540</span><a id="line.1540">                    }</a>
+<span class="sourceLineNo">1541</span><a id="line.1541">                }</a>
+<span class="sourceLineNo">1542</span><a id="line.1542">                double rotateZ = drot * ratio + last_camera.rotateZ;</a>
+<span class="sourceLineNo">1543</span><a id="line.1543">                double zoom_scale = (next_camera.zoom - last_camera.zoom) * ratio + last_camera.zoom;</a>
+<span class="sourceLineNo">1544</span><a id="line.1544">                panel.updateTransform(translate, pivot, rotateX, rotateZ, zoom_scale);</a>
+<span class="sourceLineNo">1545</span><a id="line.1545">            }</a>
+<span class="sourceLineNo">1546</span><a id="line.1546">            forceUpdateCamerawork = false;</a>
+<span class="sourceLineNo">1547</span><a id="line.1547">        }</a>
+<span class="sourceLineNo">1548</span><a id="line.1548">    }</a>
+<span class="sourceLineNo">1549</span><a id="line.1549"></a>
+<span class="sourceLineNo">1550</span><a id="line.1550">    /**</a>
+<span class="sourceLineNo">1551</span><a id="line.1551">     * マウス操作による視点移動とズーム機能の禁止/解除.</a>
+<span class="sourceLineNo">1552</span><a id="line.1552">     *</a>
+<span class="sourceLineNo">1553</span><a id="line.1553">     * true で禁止</a>
+<span class="sourceLineNo">1554</span><a id="line.1554">     */</a>
+<span class="sourceLineNo">1555</span><a id="line.1555">    public void setViewpointChangeInhibited(boolean b) {</a>
+<span class="sourceLineNo">1556</span><a id="line.1556">        if (b) {</a>
+<span class="sourceLineNo">1557</span><a id="line.1557">            viewpointChangeInhibited = true;</a>
+<span class="sourceLineNo">1558</span><a id="line.1558">            agent_size_control.setDisable(true);</a>
+<span class="sourceLineNo">1559</span><a id="line.1559">            centerinButton.setDisable(true);</a>
+<span class="sourceLineNo">1560</span><a id="line.1560">            centerinWithScalingButton.setDisable(true);</a>
+<span class="sourceLineNo">1561</span><a id="line.1561">            recordButton.setDisable(true);</a>
+<span class="sourceLineNo">1562</span><a id="line.1562">            loadCameraworkButton.setDisable(true);</a>
+<span class="sourceLineNo">1563</span><a id="line.1563">            saveCameraworkButton.setDisable(true);</a>
+<span class="sourceLineNo">1564</span><a id="line.1564">            panel.setViewPointOperationEnabled(false);</a>
+<span class="sourceLineNo">1565</span><a id="line.1565">        } else {</a>
+<span class="sourceLineNo">1566</span><a id="line.1566">            viewpointChangeInhibited = false;</a>
+<span class="sourceLineNo">1567</span><a id="line.1567">            agent_size_control.setDisable(false);</a>
+<span class="sourceLineNo">1568</span><a id="line.1568">            centerinButton.setDisable(false);</a>
+<span class="sourceLineNo">1569</span><a id="line.1569">            centerinWithScalingButton.setDisable(false);</a>
+<span class="sourceLineNo">1570</span><a id="line.1570">            recordButton.setDisable(false);</a>
+<span class="sourceLineNo">1571</span><a id="line.1571">            loadCameraworkButton.setDisable(false);</a>
+<span class="sourceLineNo">1572</span><a id="line.1572">            saveCameraworkButton.setDisable(false);</a>
+<span class="sourceLineNo">1573</span><a id="line.1573">            panel.setViewPointOperationEnabled(true);</a>
+<span class="sourceLineNo">1574</span><a id="line.1574">        }</a>
+<span class="sourceLineNo">1575</span><a id="line.1575">    }</a>
+<span class="sourceLineNo">1576</span><a id="line.1576"></a>
+<span class="sourceLineNo">1577</span><a id="line.1577">    /**</a>
+<span class="sourceLineNo">1578</span><a id="line.1578">     * シミュレーションパネルのスクリーンショットを撮ってファイルに保存する</a>
+<span class="sourceLineNo">1579</span><a id="line.1579">     */</a>
+<span class="sourceLineNo">1580</span><a id="line.1580">    public void captureScreenShot(final String path, final String imageType) {</a>
+<span class="sourceLineNo">1581</span><a id="line.1581">        WritableImage image = panel.snapshot(null, null);</a>
+<span class="sourceLineNo">1582</span><a id="line.1582">        final BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);</a>
+<span class="sourceLineNo">1583</span><a id="line.1583"></a>
+<span class="sourceLineNo">1584</span><a id="line.1584">        Thread thread = new Thread(new Task&lt;Boolean&gt;() {</a>
+<span class="sourceLineNo">1585</span><a id="line.1585">            @Override</a>
+<span class="sourceLineNo">1586</span><a id="line.1586">            protected Boolean call() throws Exception {</a>
+<span class="sourceLineNo">1587</span><a id="line.1587">                incSaveThreadCount();</a>
+<span class="sourceLineNo">1588</span><a id="line.1588">                try {</a>
+<span class="sourceLineNo">1589</span><a id="line.1589">                    ImageIO.write(bufferedImage, imageType, new File(path));</a>
+<span class="sourceLineNo">1590</span><a id="line.1590">                } catch (IOException e) {</a>
+<span class="sourceLineNo">1591</span><a id="line.1591">                    Itk.dumpStackTraceOf(e) ;</a>
+<span class="sourceLineNo">1592</span><a id="line.1592">                }</a>
+<span class="sourceLineNo">1593</span><a id="line.1593">                decSaveThreadCount();</a>
+<span class="sourceLineNo">1594</span><a id="line.1594">                return true; </a>
+<span class="sourceLineNo">1595</span><a id="line.1595">            }</a>
+<span class="sourceLineNo">1596</span><a id="line.1596">        });</a>
+<span class="sourceLineNo">1597</span><a id="line.1597">        thread.setDaemon(true);</a>
+<span class="sourceLineNo">1598</span><a id="line.1598">        thread.start();</a>
+<span class="sourceLineNo">1599</span><a id="line.1599">    }</a>
+<span class="sourceLineNo">1600</span><a id="line.1600"></a>
+<span class="sourceLineNo">1601</span><a id="line.1601">    /**</a>
+<span class="sourceLineNo">1602</span><a id="line.1602">     * ステータスバーに表示するテキストをセットする</a>
+<span class="sourceLineNo">1603</span><a id="line.1603">     */</a>
+<span class="sourceLineNo">1604</span><a id="line.1604">    public void setStatusText(String text) {</a>
+<span class="sourceLineNo">1605</span><a id="line.1605">        status.setText(text);</a>
+<span class="sourceLineNo">1606</span><a id="line.1606">    }</a>
+<span class="sourceLineNo">1607</span><a id="line.1607"></a>
+<span class="sourceLineNo">1608</span><a id="line.1608">    /**</a>
+<span class="sourceLineNo">1609</span><a id="line.1609">     * シミュレーションパネルを返す</a>
+<span class="sourceLineNo">1610</span><a id="line.1610">     */</a>
+<span class="sourceLineNo">1611</span><a id="line.1611">    public SimulationPanel3D getSimulationPanel() {</a>
+<span class="sourceLineNo">1612</span><a id="line.1612">        return panel;</a>
+<span class="sourceLineNo">1613</span><a id="line.1613">    }</a>
+<span class="sourceLineNo">1614</span><a id="line.1614"></a>
+<span class="sourceLineNo">1615</span><a id="line.1615">    /**</a>
+<span class="sourceLineNo">1616</span><a id="line.1616">     * エージェントの表示サイズ(m)を返す</a>
+<span class="sourceLineNo">1617</span><a id="line.1617">     */</a>
+<span class="sourceLineNo">1618</span><a id="line.1618">    public double getAgentSize() {</a>
+<span class="sourceLineNo">1619</span><a id="line.1619">        return agent_size_control.getValue();</a>
+<span class="sourceLineNo">1620</span><a id="line.1620">    }</a>
+<span class="sourceLineNo">1621</span><a id="line.1621"></a>
+<span class="sourceLineNo">1622</span><a id="line.1622">    /**</a>
+<span class="sourceLineNo">1623</span><a id="line.1623">     * 表示の更新が完了するのを待って次のステップに進むかどうかを返す</a>
+<span class="sourceLineNo">1624</span><a id="line.1624">     */</a>
+<span class="sourceLineNo">1625</span><a id="line.1625">    public boolean isViewSynchronized() {</a>
+<span class="sourceLineNo">1626</span><a id="line.1626">        return viewSynchronizedCheckBox.isSelected();</a>
+<span class="sourceLineNo">1627</span><a id="line.1627">    }</a>
+<span class="sourceLineNo">1628</span><a id="line.1628"></a>
+<span class="sourceLineNo">1629</span><a id="line.1629">    /**</a>
+<span class="sourceLineNo">1630</span><a id="line.1630">     * 一時停止時刻を返す</a>
+<span class="sourceLineNo">1631</span><a id="line.1631">     */</a>
+<span class="sourceLineNo">1632</span><a id="line.1632">    public SimTime getPauseTime() {</a>
+<span class="sourceLineNo">1633</span><a id="line.1633">        return pauseTime;</a>
+<span class="sourceLineNo">1634</span><a id="line.1634">    }</a>
+<span class="sourceLineNo">1635</span><a id="line.1635">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

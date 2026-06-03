@@ -1,0 +1,56 @@
+{
+    "agent" : {"xA_0" : 0.8 },
+    "link" : {
+    	   "gathering_location_width" : 6.0,
+	   "_emptySpeedRestrictRule" : [
+	         { "type" : "multiply",
+		   "directed" : true,
+                   "tag" : "major",
+		   "factor" : [ 1.0, 0.9 ]
+		 }
+	   ],
+	   "speedRestrictRule" : [
+	         { "type" : "multiply",
+		   "directed" : true,
+                   "tag" : "major",
+		   "factor" : [ 1.0, 0.1 ]
+		 }
+	   ]
+    },
+    "generation" : { "_speedModel" : "plain" },
+    "agentHandler" : {
+        "logColumnsOfIndividualPedestrians" : [
+            "pedestrianID",
+	    "current_time",
+            "current_position_in_model_x",
+            "current_position_in_model_y",
+            "current_position_in_model_z",
+            "current_linkID",
+	    "pedestrian_tag"
+        ],
+        "_logColumnsOfIndividualPedestrians" : [
+            "pedestrianID",
+	    "current_time",
+            "current_position_in_model_x",
+            "current_position_in_model_y",
+            "current_position_in_model_z",
+            "current_acceleration",
+            "current_velocity",
+            "current_linkID",
+            "current_nodeID_of_forward_movement",
+            "current_nodeID_of_backward_movement",
+            "current_distance_from_node_of_forward_movement",
+            "current_moving_direction",
+            "generated_time",
+            "current_traveling_period",
+            "current_exposure",
+            "amount_exposure",
+            "current_status_by_exposure",
+            "next_assigned_passage_node"
+        ],
+	"tickIntervalForIndividualPedestriansLog" : 10,
+	"_tickIntervalForIndividualPedestriansLog" : 1,
+	"_" : null
+    },
+    "_" : null
+}

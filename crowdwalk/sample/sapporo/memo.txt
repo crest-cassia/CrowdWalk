@@ -1,0 +1,93 @@
+%%  -*- Mode: Memo -*-
+=begin
+
+= How to Memo: 札幌を題材として。
+
+== 地図の用意
+
+   * JOSM で当該地域をダウンロード。
+
+     * 一度にダウンロードできるサイズは制限がある。
+
+   * まずは .osm 形式で保存。
+     "Hokudai-SatsuEki.00.orig.osm"
+
+   * .geojson 形式で保存。
+     "Hokudai-SatsuEki.00.orig.geojson"
+
+   * CrowdWalk 用地図に変換
+
+     $ ../../tools/osmJson2CrowdWalkMap -i Hokudai-SatsuEki.00.orig.geojson -o Hokudai-SatsuEki.00.orig.map.xml -c jp11
+
+     * 札幌付近は第11座標系
+
+   * CrowdWalk で読めるか確認
+
+     $ ../../quickstart.sh
+
+     * File > Open Map
+       .map.xml を選択。
+
+     * View > Centring
+
+=== 地図の編集
+
+    * CrowdWalk で設定を書きやすいように、マップのリンク・ノードに
+      タグをつけられる。
+
+    * 詳しくは、tools/RubyLib/OsmMap.rb のコメントを参照。
+
+    * 試みとして、
+
+      * 札幌駅北側の歩道リンクに cw:tag=SatsuEki;North
+      * 札幌駅南側の歩道リンクに cw:tag=SatsuEki;South
+      * 北大正門のノードに cw:poi=Hokudai;MainGate
+      * 北大南門のノードに cw:poi=Hokudai;SouthGate
+
+== 設定ファイルの作成
+
+   * 他の設定ファイルをコピーする。例えば、
+
+     * generatedTown/gridTown00.prop.json
+     * generatedTown/gridTown00.gen.json
+     * generatedTown/gridTown00.scnr.json
+     * generatedTown/gridTown00.fb.json
+     * generatedTown/gridTown00.nodeApp.json
+     * generatedTown/gridTown00.linkApp.json
+
+    これらを、satsueki.01.gen.json とかにしておく。
+
+   * "satsueki.01.prop.json" で、以下の項目あたり、
+     上記で作成・コピーしたファイル名に変更しておく。
+
+          "map_file":"Hokudai-SatsuEki.01.tagged.map.xml",
+          "generation_file":"satsueki.01.gen.json",
+          "scenario_file":"satsueki.01.scnr.json",
+          "fallback_file":"satsueki.01.fb.json",
+          "node_appearance_file":"satsueki.01.nodeApp.json",
+          "link_appearance_file":"satsueki.01.linkApp.json",
+
+   * "satsueki.01.gen.json" で、エージェント生成ルールを作成・変更。
+
+     * 主に変えるべきは、以下の項目
+
+          "total":100,
+          "startPlace":"SatsuEki;North","conditions":null,
+          "startTime":"18:00:00","duration":500.0,
+          "goal":"Hokudai;MainGate",
+
+     * また、以下は消すか、"_plannedRoute" としておく。
+     
+          "plannedRoute":[]
+
+== 走らせてみる。
+
+   $ ../../quickstart -2 satsueki.01.prop.json
+
+     > 2D Simulation
+     > wait を2-10くらいに
+     > View > agent size を6 くらいに。
+
+      
+
+

@@ -1,0 +1,254 @@
+/*
+    設定方法: https://github.com/crest-cassia/CrowdWalk/wiki/Link-appearance-%E3%81%AE%E8%A8%AD%E5%AE%9A%E6%96%B9%E6%B3%95
+*/
+[
+    {
+        "tag" : "STRUCTURE",
+        "2D_View" : {
+            "className" : "FixedWidth2D",
+            "parameters" : {
+                "width" : 5.0,
+                "color" : "WHITE",
+                "transparency" : 0.245,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "FixedWidth3D",
+            "parameters" : {
+                "width" : 5.0,
+                "color" : "WHITE",
+                "transparency" : 0.245,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "FLOOR",
+        "2D_View" : {
+            "className" : "FixedWidth2D",
+            "parameters" : {
+                "width" : 5.0,
+                "color" : "GRAY",
+                "transparency" : 0.95,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "FixedWidth3D",
+            "parameters" : {
+                "width" : 5.0,
+                "color" : "GRAY",
+                "transparency" : 0.95,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "HIGHWAY",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "WHITE",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "WHITE",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "MAINROAD",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.7525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.7525,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "RAILWAY",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "BRIDGE",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.4525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "GRAY",
+                "transparency" : 0.4525,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "FRAME",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "YELLOW",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "YELLOW",
+                "transparency" : 0.2525,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "ONE-WAY-FORWARD",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "PURPLE",
+                "transparency" : 0.5,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "PURPLE",
+                "transparency" : 0.5,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "ONE-WAY-BACKWARD",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "LIGHTBLUE",
+                "transparency" : 0.25,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "LIGHTBLUE",
+                "transparency" : 0.25,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "ONEWAY",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "ARED",
+                "transparency" : 0.7525,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "ARED",
+                "transparency" : 0.7525,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "ROAD-CLOSED",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "RED",
+                "transparency" : 0.25,
+                "method" : "filling"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "RED",
+                "transparency" : 0.25,
+                "method" : "filling"
+            }
+        }
+    },
+    {
+        "tag" : "BORDERING",
+        "2D_View" : {
+            "className" : "ActualWidth2D",
+            "parameters" : {
+                "color" : "DEFAULT_LINK_COLOR",
+                "transparency" : 0.7,
+                "method" : "bordering"
+            }
+        },
+        "3D_View" : {
+            "className" : "ActualWidth3D",
+            "parameters" : {
+                "color" : "DEFAULT_LINK_COLOR",
+                "transparency" : 0.0,
+                "method" : "bordering"
+            }
+        }
+    },
+    {
+        "tag" : "*",
+        "2D_View" : {
+            "className" : "SolidLine2D",
+            "parameters" : {
+                "color" : "DEFAULT_LINK_COLOR",
+                "transparency" : 0.7
+            }
+        },
+        "3D_View" : {
+            "className" : "SolidLine3D",
+            "parameters" : {
+                "color" : "DEFAULT_LINK_COLOR",
+                "transparency" : 0.0
+            }
+        }
+    }
+]

@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">/** Json Formatter テスト</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * @author:: Itsuki Noda</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * @version:: 0.0 2015/06/13 I.Noda</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * &lt;B&gt;History:&lt;/B&gt;</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * &lt;UL&gt;</a>
+<span class="sourceLineNo">007</span><a id="line.7"> *   &lt;LI&gt; [2015/06/13]: Create This File. &lt;/LI&gt;</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * &lt;/UL&gt;</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * &lt;B&gt;Usage:&lt;/B&gt;</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * ...</a>
+<span class="sourceLineNo">011</span><a id="line.11"> */</a>
+<span class="sourceLineNo">012</span><a id="line.12"></a>
+<span class="sourceLineNo">013</span><a id="line.13">package nodagumi.Itk;</a>
+<span class="sourceLineNo">014</span><a id="line.14"></a>
+<span class="sourceLineNo">015</span><a id="line.15">import static org.junit.Assert.*;</a>
+<span class="sourceLineNo">016</span><a id="line.16">import java.util.ArrayList;</a>
+<span class="sourceLineNo">017</span><a id="line.17">import org.junit.Test;</a>
+<span class="sourceLineNo">018</span><a id="line.18">import java.util.logging.Logger;</a>
+<span class="sourceLineNo">019</span><a id="line.19"></a>
+<span class="sourceLineNo">020</span><a id="line.20">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">021</span><a id="line.21"></a>
+<span class="sourceLineNo">022</span><a id="line.22">//======================================================================</a>
+<span class="sourceLineNo">023</span><a id="line.23">/**</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * Json Formatter Test</a>
+<span class="sourceLineNo">025</span><a id="line.25"> */</a>
+<span class="sourceLineNo">026</span><a id="line.26">public class JsonFormatter_Test {</a>
+<span class="sourceLineNo">027</span><a id="line.27">    //============================================================</a>
+<span class="sourceLineNo">028</span><a id="line.28">    class Foo {</a>
+<span class="sourceLineNo">029</span><a id="line.29">        public int x ;</a>
+<span class="sourceLineNo">030</span><a id="line.30">        public Foo(int _x) { x = _x ; } ;</a>
+<span class="sourceLineNo">031</span><a id="line.31">    }</a>
+<span class="sourceLineNo">032</span><a id="line.32"></a>
+<span class="sourceLineNo">033</span><a id="line.33">    static public JsonFormatter&lt;Foo&gt; formatter = new JsonFormatter&lt;Foo&gt;() ;</a>
+<span class="sourceLineNo">034</span><a id="line.34">    static {</a>
+<span class="sourceLineNo">035</span><a id="line.35">        formatter</a>
+<span class="sourceLineNo">036</span><a id="line.36">            .addMember(formatter.new Member("x") {</a>
+<span class="sourceLineNo">037</span><a id="line.37">                    public Object value(Foo f) {</a>
+<span class="sourceLineNo">038</span><a id="line.38">                        return Integer.valueOf(f.x) ; }})</a>
+<span class="sourceLineNo">039</span><a id="line.39">            .addMember(formatter.new Member("xx") {</a>
+<span class="sourceLineNo">040</span><a id="line.40">                    public Object value(Foo f) {</a>
+<span class="sourceLineNo">041</span><a id="line.41">                        return Integer.valueOf(f.x * f.x) ; }})</a>
+<span class="sourceLineNo">042</span><a id="line.42">            .addMember(formatter.new Member("xxx") {</a>
+<span class="sourceLineNo">043</span><a id="line.43">                    public Object value(Foo f) {</a>
+<span class="sourceLineNo">044</span><a id="line.44">                        return Integer.valueOf(f.x * f.x * f.x) ; }})</a>
+<span class="sourceLineNo">045</span><a id="line.45">            .addMember(formatter.new Member("1/x") {</a>
+<span class="sourceLineNo">046</span><a id="line.46">                    public Object value(Foo f) {</a>
+<span class="sourceLineNo">047</span><a id="line.47">                        return Double.valueOf(1.0 / f.x) ; }})</a>
+<span class="sourceLineNo">048</span><a id="line.48">            .addMember(formatter.new Member("name") {</a>
+<span class="sourceLineNo">049</span><a id="line.49">                    public Object value(Foo f) {</a>
+<span class="sourceLineNo">050</span><a id="line.50">                        return Integer.toString(f.x) ; }}) ;</a>
+<span class="sourceLineNo">051</span><a id="line.51">        //formatter.setOverallStyle("RecordPerLine") ;</a>
+<span class="sourceLineNo">052</span><a id="line.52">        formatter.setOverallStyle("RecordArray") ;</a>
+<span class="sourceLineNo">053</span><a id="line.53">        //formatter.setOverallStyle("PrettyPrint") ;</a>
+<span class="sourceLineNo">054</span><a id="line.54">    }</a>
+<span class="sourceLineNo">055</span><a id="line.55"></a>
+<span class="sourceLineNo">056</span><a id="line.56">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">057</span><a id="line.57">    /**</a>
+<span class="sourceLineNo">058</span><a id="line.58">     */</a>
+<span class="sourceLineNo">059</span><a id="line.59">    @Test</a>
+<span class="sourceLineNo">060</span><a id="line.60">    public void test1() {</a>
+<span class="sourceLineNo">061</span><a id="line.61">        Itk.dbgVal("header", formatter.outputHeaderToBuffer()) ;</a>
+<span class="sourceLineNo">062</span><a id="line.62"></a>
+<span class="sourceLineNo">063</span><a id="line.63">        Foo f1 = new Foo(1) ;</a>
+<span class="sourceLineNo">064</span><a id="line.64">        Foo f2 = new Foo(2) ;</a>
+<span class="sourceLineNo">065</span><a id="line.65">        Foo f3 = new Foo(3) ;</a>
+<span class="sourceLineNo">066</span><a id="line.66">        Itk.dbgVal("f1", formatter.outputRecordToBuffer(f1)) ;</a>
+<span class="sourceLineNo">067</span><a id="line.67">        Itk.dbgVal("f2", formatter.outputRecordToBuffer(f2)) ;</a>
+<span class="sourceLineNo">068</span><a id="line.68">        Itk.dbgVal("f3", formatter.outputRecordToBuffer(f3)) ;</a>
+<span class="sourceLineNo">069</span><a id="line.69"></a>
+<span class="sourceLineNo">070</span><a id="line.70">        Itk.dbgVal("tailer", formatter.outputTailerToBuffer()) ;</a>
+<span class="sourceLineNo">071</span><a id="line.71">    }</a>
+<span class="sourceLineNo">072</span><a id="line.72"></a>
+<span class="sourceLineNo">073</span><a id="line.73">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">074</span><a id="line.74">    /**</a>
+<span class="sourceLineNo">075</span><a id="line.75">     */</a>
+<span class="sourceLineNo">076</span><a id="line.76">    @Test</a>
+<span class="sourceLineNo">077</span><a id="line.77">    public void test2() {</a>
+<span class="sourceLineNo">078</span><a id="line.78">        Logger logger = Logger.getLogger("foo") ;</a>
+<span class="sourceLineNo">079</span><a id="line.79">        ArrayList&lt;Foo&gt; ff = new ArrayList&lt;Foo&gt;() ;</a>
+<span class="sourceLineNo">080</span><a id="line.80">        ff.add(new Foo(1)) ;</a>
+<span class="sourceLineNo">081</span><a id="line.81">        ff.add(new Foo(2)) ;</a>
+<span class="sourceLineNo">082</span><a id="line.82">        ff.add(new Foo(3)) ;</a>
+<span class="sourceLineNo">083</span><a id="line.83"></a>
+<span class="sourceLineNo">084</span><a id="line.84">        formatter.outputHeaderToLoggerInfo(logger) ;</a>
+<span class="sourceLineNo">085</span><a id="line.85">        formatter.outputAllRecordToLoggerInfo(logger, ff) ;</a>
+<span class="sourceLineNo">086</span><a id="line.86">        formatter.outputTailerToLoggerInfo(logger) ;</a>
+<span class="sourceLineNo">087</span><a id="line.87">    }</a>
+<span class="sourceLineNo">088</span><a id="line.88"></a>
+<span class="sourceLineNo">089</span><a id="line.89">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">090</span><a id="line.90">    /**</a>
+<span class="sourceLineNo">091</span><a id="line.91">     */</a>
+<span class="sourceLineNo">092</span><a id="line.92">    @Test</a>
+<span class="sourceLineNo">093</span><a id="line.93">    public void test3() {</a>
+<span class="sourceLineNo">094</span><a id="line.94">        ArrayList&lt;Foo&gt; ff = new ArrayList&lt;Foo&gt;() ;</a>
+<span class="sourceLineNo">095</span><a id="line.95">        ff.add(new Foo(1)) ;</a>
+<span class="sourceLineNo">096</span><a id="line.96">        ff.add(new Foo(2)) ;</a>
+<span class="sourceLineNo">097</span><a id="line.97">        ff.add(new Foo(3)) ;</a>
+<span class="sourceLineNo">098</span><a id="line.98"></a>
+<span class="sourceLineNo">099</span><a id="line.99">        formatter.outputHeaderToStream(System.out) ;</a>
+<span class="sourceLineNo">100</span><a id="line.100">        formatter.outputAllRecordToStream(System.out, ff) ;</a>
+<span class="sourceLineNo">101</span><a id="line.101">        formatter.outputTailerToStream(System.out) ;</a>
+<span class="sourceLineNo">102</span><a id="line.102">    }</a>
+<span class="sourceLineNo">103</span><a id="line.103"></a>
+<span class="sourceLineNo">104</span><a id="line.104">} // class JsonFormatter_Test</a>
+<span class="sourceLineNo">105</span><a id="line.105"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

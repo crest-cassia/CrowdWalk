@@ -1,0 +1,25 @@
+{
+  "__0":"NetmasCuiSimulator",
+  "debug":true,
+  "io_handler_type":"none",
+  "map_file":"ginza00.map.xml",
+  "generation_file":"ginza00e.gen.json",
+  "scenario_file":"ginza00.scnr.json",
+  "fallback_file":"ginza00.fb.json",
+  "node_appearance_file":"ginza00.nodeApp.json",
+  "link_appearance_file":"ginza00.linkApp.json",
+  "timer_enable":true,
+  "timer_file":"/tmp/timer.log",
+  "interval":0,
+  "randseed":2524,
+  "random_navigation":true,
+  "time_series_log":true,
+  "time_series_log_path":"/tmp",
+  "time_series_log_interval":1,
+  "_screenshot_dir":",Screenshots",
+  "loop_count":1,
+  "exit_count":0,
+  "all_agent_speed_zero_break":false
+  
+  "___":null
+}

@@ -1,0 +1,35 @@
+#{ "version" : 2}
+[
+ {"rule":"INDIVIDUAL",
+  "agentType":{"className":"RationalAgent",
+               "weight": -0.0, 
+	       "trail":0.0,
+	       "margin":0.0},
+  "startPlace":"link_node_00_00__node_00_01","conditions":null,
+  "goal":"node_09_09",
+  "plannedRoute":[],
+  "individualConfig":[
+	{ "startTime": "18:00:10",
+	  "emptySpeed": 2.0,
+  	  "conditions": [ "aid_001" ]
+	},
+	{ "startTime": "18:01:10",
+	  "emptySpeed": 1.5,
+  	  "conditions": [ "aid_001" ]
+	},
+	{ "startTime": "18:02:10",
+	  "emptySpeed": 1.1,
+  	  "conditions": [ "aid_001" ]
+	},
+	{ "startTime": "18:03:10",
+	  "emptySpeed": 0.7,
+  	  "conditions": [ "aid_001" ]
+	},
+	{ "startTime": "18:04:10",
+	  "emptySpeed": 0.5,
+  	  "conditions": [ "aid_001" ]
+	},
+	{ "startTime": "18:05:10" }
+  ],
+  "_":null}
+]

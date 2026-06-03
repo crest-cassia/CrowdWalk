@@ -1,0 +1,155 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+## -*- mode: ruby -*-
+## = convert Open Street Map (json) to CrowdWalk Map
+## Author:: Itsuki Noda
+## Version:: 0.0 2016/07/23 I.Noda
+##
+## === History
+## * [2016/07/23]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * 変換の内容は、RubyLib/OsmMap.rb の説明参照。
+## *
+
+require 'optparse' ;
+require 'pp' ;
+
+$LOAD_PATH.push(File::dirname(__FILE__) + "/RubyLib");
+require 'OsmMap.rb' ;
+
+#------------------------------------------------------------------------
+#++
+$conf = {
+  :inFile => nil,
+  :outFile => nil,
+  :cartOrigin => :jp09,
+  :redundantMargin => 0.5,
+  :linkWidth => 2.0,
+  :foo => false,
+  :bar => 1,
+  :baz => "test",
+} ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]*
+           [OriginName]:
+              #{OsmMap::EpsgCodeForJprCS.map{|k,v| k}.join(", ")}
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-i","--in InFile", String, sep + "input file") {|file|
+    $conf[:inFile] = file ;
+  }
+  op.on("-o","--out OutFile", String, sep + "output file") {|file|
+    $conf[:outFile] = file ;
+  }
+  op.on("-c","--cartOrigin OriginName", String, sep + "choose cartesian origin.") {|origName|
+    name = origName.intern ;
+    if(OsmMap::CartesianLonLatOrigin[name]) then
+      $conf[:cartOrigin] = name ;
+    else
+      $stderr.puts("Wrong cartegian origin name: " + origName.inspect) ;
+      $stderr.puts("  possible name: " +
+                   OsmMap::CartesianLonLatOrigin.keys.inspect) ;
+      exit(1) ;
+    end
+  }
+  op.on("-C","--newCartOrigin Lon:Lat", String, sep + "temporal cartesian origin."){|lonlat|
+    (lon, lat) = lonlat.split(':').map(){|v| v.to_f}
+    OsmMap.addCartesianLonLatOrigin(:temporal, lon, lat) ;
+    $conf[:cartOrigin] = :temporal ;
+  }
+  op.on("-b","--useCenterForOrigin", sep + "use center of bbox as origin."){
+    $conf[:cartOrigin] = :bbox ;
+  }
+  op.on("-m","--margin ReduceMargin", Float, sep + "margin to reduce nodes") {
+    |margin|
+    $conf[:redundantMargin] = margin ;
+  }
+  
+  op.on("-w","--width LinkWidth", Float, sep + "width of each link.") {
+    |width|
+    $conf[:linkWidth] = width ;
+  }
+  
+  op.on("-f","--[no-]foo", sep + "switch foo.") {|foo|
+    $conf[:foo] = foo ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    $stderr.puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+p [:rest, ARGV], [:conf,$conf] ; 
+
+########################################################################
+StdioFileName = "-" ;
+#----------------------------------------------------------------------
+#++
+## ファイルもしくは標準入出力をオープン。
+## もしファイル名が nil もしくは "-" なら、標準入出力を使う。
+## _filename_ :: ファイル名。
+## _mode_ :: :r もしくは :w。
+def myOpenFile(filename, mode, &block)
+  stdio = nil ;
+  if(mode == :r) then
+    stdio = $stdin ;
+  elsif(mode == :w) then
+    stdio = $stdout ;
+  else
+    raise "unknown file IO mode: " + mode.inspect ;
+  end
+
+  if(filename.nil? || filename == StdioFileName) then
+    block.call(stdio) ;
+  else
+    open(filename, mode.to_s){|strm| block.call(strm) ; }
+  end
+end
+
+########################################################################
+##----------------------------------------------------------------------
+## よけいな引数があると、exit
+if(ARGV.length>0) then
+  puts($op) ;
+  exit(1) ;
+end
+
+##----------------------------------------------------------------------
+## メインルーチン
+
+pp [:convert, $conf]
+
+mapConf = { :cartOrigin => $conf[:cartOrigin],
+            :redundantMargin => $conf[:redundantMargin],
+            :linkWidth => $conf[:linkWidth],
+          } ;
+
+map = OsmMap.new(mapConf) ;
+myOpenFile($conf[:inFile],:r) {|inStream|
+  map.scanJsonFromStream(inStream) ;
+}
+
+map.convertOsm2CrowdWalk() ;
+   
+myOpenFile($conf[:outFile],:w) {|outStream|
+  map.saveXmlToStream(outStream) ;
+}
+
+
+  
+
+
+
+

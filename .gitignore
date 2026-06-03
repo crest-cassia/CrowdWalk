@@ -1,0 +1,50 @@
+# editor cache
+*.swp
+
+# OS cache file
+.DS_Store
+Thumbs.db
+
+# gradle
+.gradle/
+build/
+
+# intellij idea
+.idea/
+
+# ctags
+.tags
+
+# GNU GLOBAL
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+
+# local setting data
+NetworkMapEditor.ini
+GuiSimulationLauncher.ini
+
+# execution result data
+tick.txt
+
+# cache files
+crowdwalk/cache/*
+
+# javadoc files
+crowdwalk/doc/javadoc/*
+
+# screen shots
+crowdwalk/screenshots/*
+
+# log files
+crowdwalk/log/*
+
+# temporary files
+crowdwalk/tmp/*
+
+# vim plugin
+.vimsessions/
+
+# log files/dirs
+/crowdwalk/sample/kawaguchi-S2B/log-S2B

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Group defaultHeight="0.0" id="1169439655" imageFileName="/Users/tkokada/Documents/Programs/netmas/sample/diamond//" maxHeight="5.0" minHeight="-5.0" pNorthWestX="5.0" pNorthWestY="45.0" pSouthEastX="600.0" pSouthEastY="600.0" pTheta="0.0" r="0.0" scale="1.0" sx="1.0" sy="1.0" tx="0.0" ty="0.0">
+  <tag>ROOT</tag>
+  <Node height="0.0" id="1923395011" x="83.0" y="283.0">
+    <tag>WEST_EXIT</tag>
+    <tag>EXIT</tag>
+    <link id="1257716840"/>
+  </Node>
+  <Node height="0.0" id="1742719508" x="184.0" y="284.0">
+    <tag>DIAMOND</tag>
+    <link id="1257716840"/>
+    <link id="981046212"/>
+    <link id="1753799024"/>
+  </Node>
+  <Node height="0.0" id="913848693" x="272.0" y="219.0">
+    <tag>DIAMOND</tag>
+    <link id="981046212"/>
+    <link id="245559422"/>
+  </Node>
+  <Node height="0.0" id="424232916" x="365.0" y="284.0">
+    <tag>DIAMOND</tag>
+    <link id="1900680998"/>
+    <link id="245559422"/>
+    <link id="1010232240"/>
+  </Node>
+  <Node height="0.0" id="184902684" x="273.0" y="351.0">
+    <tag>DIAMOND</tag>
+    <link id="1753799024"/>
+    <link id="1900680998"/>
+  </Node>
+  <Node height="0.0" id="1504202266" x="472.0" y="287.0">
+    <tag>EAST_EXIT</tag>
+    <link id="1010232240"/>
+  </Node>
+  <Link from="1742719508" id="1257716840" length="109.40292500660117" to="1923395011" width="1.0">
+    <tag>WEST_LINK</tag>
+    <tag>ROAD</tag>
+  </Link>
+  <Link from="1742719508" id="981046212" length="111.40017953306898" to="913848693" width="1.0">
+    <tag>ROAD</tag>
+  </Link>
+  <Link from="1742719508" id="1753799024" length="113.81124724736128" to="184902684" width="1.0">
+    <tag>ROAD</tag>
+  </Link>
+  <Link from="424232916" id="1900680998" length="113.46365056704283" to="184902684" width="1.0">
+    <tag>ROAD</tag>
+  </Link>
+  <Link from="424232916" id="245559422" length="107.0420478129973" to="913848693" width="1.0">
+    <tag>ROAD</tag>
+  </Link>
+  <Link from="424232916" id="1010232240" length="107.0420478129973" to="1504202266" width="1.0">
+    <tag>EAST_LINK</tag>
+    <tag>ROAD</tag>
+  </Link>
+</Group>

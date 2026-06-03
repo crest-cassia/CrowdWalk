@@ -1,0 +1,1096 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package nodagumi.ananPJ;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.awt.*;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.awt.event.*;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.awt.geom.*;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.io.*;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.math.BigDecimal;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.net.*;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.util.*;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import javax.swing.*;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import javax.swing.event.*;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import org.w3c.dom.*;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>import org.apache.commons.cli.CommandLine;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import org.apache.commons.cli.CommandLineParser;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import org.apache.commons.cli.HelpFormatter;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import org.apache.commons.cli.OptionBuilder;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import org.apache.commons.cli.Options;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import org.apache.commons.cli.ParseException;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import org.apache.commons.cli.PosixParser;<a name="line.20"></a>
+<span class="sourceLineNo">021</span><a name="line.21"></a>
+<span class="sourceLineNo">022</span>import org.geotools.data.*;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import org.geotools.data.simple.*;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.geotools.factory.*;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.geotools.feature.*;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.geotools.geometry.jts.*;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.geotools.map.*;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.geotools.swing.*;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.geotools.swing.action.*;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.geotools.swing.data.*;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.opengis.feature.simple.*;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.opengis.feature.type.*;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.opengis.filter.*;<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>import com.vividsolutions.jts.geom.Coordinate;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import com.vividsolutions.jts.geom.MultiLineString;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import net.arnx.jsonic.JSON;<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.osgeo.proj4j.CRSFactory;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.osgeo.proj4j.CoordinateReferenceSystem;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.osgeo.proj4j.CoordinateTransform;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.osgeo.proj4j.CoordinateTransformFactory;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.osgeo.proj4j.ProjCoordinate;<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>import nodagumi.ananPJ.*;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import nodagumi.ananPJ.Settings;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>import nodagumi.ananPJ.NetworkMap.*;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import nodagumi.ananPJ.NetworkMap.Node.*;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import nodagumi.ananPJ.NetworkMap.Link.*;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import nodagumi.Itk.ItkXmlUtility;<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>public class ImportGis {<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    /**<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     * Shapefile 形式の地図を読み込んでモデルを作成する． <a name="line.54"></a>
+<span class="sourceLineNo">055</span>     * 以下の2種類のデータ形式に対応<a name="line.55"></a>
+<span class="sourceLineNo">056</span>     *<a name="line.56"></a>
+<span class="sourceLineNo">057</span>     * 1. ナビゲーション道路地図2004 （shape版） アルプス社<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     *<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     * 読み込みの対象ファイル：<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     *   RNxxxxxxA.shp 道路リンク（高速・有料道路・国道）<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     *   RNxxxxxxB.shp 主要地方道、一般県道、幅員13.0m以上の道路のリンクデータ（道路区間データ）<a name="line.61"></a>
+<span class="sourceLineNo">062</span>     *   RNxxxxxxC.shp 全道路のノードデータ（道路点データ）<a name="line.62"></a>
+<span class="sourceLineNo">063</span>     *<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     * 読み込みデータ：<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     *   ノード１番号 nd1 文字 5 あり 半角数字<a name="line.65"></a>
+<span class="sourceLineNo">066</span>     *   ノード２番号 nd2 文字 5 あり 半角数字<a name="line.66"></a>
+<span class="sourceLineNo">067</span>     *   リンク長 lk_length 整数<a name="line.67"></a>
+<span class="sourceLineNo">068</span>     *   道路幅員区分コード width_tpcd 文字<a name="line.68"></a>
+<span class="sourceLineNo">069</span>     *     1 幅員13．0ｍ以上<a name="line.69"></a>
+<span class="sourceLineNo">070</span>     *     2 幅員 5．5ｍ以上～13．0ｍ未満<a name="line.70"></a>
+<span class="sourceLineNo">071</span>     *     3 幅員 3．0ｍ以上～ 5．5ｍ未満<a name="line.71"></a>
+<span class="sourceLineNo">072</span>     *     4 幅員 3．0ｍ未満<a name="line.72"></a>
+<span class="sourceLineNo">073</span>     *     0 未調査<a name="line.73"></a>
+<span class="sourceLineNo">074</span>     *<a name="line.74"></a>
+<span class="sourceLineNo">075</span>     * 2. 拡張版全国デジタル道路地図データベース （shape版） 2013 住友電気工業株式会社・住友電工システムソリューション株式会社<a name="line.75"></a>
+<span class="sourceLineNo">076</span>     *<a name="line.76"></a>
+<span class="sourceLineNo">077</span>     * 読み込みの対象ファイル：<a name="line.77"></a>
+<span class="sourceLineNo">078</span>     *   全道路リンクデータ(32)<a name="line.78"></a>
+<span class="sourceLineNo">079</span>     *   or<a name="line.79"></a>
+<span class="sourceLineNo">080</span>     *   全道路リンク拡張属性データ(39)<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     *<a name="line.81"></a>
+<span class="sourceLineNo">082</span>     * 読み込みデータ：<a name="line.82"></a>
+<span class="sourceLineNo">083</span>     *   ノード１番号リンク番号nd1 C 5<a name="line.83"></a>
+<span class="sourceLineNo">084</span>     *   ノード２番号リンク番号nd2 C 5<a name="line.84"></a>
+<span class="sourceLineNo">085</span>     *   リンク長(計算値) length C<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     *   道路幅員区分コードrdwdcd C 1<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     *     1 幅員 13.0m以上<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     *     2 幅員 5.5m以上~13.0m未満<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     *     3 幅員 3.0m以上～ 5.5ｍ未満<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     *     4 幅員 3.0ｍ未満<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     *     0 未調査<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     */<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    private static final String VERSION = "Version 1.10 (April 7, 2016)";<a name="line.93"></a>
+<span class="sourceLineNo">094</span><a name="line.94"></a>
+<span class="sourceLineNo">095</span>    private static final String SHAPEFILE_SPECS_PATH = "shapefile_specs.json";<a name="line.95"></a>
+<span class="sourceLineNo">096</span>    private static final String optionsFormat = "[-h] [-p] [-s &lt;SPEC&gt;] [-S] [-t] [-T] [-z &lt;NUMBER&gt;]";<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    private static final String commandLineSyntax = String.format("ImportGis %s [Shapefile]", optionsFormat);<a name="line.97"></a>
+<span class="sourceLineNo">098</span><a name="line.98"></a>
+<span class="sourceLineNo">099</span>    // 国土地理院: 平面直角座標系（平成十四年国土交通省告示第九号）<a name="line.99"></a>
+<span class="sourceLineNo">100</span>    public static final String REFERENCE_URL = "http://www.gsi.go.jp/LAW/heimencho.html";<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>    /**<a name="line.102"></a>
+<span class="sourceLineNo">103</span>     * JGD2000 の平面直角座標系の系番号に対応する EPSG コード<a name="line.103"></a>
+<span class="sourceLineNo">104</span>     */<a name="line.104"></a>
+<span class="sourceLineNo">105</span>    public static String[] JGD2000_JPR_EPSG_CODES = {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        null,<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        "EPSG:2443",    // 系番号 I<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        "EPSG:2444",    // 系番号 II<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        "EPSG:2445",    // 系番号 III<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        "EPSG:2446",    // 系番号 IV<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        "EPSG:2447",    // 系番号 V<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        "EPSG:2448",    // 系番号 VI<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        "EPSG:2449",    // 系番号 VII<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        "EPSG:2450",    // 系番号 VIII<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        "EPSG:2451",    // 系番号 IX<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        "EPSG:2452",    // 系番号 X<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        "EPSG:2453",    // 系番号 XI<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        "EPSG:2454",    // 系番号 XII<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        "EPSG:2455",    // 系番号 XIII<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        "EPSG:2456",    // 系番号 XIV<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        "EPSG:2457",    // 系番号 XV<a name="line.121"></a>
+<span class="sourceLineNo">122</span>        "EPSG:2458",    // 系番号 XVI<a name="line.122"></a>
+<span class="sourceLineNo">123</span>        "EPSG:2459",    // 系番号 XVII<a name="line.123"></a>
+<span class="sourceLineNo">124</span>        "EPSG:2460",    // 系番号 XVIII<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        "EPSG:2461"     // 系番号 XIX<a name="line.125"></a>
+<span class="sourceLineNo">126</span>    };<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>    /**<a name="line.128"></a>
+<span class="sourceLineNo">129</span>     * Tokyo Datum の平面直角座標系の系番号に対応する EPSG コード<a name="line.129"></a>
+<span class="sourceLineNo">130</span>     */<a name="line.130"></a>
+<span class="sourceLineNo">131</span>    public static String[] TOKYO_JPR_EPSG_CODES = {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        null,<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        "EPSG:30161",    // 系番号 I<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        "EPSG:30162",    // 系番号 II<a name="line.134"></a>
+<span class="sourceLineNo">135</span>        "EPSG:30163",    // 系番号 III<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        "EPSG:30164",    // 系番号 IV<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        "EPSG:30165",    // 系番号 V<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        "EPSG:30166",    // 系番号 VI<a name="line.138"></a>
+<span class="sourceLineNo">139</span>        "EPSG:30167",    // 系番号 VII<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        "EPSG:30168",    // 系番号 VIII<a name="line.140"></a>
+<span class="sourceLineNo">141</span>        "EPSG:30169",    // 系番号 IX<a name="line.141"></a>
+<span class="sourceLineNo">142</span>        "EPSG:30170",    // 系番号 X<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        "EPSG:30171",    // 系番号 XI<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        "EPSG:30172",    // 系番号 XII<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        "EPSG:30173",    // 系番号 XIII<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        "EPSG:30174",    // 系番号 XIV<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        "EPSG:30175",    // 系番号 XV<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        "EPSG:30176",    // 系番号 XVI<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        "EPSG:30177",    // 系番号 XVII<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        "EPSG:30178",    // 系番号 XVIII<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        "EPSG:30179"     // 系番号 XIX<a name="line.151"></a>
+<span class="sourceLineNo">152</span>    };<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>    /**<a name="line.154"></a>
+<span class="sourceLineNo">155</span>     * 平面直角座標系の系番号として有効な値<a name="line.155"></a>
+<span class="sourceLineNo">156</span>     */<a name="line.156"></a>
+<span class="sourceLineNo">157</span>    private static Integer[] SYSTEM_NUMBERS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};<a name="line.157"></a>
+<span class="sourceLineNo">158</span><a name="line.158"></a>
+<span class="sourceLineNo">159</span>    private static Map&lt;String, Object&gt; shapefileSpecs = null;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>    private static String[] shapefileSpecNames;<a name="line.160"></a>
+<span class="sourceLineNo">161</span>    private static String shapefileSpecName = null;<a name="line.161"></a>
+<span class="sourceLineNo">162</span>    private static boolean heightEnable = false;<a name="line.162"></a>
+<span class="sourceLineNo">163</span>    private static boolean outputByTokyoDatum = false;<a name="line.163"></a>
+<span class="sourceLineNo">164</span>    private static boolean outputByPlaneRectangular = false;<a name="line.164"></a>
+<span class="sourceLineNo">165</span>    private static boolean makeSimpleModel = false;<a name="line.165"></a>
+<span class="sourceLineNo">166</span>    private static boolean addCoordinateValueTag = false;<a name="line.166"></a>
+<span class="sourceLineNo">167</span>    private static int zone = -1;<a name="line.167"></a>
+<span class="sourceLineNo">168</span><a name="line.168"></a>
+<span class="sourceLineNo">169</span>    private MapContext map;<a name="line.169"></a>
+<span class="sourceLineNo">170</span>    private JMapFrame map_frame = null;<a name="line.170"></a>
+<span class="sourceLineNo">171</span>    private Settings settings;<a name="line.171"></a>
+<span class="sourceLineNo">172</span>    private String shapefilePath = null;<a name="line.172"></a>
+<span class="sourceLineNo">173</span>    private NetworkMap networkMap;<a name="line.173"></a>
+<span class="sourceLineNo">174</span><a name="line.174"></a>
+<span class="sourceLineNo">175</span>    // ShapefileSpecs<a name="line.175"></a>
+<span class="sourceLineNo">176</span>    private String description = "";<a name="line.176"></a>
+<span class="sourceLineNo">177</span>    private String coordinateSystem = null;<a name="line.177"></a>
+<span class="sourceLineNo">178</span>    private String geodeticDatum = null;<a name="line.178"></a>
+<span class="sourceLineNo">179</span>    private int scaleOfRoundOff = -1;<a name="line.179"></a>
+<span class="sourceLineNo">180</span>    private String lengthAttributeName;<a name="line.180"></a>
+<span class="sourceLineNo">181</span>    private double lengthCorrectionFactor = 1.0;<a name="line.181"></a>
+<span class="sourceLineNo">182</span>    private String widthAttributeName;<a name="line.182"></a>
+<span class="sourceLineNo">183</span>    private double widthCorrectionFactor = 1.0;<a name="line.183"></a>
+<span class="sourceLineNo">184</span>    private Object[] widthTable = null;<a name="line.184"></a>
+<span class="sourceLineNo">185</span><a name="line.185"></a>
+<span class="sourceLineNo">186</span>    public ImportGis() {<a name="line.186"></a>
+<span class="sourceLineNo">187</span>        settings = Settings.load("NetworkMapEditor.ini");<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        map = new DefaultMapContext();<a name="line.188"></a>
+<span class="sourceLineNo">189</span>    }<a name="line.189"></a>
+<span class="sourceLineNo">190</span><a name="line.190"></a>
+<span class="sourceLineNo">191</span>    /**<a name="line.191"></a>
+<span class="sourceLineNo">192</span>     * 初期設定<a name="line.192"></a>
+<span class="sourceLineNo">193</span>     */<a name="line.193"></a>
+<span class="sourceLineNo">194</span>    private void initialize() {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>        readShapefileSpecs();<a name="line.195"></a>
+<span class="sourceLineNo">196</span><a name="line.196"></a>
+<span class="sourceLineNo">197</span>        // Shapefile を読み込んで MapContext にセットする<a name="line.197"></a>
+<span class="sourceLineNo">198</span>        File source_file = null;<a name="line.198"></a>
+<span class="sourceLineNo">199</span>        if (shapefilePath == null) {<a name="line.199"></a>
+<span class="sourceLineNo">200</span>            source_file = selectShapefile();<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        } else {<a name="line.201"></a>
+<span class="sourceLineNo">202</span>            source_file = new File(shapefilePath);<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        }<a name="line.203"></a>
+<span class="sourceLineNo">204</span>        if (source_file == null) {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>            Itk.quitSafely() ;<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        }<a name="line.206"></a>
+<span class="sourceLineNo">207</span>        readShapefile(source_file);<a name="line.207"></a>
+<span class="sourceLineNo">208</span>    }<a name="line.208"></a>
+<span class="sourceLineNo">209</span><a name="line.209"></a>
+<span class="sourceLineNo">210</span>    /**<a name="line.210"></a>
+<span class="sourceLineNo">211</span>     * シェープファイル仕様情報を読み込む<a name="line.211"></a>
+<span class="sourceLineNo">212</span>     */<a name="line.212"></a>
+<span class="sourceLineNo">213</span>    private void readShapefileSpecs() {<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        Map&lt;String, Object&gt; shapefileSpec = (Map&lt;String, Object&gt;)shapefileSpecs.get(shapefileSpecName);<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        JSON json = new JSON();<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        Itk.logInfo("shapeFileSpec", json.encode(shapefileSpec, true));<a name="line.216"></a>
+<span class="sourceLineNo">217</span><a name="line.217"></a>
+<span class="sourceLineNo">218</span>        coordinateSystem = (String)shapefileSpec.get("coordinate_system");<a name="line.218"></a>
+<span class="sourceLineNo">219</span>        if (! coordinateSystem.equals("Geographic")) {<a name="line.219"></a>
+<span class="sourceLineNo">220</span>            Itk.logError("readShapeFileSpecs",<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                         "coordinate_system は現在 \"Geographic\" のみ有効です。");<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            Itk.quitByError() ;<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        }<a name="line.223"></a>
+<span class="sourceLineNo">224</span><a name="line.224"></a>
+<span class="sourceLineNo">225</span>        geodeticDatum = (String)shapefileSpec.get("geodetic_datum");<a name="line.225"></a>
+<span class="sourceLineNo">226</span><a name="line.226"></a>
+<span class="sourceLineNo">227</span>        // 経緯度座標を四捨五入して小数第 scaleOfRoundOff 位に丸める<a name="line.227"></a>
+<span class="sourceLineNo">228</span>        Object object = shapefileSpec.get("round_off_coordinate_to");<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        if (object != null) {<a name="line.229"></a>
+<span class="sourceLineNo">230</span>            scaleOfRoundOff = Integer.parseInt(object.toString());<a name="line.230"></a>
+<span class="sourceLineNo">231</span>        }<a name="line.231"></a>
+<span class="sourceLineNo">232</span><a name="line.232"></a>
+<span class="sourceLineNo">233</span>        // length<a name="line.233"></a>
+<span class="sourceLineNo">234</span>        Map&lt;String, Object&gt; lengthObjects = (Map&lt;String, Object&gt;)shapefileSpec.get("length");<a name="line.234"></a>
+<span class="sourceLineNo">235</span>        lengthAttributeName = (String)lengthObjects.get("attribute_name");<a name="line.235"></a>
+<span class="sourceLineNo">236</span>        object = lengthObjects.get("correction_factor");<a name="line.236"></a>
+<span class="sourceLineNo">237</span>        if (object != null) {<a name="line.237"></a>
+<span class="sourceLineNo">238</span>            lengthCorrectionFactor = Double.parseDouble(object.toString());<a name="line.238"></a>
+<span class="sourceLineNo">239</span>        }<a name="line.239"></a>
+<span class="sourceLineNo">240</span><a name="line.240"></a>
+<span class="sourceLineNo">241</span>        // width<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        Map&lt;String, Object&gt; widthObjects = (Map&lt;String, Object&gt;)shapefileSpec.get("width");<a name="line.242"></a>
+<span class="sourceLineNo">243</span>        widthAttributeName = (String)widthObjects.get("attribute_name");<a name="line.243"></a>
+<span class="sourceLineNo">244</span>        object = widthObjects.get("correction_factor");<a name="line.244"></a>
+<span class="sourceLineNo">245</span>        if (object != null) {<a name="line.245"></a>
+<span class="sourceLineNo">246</span>            widthCorrectionFactor = Double.parseDouble(object.toString());<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        }<a name="line.247"></a>
+<span class="sourceLineNo">248</span>        object = widthObjects.get("reference_table");<a name="line.248"></a>
+<span class="sourceLineNo">249</span>        if (object != null) {<a name="line.249"></a>
+<span class="sourceLineNo">250</span>            widthTable = ((ArrayList&lt;Object&gt;)object).toArray();<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        }<a name="line.251"></a>
+<span class="sourceLineNo">252</span>    }<a name="line.252"></a>
+<span class="sourceLineNo">253</span><a name="line.253"></a>
+<span class="sourceLineNo">254</span>    /**<a name="line.254"></a>
+<span class="sourceLineNo">255</span>     * アプリケーションウィンドウを構築する<a name="line.255"></a>
+<span class="sourceLineNo">256</span>     */<a name="line.256"></a>
+<span class="sourceLineNo">257</span>    private JMapFrame setupMapFrame() {<a name="line.257"></a>
+<span class="sourceLineNo">258</span>        map_frame = new JMapFrame(map);<a name="line.258"></a>
+<span class="sourceLineNo">259</span>        map_frame.setTitle("Import GIS file - " + VERSION);<a name="line.259"></a>
+<span class="sourceLineNo">260</span><a name="line.260"></a>
+<span class="sourceLineNo">261</span>        //map_frame.enableLayerTable(true);<a name="line.261"></a>
+<span class="sourceLineNo">262</span>        map_frame.enableToolBar(true);<a name="line.262"></a>
+<span class="sourceLineNo">263</span>        map_frame.enableStatusBar(true);<a name="line.263"></a>
+<span class="sourceLineNo">264</span><a name="line.264"></a>
+<span class="sourceLineNo">265</span>        int w = settings.get("gis-width", 800);<a name="line.265"></a>
+<span class="sourceLineNo">266</span>        int h = settings.get("gis-height", 640);<a name="line.266"></a>
+<span class="sourceLineNo">267</span><a name="line.267"></a>
+<span class="sourceLineNo">268</span>        map_frame.setSize(w, h);<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        map_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        setupToolbar(map_frame.getToolBar());<a name="line.270"></a>
+<span class="sourceLineNo">271</span><a name="line.271"></a>
+<span class="sourceLineNo">272</span>        return map_frame;<a name="line.272"></a>
+<span class="sourceLineNo">273</span>    }<a name="line.273"></a>
+<span class="sourceLineNo">274</span><a name="line.274"></a>
+<span class="sourceLineNo">275</span>    /**<a name="line.275"></a>
+<span class="sourceLineNo">276</span>     * ツールバーの設定<a name="line.276"></a>
+<span class="sourceLineNo">277</span>     */<a name="line.277"></a>
+<span class="sourceLineNo">278</span>    private void setupToolbar(JToolBar toolbar) {<a name="line.278"></a>
+<span class="sourceLineNo">279</span>        toolbar.addSeparator();<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        toolbar.add(new JButton(new AddGisMapAction()));<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        toolbar.add(new JButton(new ExportNodeLinkAction()));<a name="line.281"></a>
+<span class="sourceLineNo">282</span>    }<a name="line.282"></a>
+<span class="sourceLineNo">283</span><a name="line.283"></a>
+<span class="sourceLineNo">284</span>    /**<a name="line.284"></a>
+<span class="sourceLineNo">285</span>     * ファイル選択ダイアログでシェープファイルを選択する<a name="line.285"></a>
+<span class="sourceLineNo">286</span>     */<a name="line.286"></a>
+<span class="sourceLineNo">287</span>    private File selectShapefile() {<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        File source_file = JFileDataStoreChooser.showOpenFile("shp", getGisFile(), null);<a name="line.288"></a>
+<span class="sourceLineNo">289</span>        if (source_file != null) {<a name="line.289"></a>
+<span class="sourceLineNo">290</span>            setGisFile(source_file);<a name="line.290"></a>
+<span class="sourceLineNo">291</span>            Itk.logInfo("source file path",<a name="line.291"></a>
+<span class="sourceLineNo">292</span>                        source_file.getPath().replaceAll("\\\\", "/"));<a name="line.292"></a>
+<span class="sourceLineNo">293</span>        }<a name="line.293"></a>
+<span class="sourceLineNo">294</span>        return source_file;<a name="line.294"></a>
+<span class="sourceLineNo">295</span>    }<a name="line.295"></a>
+<span class="sourceLineNo">296</span><a name="line.296"></a>
+<span class="sourceLineNo">297</span>    /**<a name="line.297"></a>
+<span class="sourceLineNo">298</span>     * シェープファイルを読み込む<a name="line.298"></a>
+<span class="sourceLineNo">299</span>     */<a name="line.299"></a>
+<span class="sourceLineNo">300</span>    private void readShapefile(File source_file) {<a name="line.300"></a>
+<span class="sourceLineNo">301</span>        /* set up map */<a name="line.301"></a>
+<span class="sourceLineNo">302</span>        try {<a name="line.302"></a>
+<span class="sourceLineNo">303</span>            FileDataStore store;<a name="line.303"></a>
+<span class="sourceLineNo">304</span>            store = FileDataStoreFinder.getDataStore(source_file);<a name="line.304"></a>
+<span class="sourceLineNo">305</span>            Itk.logInfo("source file name", source_file.getName()) ;<a name="line.305"></a>
+<span class="sourceLineNo">306</span>            if (store == null) {<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                Itk.logError("readShapeFile", "store is null!!");<a name="line.307"></a>
+<span class="sourceLineNo">308</span>                Itk.quitByError() ;<a name="line.308"></a>
+<span class="sourceLineNo">309</span>            }<a name="line.309"></a>
+<span class="sourceLineNo">310</span>            String fileName = source_file.getName();<a name="line.310"></a>
+<span class="sourceLineNo">311</span>            if (! fileName.toLowerCase().endsWith(".shp")) {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>                Itk.logWarn("Irregular file name", fileName);<a name="line.312"></a>
+<span class="sourceLineNo">313</span>            }<a name="line.313"></a>
+<span class="sourceLineNo">314</span>            SimpleFeatureSource featureSource;<a name="line.314"></a>
+<span class="sourceLineNo">315</span>            featureSource = store.getFeatureSource();<a name="line.315"></a>
+<span class="sourceLineNo">316</span><a name="line.316"></a>
+<span class="sourceLineNo">317</span>            map.addLayer(featureSource, null);<a name="line.317"></a>
+<span class="sourceLineNo">318</span>        } catch (IOException e) {<a name="line.318"></a>
+<span class="sourceLineNo">319</span>            Itk.dumpStackTraceOf(e) ;<a name="line.319"></a>
+<span class="sourceLineNo">320</span>        }<a name="line.320"></a>
+<span class="sourceLineNo">321</span>    }<a name="line.321"></a>
+<span class="sourceLineNo">322</span><a name="line.322"></a>
+<span class="sourceLineNo">323</span>    /* Helper actions <a name="line.323"></a>
+<span class="sourceLineNo">324</span>     */<a name="line.324"></a>
+<span class="sourceLineNo">325</span>    class AddGisMapAction extends SafeAction {<a name="line.325"></a>
+<span class="sourceLineNo">326</span>        public AddGisMapAction() {<a name="line.326"></a>
+<span class="sourceLineNo">327</span>            super("Add map");<a name="line.327"></a>
+<span class="sourceLineNo">328</span>            putValue(Action.SHORT_DESCRIPTION, "Adds a gis map.");<a name="line.328"></a>
+<span class="sourceLineNo">329</span>        }<a name="line.329"></a>
+<span class="sourceLineNo">330</span><a name="line.330"></a>
+<span class="sourceLineNo">331</span>        @Override<a name="line.331"></a>
+<span class="sourceLineNo">332</span>        public void action(ActionEvent arg0) throws Throwable {<a name="line.332"></a>
+<span class="sourceLineNo">333</span>            File source_file = selectShapefile();<a name="line.333"></a>
+<span class="sourceLineNo">334</span>            if (source_file != null) {<a name="line.334"></a>
+<span class="sourceLineNo">335</span>                readShapefile(source_file);<a name="line.335"></a>
+<span class="sourceLineNo">336</span>            }<a name="line.336"></a>
+<span class="sourceLineNo">337</span>        }<a name="line.337"></a>
+<span class="sourceLineNo">338</span>    }<a name="line.338"></a>
+<span class="sourceLineNo">339</span><a name="line.339"></a>
+<span class="sourceLineNo">340</span>    /**<a name="line.340"></a>
+<span class="sourceLineNo">341</span>     * @author shnsk<a name="line.341"></a>
+<span class="sourceLineNo">342</span>     * Class that converts GIS data to NetworkMap.<a name="line.342"></a>
+<span class="sourceLineNo">343</span>     */<a name="line.343"></a>
+<span class="sourceLineNo">344</span>    class ExportNodeLinkAction extends SafeAction {<a name="line.344"></a>
+<span class="sourceLineNo">345</span><a name="line.345"></a>
+<span class="sourceLineNo">346</span>        public ExportNodeLinkAction() {<a name="line.346"></a>
+<span class="sourceLineNo">347</span>            super("Convert");<a name="line.347"></a>
+<span class="sourceLineNo">348</span>            putValue(Action.SHORT_DESCRIPTION,<a name="line.348"></a>
+<span class="sourceLineNo">349</span>                    "Exports GIS map to node-link data of NetMAS");<a name="line.349"></a>
+<span class="sourceLineNo">350</span>        }<a name="line.350"></a>
+<span class="sourceLineNo">351</span><a name="line.351"></a>
+<span class="sourceLineNo">352</span>        // 系番号選択ダイアログ<a name="line.352"></a>
+<span class="sourceLineNo">353</span>        public class ChooseDialog extends JDialog implements ActionListener, WindowListener {<a name="line.353"></a>
+<span class="sourceLineNo">354</span>            private JComboBox&lt;Integer&gt; combo = null;<a name="line.354"></a>
+<span class="sourceLineNo">355</span>            private boolean canceled = false;<a name="line.355"></a>
+<span class="sourceLineNo">356</span><a name="line.356"></a>
+<span class="sourceLineNo">357</span>            public ChooseDialog(Frame owner) {<a name="line.357"></a>
+<span class="sourceLineNo">358</span>                super(owner);<a name="line.358"></a>
+<span class="sourceLineNo">359</span><a name="line.359"></a>
+<span class="sourceLineNo">360</span>                setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);<a name="line.360"></a>
+<span class="sourceLineNo">361</span>                addWindowListener(this);<a name="line.361"></a>
+<span class="sourceLineNo">362</span><a name="line.362"></a>
+<span class="sourceLineNo">363</span>                GridBagLayout layout = new GridBagLayout();<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                GridBagConstraints gbc = new GridBagConstraints();<a name="line.364"></a>
+<span class="sourceLineNo">365</span>                getContentPane().setLayout(layout);<a name="line.365"></a>
+<span class="sourceLineNo">366</span><a name="line.366"></a>
+<span class="sourceLineNo">367</span>                JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));<a name="line.367"></a>
+<span class="sourceLineNo">368</span>                JLabel label = new JLabel("Choose a Zone number ");<a name="line.368"></a>
+<span class="sourceLineNo">369</span>                label.setIcon(UIManager.getIcon("OptionPane.questionIcon"));<a name="line.369"></a>
+<span class="sourceLineNo">370</span>                inputPanel.add(label);<a name="line.370"></a>
+<span class="sourceLineNo">371</span>                combo = new JComboBox&lt;Integer&gt;(SYSTEM_NUMBERS);<a name="line.371"></a>
+<span class="sourceLineNo">372</span>                combo.setSelectedIndex(8);  // デフォルト系番号は 9<a name="line.372"></a>
+<span class="sourceLineNo">373</span>                inputPanel.add(combo);<a name="line.373"></a>
+<span class="sourceLineNo">374</span><a name="line.374"></a>
+<span class="sourceLineNo">375</span>                JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));<a name="line.375"></a>
+<span class="sourceLineNo">376</span>                JButton okButton = new JButton("Ok");<a name="line.376"></a>
+<span class="sourceLineNo">377</span>                okButton.setActionCommand("ok");<a name="line.377"></a>
+<span class="sourceLineNo">378</span>                okButton.addActionListener(this);<a name="line.378"></a>
+<span class="sourceLineNo">379</span>                buttonPanel.add(okButton);<a name="line.379"></a>
+<span class="sourceLineNo">380</span><a name="line.380"></a>
+<span class="sourceLineNo">381</span>                JButton cancelButton = new JButton("Cancel");<a name="line.381"></a>
+<span class="sourceLineNo">382</span>                cancelButton.setActionCommand("cancel");<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                cancelButton.addActionListener(this);<a name="line.383"></a>
+<span class="sourceLineNo">384</span>                buttonPanel.add(cancelButton);<a name="line.384"></a>
+<span class="sourceLineNo">385</span><a name="line.385"></a>
+<span class="sourceLineNo">386</span>                JEditorPane editor = new JEditorPane("text/html", "&lt;html&gt;&lt;a href='" + REFERENCE_URL + "'&gt;by 平面直角座標系(平成十四年国土交通省告示第九号)&lt;/a&gt;");<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                editor.setOpaque(false);<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                editor.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);<a name="line.388"></a>
+<span class="sourceLineNo">389</span>                editor.setEditable(false);<a name="line.389"></a>
+<span class="sourceLineNo">390</span>                editor.addHyperlinkListener(new HyperlinkListener() {<a name="line.390"></a>
+<span class="sourceLineNo">391</span>                    @Override<a name="line.391"></a>
+<span class="sourceLineNo">392</span>                    public void hyperlinkUpdate(HyperlinkEvent e) {<a name="line.392"></a>
+<span class="sourceLineNo">393</span>                        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED &amp;&amp; Desktop.isDesktopSupported()) {<a name="line.393"></a>
+<span class="sourceLineNo">394</span>                            try {<a name="line.394"></a>
+<span class="sourceLineNo">395</span>                                Desktop.getDesktop().browse(new URI(REFERENCE_URL));<a name="line.395"></a>
+<span class="sourceLineNo">396</span>                            } catch(Exception ex) {<a name="line.396"></a>
+<span class="sourceLineNo">397</span>                                Itk.dumpStackTraceOf(ex) ;<a name="line.397"></a>
+<span class="sourceLineNo">398</span>                            }<a name="line.398"></a>
+<span class="sourceLineNo">399</span>                        }<a name="line.399"></a>
+<span class="sourceLineNo">400</span>                    }<a name="line.400"></a>
+<span class="sourceLineNo">401</span>                });<a name="line.401"></a>
+<span class="sourceLineNo">402</span><a name="line.402"></a>
+<span class="sourceLineNo">403</span>                gbc.anchor = GridBagConstraints.NORTHWEST;<a name="line.403"></a>
+<span class="sourceLineNo">404</span>                gbc.gridx = 0;<a name="line.404"></a>
+<span class="sourceLineNo">405</span>                gbc.gridy = 0;<a name="line.405"></a>
+<span class="sourceLineNo">406</span>                gbc.insets = new Insets(12, 20, 0, 20);<a name="line.406"></a>
+<span class="sourceLineNo">407</span>                layout.setConstraints(inputPanel, gbc);<a name="line.407"></a>
+<span class="sourceLineNo">408</span><a name="line.408"></a>
+<span class="sourceLineNo">409</span>                gbc.anchor = GridBagConstraints.NORTHWEST;<a name="line.409"></a>
+<span class="sourceLineNo">410</span>                gbc.gridx = 0;<a name="line.410"></a>
+<span class="sourceLineNo">411</span>                gbc.gridy = 1;<a name="line.411"></a>
+<span class="sourceLineNo">412</span>                gbc.insets = new Insets(0, 60, 0, 20);<a name="line.412"></a>
+<span class="sourceLineNo">413</span>                layout.setConstraints(editor, gbc);<a name="line.413"></a>
+<span class="sourceLineNo">414</span><a name="line.414"></a>
+<span class="sourceLineNo">415</span>                gbc.anchor = GridBagConstraints.SOUTHEAST;<a name="line.415"></a>
+<span class="sourceLineNo">416</span>                gbc.gridx = 0;<a name="line.416"></a>
+<span class="sourceLineNo">417</span>                gbc.gridy = 2;<a name="line.417"></a>
+<span class="sourceLineNo">418</span>                gbc.insets = new Insets(12, 20, 12, 20);<a name="line.418"></a>
+<span class="sourceLineNo">419</span>                layout.setConstraints(buttonPanel, gbc);<a name="line.419"></a>
+<span class="sourceLineNo">420</span><a name="line.420"></a>
+<span class="sourceLineNo">421</span>                getContentPane().add(inputPanel);<a name="line.421"></a>
+<span class="sourceLineNo">422</span>                getContentPane().add(buttonPanel);<a name="line.422"></a>
+<span class="sourceLineNo">423</span>                getContentPane().add(editor);<a name="line.423"></a>
+<span class="sourceLineNo">424</span><a name="line.424"></a>
+<span class="sourceLineNo">425</span>                pack();<a name="line.425"></a>
+<span class="sourceLineNo">426</span>                setLocationRelativeTo(owner);<a name="line.426"></a>
+<span class="sourceLineNo">427</span>            }<a name="line.427"></a>
+<span class="sourceLineNo">428</span><a name="line.428"></a>
+<span class="sourceLineNo">429</span>            public void actionPerformed(ActionEvent e) {<a name="line.429"></a>
+<span class="sourceLineNo">430</span>                if (e.getActionCommand().equals("cancel")) {<a name="line.430"></a>
+<span class="sourceLineNo">431</span>                    canceled = true;<a name="line.431"></a>
+<span class="sourceLineNo">432</span>                }<a name="line.432"></a>
+<span class="sourceLineNo">433</span>                setVisible(false);<a name="line.433"></a>
+<span class="sourceLineNo">434</span>            }<a name="line.434"></a>
+<span class="sourceLineNo">435</span><a name="line.435"></a>
+<span class="sourceLineNo">436</span>            public void windowActivated(WindowEvent e) {}<a name="line.436"></a>
+<span class="sourceLineNo">437</span><a name="line.437"></a>
+<span class="sourceLineNo">438</span>            public void windowClosed(WindowEvent e) {}<a name="line.438"></a>
+<span class="sourceLineNo">439</span><a name="line.439"></a>
+<span class="sourceLineNo">440</span>            public void windowClosing(WindowEvent e) {<a name="line.440"></a>
+<span class="sourceLineNo">441</span>                canceled = true;<a name="line.441"></a>
+<span class="sourceLineNo">442</span>            }<a name="line.442"></a>
+<span class="sourceLineNo">443</span><a name="line.443"></a>
+<span class="sourceLineNo">444</span>            public void windowDeactivated(WindowEvent e) {}<a name="line.444"></a>
+<span class="sourceLineNo">445</span><a name="line.445"></a>
+<span class="sourceLineNo">446</span>            public void windowDeiconified(WindowEvent e) {}<a name="line.446"></a>
+<span class="sourceLineNo">447</span><a name="line.447"></a>
+<span class="sourceLineNo">448</span>            public void windowIconified(WindowEvent e) {}<a name="line.448"></a>
+<span class="sourceLineNo">449</span><a name="line.449"></a>
+<span class="sourceLineNo">450</span>            public void windowOpened(WindowEvent e) {}<a name="line.450"></a>
+<span class="sourceLineNo">451</span><a name="line.451"></a>
+<span class="sourceLineNo">452</span>            public int getNumber() {<a name="line.452"></a>
+<span class="sourceLineNo">453</span>                return canceled ? -1 : (Integer)combo.getSelectedItem();<a name="line.453"></a>
+<span class="sourceLineNo">454</span>            }<a name="line.454"></a>
+<span class="sourceLineNo">455</span>        }<a name="line.455"></a>
+<span class="sourceLineNo">456</span><a name="line.456"></a>
+<span class="sourceLineNo">457</span>        public int chooseSystemNumber() {<a name="line.457"></a>
+<span class="sourceLineNo">458</span>            ChooseDialog dlg = new ChooseDialog(map_frame);<a name="line.458"></a>
+<span class="sourceLineNo">459</span>            dlg.setModal(true);<a name="line.459"></a>
+<span class="sourceLineNo">460</span>            dlg.setVisible(true);<a name="line.460"></a>
+<span class="sourceLineNo">461</span>            return dlg.getNumber();<a name="line.461"></a>
+<span class="sourceLineNo">462</span>        }<a name="line.462"></a>
+<span class="sourceLineNo">463</span><a name="line.463"></a>
+<span class="sourceLineNo">464</span>        public double objectToDouble(Object object) {<a name="line.464"></a>
+<span class="sourceLineNo">465</span>            double value = 0.0;<a name="line.465"></a>
+<span class="sourceLineNo">466</span>            if (object instanceof Double) {<a name="line.466"></a>
+<span class="sourceLineNo">467</span>                value = (Double)object;<a name="line.467"></a>
+<span class="sourceLineNo">468</span>            } else if (object instanceof Integer) {<a name="line.468"></a>
+<span class="sourceLineNo">469</span>                value = (Integer)object;<a name="line.469"></a>
+<span class="sourceLineNo">470</span>            } else if (object instanceof Long) {<a name="line.470"></a>
+<span class="sourceLineNo">471</span>                value = (Long)object;<a name="line.471"></a>
+<span class="sourceLineNo">472</span>            } else if (object instanceof String) {<a name="line.472"></a>
+<span class="sourceLineNo">473</span>                value = Double.valueOf((String)object);<a name="line.473"></a>
+<span class="sourceLineNo">474</span>            } else if (object instanceof BigDecimal) {<a name="line.474"></a>
+<span class="sourceLineNo">475</span>                value = ((BigDecimal)object).doubleValue();<a name="line.475"></a>
+<span class="sourceLineNo">476</span>            } else {<a name="line.476"></a>
+<span class="sourceLineNo">477</span>                Itk.logError("Illegal object", object);<a name="line.477"></a>
+<span class="sourceLineNo">478</span>                Itk.quitByError() ;<a name="line.478"></a>
+<span class="sourceLineNo">479</span>            }<a name="line.479"></a>
+<span class="sourceLineNo">480</span>            return value;<a name="line.480"></a>
+<span class="sourceLineNo">481</span>        }<a name="line.481"></a>
+<span class="sourceLineNo">482</span><a name="line.482"></a>
+<span class="sourceLineNo">483</span>        @Override<a name="line.483"></a>
+<span class="sourceLineNo">484</span>        public void action(ActionEvent arg0) throws Throwable {<a name="line.484"></a>
+<span class="sourceLineNo">485</span>            if (zone == -1) {<a name="line.485"></a>
+<span class="sourceLineNo">486</span>                zone = chooseSystemNumber();<a name="line.486"></a>
+<span class="sourceLineNo">487</span>                if (zone == -1)<a name="line.487"></a>
+<span class="sourceLineNo">488</span>                    return;<a name="line.488"></a>
+<span class="sourceLineNo">489</span>            }<a name="line.489"></a>
+<span class="sourceLineNo">490</span>            JOptionPane.showMessageDialog(map_frame, "GisToCrowdWalk Version 1.10 uses Proj4J (Java library) to transform point coordinates.", "", JOptionPane.INFORMATION_MESSAGE);<a name="line.490"></a>
+<span class="sourceLineNo">491</span><a name="line.491"></a>
+<span class="sourceLineNo">492</span>            // シェープファイルの座標系から平面直角座標系に変換する座標変換オブジェクトを生成する<a name="line.492"></a>
+<span class="sourceLineNo">493</span>            String srcEpsg = null;<a name="line.493"></a>
+<span class="sourceLineNo">494</span>            if (geodeticDatum.equals("Tokyo")) {<a name="line.494"></a>
+<span class="sourceLineNo">495</span>                srcEpsg = "EPSG:4301";  // 旧日本測地系<a name="line.495"></a>
+<span class="sourceLineNo">496</span>            } else {<a name="line.496"></a>
+<span class="sourceLineNo">497</span>                srcEpsg = "EPSG:4326";  // WGS84<a name="line.497"></a>
+<span class="sourceLineNo">498</span>            }<a name="line.498"></a>
+<span class="sourceLineNo">499</span>            String targetEpsg = null;<a name="line.499"></a>
+<span class="sourceLineNo">500</span>            if (outputByTokyoDatum) {<a name="line.500"></a>
+<span class="sourceLineNo">501</span>                targetEpsg = TOKYO_JPR_EPSG_CODES[zone];<a name="line.501"></a>
+<span class="sourceLineNo">502</span>            } else {<a name="line.502"></a>
+<span class="sourceLineNo">503</span>                targetEpsg = JGD2000_JPR_EPSG_CODES[zone];<a name="line.503"></a>
+<span class="sourceLineNo">504</span>            }<a name="line.504"></a>
+<span class="sourceLineNo">505</span>            CoordinateTransform transform = createCoordinateTransform(srcEpsg, targetEpsg);<a name="line.505"></a>
+<span class="sourceLineNo">506</span><a name="line.506"></a>
+<span class="sourceLineNo">507</span>            networkMap = new NetworkMap();<a name="line.507"></a>
+<span class="sourceLineNo">508</span>            ReferencedEnvelope ref = map.getAreaOfInterest();<a name="line.508"></a>
+<span class="sourceLineNo">509</span>            MapPartGroup root = (MapPartGroup)networkMap.getRoot();<a name="line.509"></a>
+<span class="sourceLineNo">510</span>            root.setZone(zone);<a name="line.510"></a>
+<span class="sourceLineNo">511</span>            MapPartGroup group = networkMap.createGroupNode(root);<a name="line.511"></a>
+<span class="sourceLineNo">512</span>            group.addTag("(" + roundCoordinate(ref.getMinX()) + "_"<a name="line.512"></a>
+<span class="sourceLineNo">513</span>                    + roundCoordinate(ref.getMinY()) + ")-("<a name="line.513"></a>
+<span class="sourceLineNo">514</span>                    + roundCoordinate(ref.getMaxX()) + "_"<a name="line.514"></a>
+<span class="sourceLineNo">515</span>                    + roundCoordinate(ref.getMaxY()) + ")");<a name="line.515"></a>
+<span class="sourceLineNo">516</span>            group.setWest(roundCoordinate(ref.getMinX()));<a name="line.516"></a>
+<span class="sourceLineNo">517</span>            group.setSouth(roundCoordinate(ref.getMaxY()));<a name="line.517"></a>
+<span class="sourceLineNo">518</span>            group.setEast(roundCoordinate(ref.getMaxX()));<a name="line.518"></a>
+<span class="sourceLineNo">519</span>            group.setNorth(roundCoordinate(ref.getMinY()));<a name="line.519"></a>
+<span class="sourceLineNo">520</span>            group.setZone(zone);<a name="line.520"></a>
+<span class="sourceLineNo">521</span><a name="line.521"></a>
+<span class="sourceLineNo">522</span>            double base_x = roundCoordinate(ref.getMinX());<a name="line.522"></a>
+<span class="sourceLineNo">523</span>            double scale_x =15.0* Math.min(800 / roundCoordinate(ref.getWidth()),<a name="line.523"></a>
+<span class="sourceLineNo">524</span>                    800 / roundCoordinate(ref.getHeight()));<a name="line.524"></a>
+<span class="sourceLineNo">525</span>            double base_y = roundCoordinate(ref.getMinY());<a name="line.525"></a>
+<span class="sourceLineNo">526</span>            double scale_y = scale_x;<a name="line.526"></a>
+<span class="sourceLineNo">527</span><a name="line.527"></a>
+<span class="sourceLineNo">528</span>            Itk.logInfo("","basex: " + base_x + ", basey: " + base_y +<a name="line.528"></a>
+<span class="sourceLineNo">529</span>                        ", scalex: " + scale_x + ", scaley: " + scale_y);<a name="line.529"></a>
+<span class="sourceLineNo">530</span>            FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools<a name="line.530"></a>
+<span class="sourceLineNo">531</span>                    .getDefaultHints());<a name="line.531"></a>
+<span class="sourceLineNo">532</span>            Filter filter = ff.bbox(ff.property("the_geom"), ref);<a name="line.532"></a>
+<span class="sourceLineNo">533</span>            HashMap&lt;String, MapNode&gt; nodes = new HashMap&lt;String, MapNode&gt;();<a name="line.533"></a>
+<span class="sourceLineNo">534</span>            HashMap&lt;String, MapLink&gt; links = new HashMap&lt;String, MapLink&gt;();<a name="line.534"></a>
+<span class="sourceLineNo">535</span>            MapLayer layers[] = map.getLayers();<a name="line.535"></a>
+<span class="sourceLineNo">536</span>            for (int i = 0; i &lt; layers.length; ++i) {<a name="line.536"></a>
+<span class="sourceLineNo">537</span>                MapLayer layer = layers[i];<a name="line.537"></a>
+<span class="sourceLineNo">538</span>                SimpleFeatureSource source = (SimpleFeatureSource) layer<a name="line.538"></a>
+<span class="sourceLineNo">539</span>                    .getFeatureSource();<a name="line.539"></a>
+<span class="sourceLineNo">540</span>                SimpleFeatureCollection features = source.getFeatures(filter);<a name="line.540"></a>
+<span class="sourceLineNo">541</span>                SimpleFeatureType schema = features.getSchema();<a name="line.541"></a>
+<span class="sourceLineNo">542</span>                // for (AttributeType type : schema.getTypes()) {<a name="line.542"></a>
+<span class="sourceLineNo">543</span>                    // Itk.dbgVal("type",type);<a name="line.543"></a>
+<span class="sourceLineNo">544</span>                // }<a name="line.544"></a>
+<span class="sourceLineNo">545</span>                FeatureIterator&lt;SimpleFeature&gt; it = features.features();<a name="line.545"></a>
+<span class="sourceLineNo">546</span>                while (it.hasNext()) {<a name="line.546"></a>
+<span class="sourceLineNo">547</span>                    SimpleFeature feature = it.next();<a name="line.547"></a>
+<span class="sourceLineNo">548</span>                    Object the_geom = feature.getAttribute("the_geom");<a name="line.548"></a>
+<span class="sourceLineNo">549</span><a name="line.549"></a>
+<span class="sourceLineNo">550</span>                    double length = objectToDouble(feature.getAttribute(lengthAttributeName));<a name="line.550"></a>
+<span class="sourceLineNo">551</span>                    if (lengthCorrectionFactor != 1.0) {<a name="line.551"></a>
+<span class="sourceLineNo">552</span>                        length *= lengthCorrectionFactor;<a name="line.552"></a>
+<span class="sourceLineNo">553</span>                    }<a name="line.553"></a>
+<span class="sourceLineNo">554</span><a name="line.554"></a>
+<span class="sourceLineNo">555</span>                    double width = objectToDouble(feature.getAttribute(widthAttributeName));<a name="line.555"></a>
+<span class="sourceLineNo">556</span>                    if (widthCorrectionFactor != 1.0) {<a name="line.556"></a>
+<span class="sourceLineNo">557</span>                        width *= widthCorrectionFactor;<a name="line.557"></a>
+<span class="sourceLineNo">558</span>                    }<a name="line.558"></a>
+<span class="sourceLineNo">559</span>                    if (widthTable != null) {<a name="line.559"></a>
+<span class="sourceLineNo">560</span>                        width = objectToDouble(widthTable[(int)width]);<a name="line.560"></a>
+<span class="sourceLineNo">561</span>                    }<a name="line.561"></a>
+<span class="sourceLineNo">562</span>                    width = roundValue(width, 4);<a name="line.562"></a>
+<span class="sourceLineNo">563</span><a name="line.563"></a>
+<span class="sourceLineNo">564</span>                    if (makeSimpleModel) {<a name="line.564"></a>
+<span class="sourceLineNo">565</span>                        make_nodes_simple(the_geom, feature, group, nodes, links,<a name="line.565"></a>
+<span class="sourceLineNo">566</span>                            length, width, base_x, base_y, scale_x, scale_y,<a name="line.566"></a>
+<span class="sourceLineNo">567</span>                            ! outputByPlaneRectangular, transform);<a name="line.567"></a>
+<span class="sourceLineNo">568</span>                    } else {<a name="line.568"></a>
+<span class="sourceLineNo">569</span>                        make_nodes_precise(the_geom, feature, group, nodes, links,<a name="line.569"></a>
+<span class="sourceLineNo">570</span>                            length, width, base_x, base_y, scale_x, scale_y,<a name="line.570"></a>
+<span class="sourceLineNo">571</span>                            ! outputByPlaneRectangular, transform);<a name="line.571"></a>
+<span class="sourceLineNo">572</span>                    }<a name="line.572"></a>
+<span class="sourceLineNo">573</span>                }<a name="line.573"></a>
+<span class="sourceLineNo">574</span>            }<a name="line.574"></a>
+<span class="sourceLineNo">575</span>            // check the nodes that are placed same coordinate.<a name="line.575"></a>
+<span class="sourceLineNo">576</span>            ArrayList&lt;MapNode&gt; mapNodes = networkMap.getNodes();<a name="line.576"></a>
+<span class="sourceLineNo">577</span>            Itk.logInfo("MapNode size", mapNodes.size());<a name="line.577"></a>
+<span class="sourceLineNo">578</span>            for (int i = 0; i &lt; mapNodes.size(); i++) {<a name="line.578"></a>
+<span class="sourceLineNo">579</span>                for (int j = i + 1; j &lt; mapNodes.size(); j++) {<a name="line.579"></a>
+<span class="sourceLineNo">580</span>                    if (mapNodes.get(i).ID == mapNodes.get(j).ID)<a name="line.580"></a>
+<span class="sourceLineNo">581</span>                        Itk.logWarn("",<a name="line.581"></a>
+<span class="sourceLineNo">582</span>                                    "MapNode " + mapNodes.get(i).ID +<a name="line.582"></a>
+<span class="sourceLineNo">583</span>                                    " is used by two nodes!");<a name="line.583"></a>
+<span class="sourceLineNo">584</span>                }<a name="line.584"></a>
+<span class="sourceLineNo">585</span>            }<a name="line.585"></a>
+<span class="sourceLineNo">586</span>            ArrayList&lt;MapLink&gt; mapLinks = networkMap.getLinks();<a name="line.586"></a>
+<span class="sourceLineNo">587</span>            Itk.logInfo("MapLink size", mapLinks.size());<a name="line.587"></a>
+<span class="sourceLineNo">588</span>            for (int i = 0; i &lt; mapLinks.size(); i++) {<a name="line.588"></a>
+<span class="sourceLineNo">589</span>                for (int j = i + 1; j &lt; mapLinks.size(); j++) {<a name="line.589"></a>
+<span class="sourceLineNo">590</span>                    if (mapLinks.get(i).ID == mapLinks.get(j).ID)<a name="line.590"></a>
+<span class="sourceLineNo">591</span>                        Itk.logWarn("",<a name="line.591"></a>
+<span class="sourceLineNo">592</span>                                    "MapLink " + mapLinks.get(i).ID +<a name="line.592"></a>
+<span class="sourceLineNo">593</span>                                    " is used by two links!");<a name="line.593"></a>
+<span class="sourceLineNo">594</span>                }<a name="line.594"></a>
+<span class="sourceLineNo">595</span>            }<a name="line.595"></a>
+<span class="sourceLineNo">596</span>            if (save_map()) {<a name="line.596"></a>
+<span class="sourceLineNo">597</span>                map.dispose();<a name="line.597"></a>
+<span class="sourceLineNo">598</span>                map_frame.dispose();<a name="line.598"></a>
+<span class="sourceLineNo">599</span>                quit();<a name="line.599"></a>
+<span class="sourceLineNo">600</span>            }<a name="line.600"></a>
+<span class="sourceLineNo">601</span>        }<a name="line.601"></a>
+<span class="sourceLineNo">602</span>    }<a name="line.602"></a>
+<span class="sourceLineNo">603</span><a name="line.603"></a>
+<span class="sourceLineNo">604</span>    /**<a name="line.604"></a>
+<span class="sourceLineNo">605</span>     * 経緯度座標を四捨五入して小数第 scaleOfRoundOff 位に丸める<a name="line.605"></a>
+<span class="sourceLineNo">606</span>     */<a name="line.606"></a>
+<span class="sourceLineNo">607</span>    public double roundCoordinate(double coordinate) {<a name="line.607"></a>
+<span class="sourceLineNo">608</span>        return roundValue(coordinate, scaleOfRoundOff);<a name="line.608"></a>
+<span class="sourceLineNo">609</span>    }<a name="line.609"></a>
+<span class="sourceLineNo">610</span><a name="line.610"></a>
+<span class="sourceLineNo">611</span>    /**<a name="line.611"></a>
+<span class="sourceLineNo">612</span>     * 実数値 value を小数点以下第 scale 位で四捨五入する<a name="line.612"></a>
+<span class="sourceLineNo">613</span>     */<a name="line.613"></a>
+<span class="sourceLineNo">614</span>    public double roundValue(double value, int scale) {<a name="line.614"></a>
+<span class="sourceLineNo">615</span>        if (scale &gt;= 0 &amp;&amp; ! Double.isNaN(value)) {<a name="line.615"></a>
+<span class="sourceLineNo">616</span>            BigDecimal bd = new BigDecimal(String.valueOf(value));<a name="line.616"></a>
+<span class="sourceLineNo">617</span>            return bd.setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();<a name="line.617"></a>
+<span class="sourceLineNo">618</span>        }<a name="line.618"></a>
+<span class="sourceLineNo">619</span>        return value;<a name="line.619"></a>
+<span class="sourceLineNo">620</span>    }<a name="line.620"></a>
+<span class="sourceLineNo">621</span><a name="line.621"></a>
+<span class="sourceLineNo">622</span>    /**<a name="line.622"></a>
+<span class="sourceLineNo">623</span>     * Proj4J の座標変換オブジェクトを生成する<a name="line.623"></a>
+<span class="sourceLineNo">624</span>     */<a name="line.624"></a>
+<span class="sourceLineNo">625</span>    public CoordinateTransform createCoordinateTransform(String srcEpsgName, String targetEpsgName) {<a name="line.625"></a>
+<span class="sourceLineNo">626</span>        CRSFactory crsFactory = new CRSFactory();<a name="line.626"></a>
+<span class="sourceLineNo">627</span>        CoordinateReferenceSystem sourceCRS = crsFactory.createFromName(srcEpsgName);<a name="line.627"></a>
+<span class="sourceLineNo">628</span>        CoordinateReferenceSystem targetCRS = crsFactory.createFromName(targetEpsgName);<a name="line.628"></a>
+<span class="sourceLineNo">629</span>        CoordinateTransformFactory transformFactory = new CoordinateTransformFactory();<a name="line.629"></a>
+<span class="sourceLineNo">630</span>        return transformFactory.createTransform(sourceCRS, targetCRS);<a name="line.630"></a>
+<span class="sourceLineNo">631</span>    }<a name="line.631"></a>
+<span class="sourceLineNo">632</span><a name="line.632"></a>
+<span class="sourceLineNo">633</span>    /**<a name="line.633"></a>
+<span class="sourceLineNo">634</span>     * 座標変換<a name="line.634"></a>
+<span class="sourceLineNo">635</span>     */<a name="line.635"></a>
+<span class="sourceLineNo">636</span>    public ProjCoordinate transformCoordinate(CoordinateTransform transform, Coordinate c) {<a name="line.636"></a>
+<span class="sourceLineNo">637</span>        ProjCoordinate gcsPoint = new ProjCoordinate(c.x, c.y);<a name="line.637"></a>
+<span class="sourceLineNo">638</span>        ProjCoordinate pcsPoint = new ProjCoordinate();<a name="line.638"></a>
+<span class="sourceLineNo">639</span>        pcsPoint = transform.transform(gcsPoint, pcsPoint);<a name="line.639"></a>
+<span class="sourceLineNo">640</span>        return pcsPoint;<a name="line.640"></a>
+<span class="sourceLineNo">641</span>    }<a name="line.641"></a>
+<span class="sourceLineNo">642</span><a name="line.642"></a>
+<span class="sourceLineNo">643</span>    /**<a name="line.643"></a>
+<span class="sourceLineNo">644</span>     * ノード ID を小さい順に並べた文字列<a name="line.644"></a>
+<span class="sourceLineNo">645</span>     */<a name="line.645"></a>
+<span class="sourceLineNo">646</span>    private String makeNodeIdPair(MapNode node1, MapNode node2) {<a name="line.646"></a>
+<span class="sourceLineNo">647</span>        if (node1.ID.compareTo(node2.ID) &lt; 0) {<a name="line.647"></a>
+<span class="sourceLineNo">648</span>            return node1.ID + " " + node2.ID;<a name="line.648"></a>
+<span class="sourceLineNo">649</span>        } else {<a name="line.649"></a>
+<span class="sourceLineNo">650</span>            return node2.ID + " " + node1.ID;<a name="line.650"></a>
+<span class="sourceLineNo">651</span>        }<a name="line.651"></a>
+<span class="sourceLineNo">652</span>    }<a name="line.652"></a>
+<span class="sourceLineNo">653</span><a name="line.653"></a>
+<span class="sourceLineNo">654</span>    private void make_nodes_precise(Object the_geom, SimpleFeature feature,<a name="line.654"></a>
+<span class="sourceLineNo">655</span>            MapPartGroup parent_group, HashMap&lt;String, MapNode&gt; nodes, HashMap&lt;String, MapLink&gt; links,<a name="line.655"></a>
+<span class="sourceLineNo">656</span>            double length, double width, double base_x, double base_y,<a name="line.656"></a>
+<span class="sourceLineNo">657</span>            double scale_x, double scale_y, boolean crowdwalk_coordinate, CoordinateTransform transform) {<a name="line.657"></a>
+<span class="sourceLineNo">658</span>        if (!(the_geom instanceof MultiLineString))<a name="line.658"></a>
+<span class="sourceLineNo">659</span>            return;<a name="line.659"></a>
+<span class="sourceLineNo">660</span>        MultiLineString line = (MultiLineString) the_geom;<a name="line.660"></a>
+<span class="sourceLineNo">661</span>        MapNode from = null;<a name="line.661"></a>
+<span class="sourceLineNo">662</span>        Coordinate[] points = line.getCoordinates();<a name="line.662"></a>
+<span class="sourceLineNo">663</span><a name="line.663"></a>
+<span class="sourceLineNo">664</span>        if (scaleOfRoundOff &gt;= 0) {<a name="line.664"></a>
+<span class="sourceLineNo">665</span>            for (int index = 0; index &lt; points.length; index++) {<a name="line.665"></a>
+<span class="sourceLineNo">666</span>                Coordinate c = points[index];<a name="line.666"></a>
+<span class="sourceLineNo">667</span>                points[index] = new Coordinate(roundCoordinate(c.x), roundCoordinate(c.y), roundCoordinate(c.z));<a name="line.667"></a>
+<span class="sourceLineNo">668</span>            }<a name="line.668"></a>
+<span class="sourceLineNo">669</span>        }<a name="line.669"></a>
+<span class="sourceLineNo">670</span><a name="line.670"></a>
+<span class="sourceLineNo">671</span>        /* two-pass, first get ratio of each segments */<a name="line.671"></a>
+<span class="sourceLineNo">672</span>        double[] ratio = new double[points.length - 1];<a name="line.672"></a>
+<span class="sourceLineNo">673</span><a name="line.673"></a>
+<span class="sourceLineNo">674</span>        Coordinate last_c = null;<a name="line.674"></a>
+<span class="sourceLineNo">675</span>        double total_d = 0.0;<a name="line.675"></a>
+<span class="sourceLineNo">676</span>        for (int j = 0; j &lt; points.length; j++) {<a name="line.676"></a>
+<span class="sourceLineNo">677</span>            Coordinate c = points[j];<a name="line.677"></a>
+<span class="sourceLineNo">678</span>            if (last_c != null) {<a name="line.678"></a>
+<span class="sourceLineNo">679</span>                double d = c.distance(last_c);<a name="line.679"></a>
+<span class="sourceLineNo">680</span>                ratio[j - 1] = d;<a name="line.680"></a>
+<span class="sourceLineNo">681</span>                total_d += d;<a name="line.681"></a>
+<span class="sourceLineNo">682</span>            }<a name="line.682"></a>
+<span class="sourceLineNo">683</span>            last_c = c;<a name="line.683"></a>
+<span class="sourceLineNo">684</span>        }<a name="line.684"></a>
+<span class="sourceLineNo">685</span>        for (int j = 0; j &lt; points.length - 1; j++) {<a name="line.685"></a>
+<span class="sourceLineNo">686</span>            ratio[j] /= total_d;<a name="line.686"></a>
+<span class="sourceLineNo">687</span>        }<a name="line.687"></a>
+<span class="sourceLineNo">688</span><a name="line.688"></a>
+<span class="sourceLineNo">689</span>        /* two-pass, second actually make links */<a name="line.689"></a>
+<span class="sourceLineNo">690</span>        for (int j = 0; j &lt; points.length; j++) {<a name="line.690"></a>
+<span class="sourceLineNo">691</span>            Coordinate c = points[j];<a name="line.691"></a>
+<span class="sourceLineNo">692</span>            ProjCoordinate coordinate = transformCoordinate(transform, c);<a name="line.692"></a>
+<span class="sourceLineNo">693</span>            double x = roundValue(coordinate.y, 4);<a name="line.693"></a>
+<span class="sourceLineNo">694</span>            double y = roundValue(coordinate.x, 4);<a name="line.694"></a>
+<span class="sourceLineNo">695</span>            double z = roundValue(c.z, 4);<a name="line.695"></a>
+<span class="sourceLineNo">696</span>            if (! heightEnable || Double.isNaN(z)) {<a name="line.696"></a>
+<span class="sourceLineNo">697</span>                z = 0.0;<a name="line.697"></a>
+<span class="sourceLineNo">698</span>            }<a name="line.698"></a>
+<span class="sourceLineNo">699</span><a name="line.699"></a>
+<span class="sourceLineNo">700</span>            Point2D point = null;<a name="line.700"></a>
+<span class="sourceLineNo">701</span>            if (crowdwalk_coordinate) {<a name="line.701"></a>
+<span class="sourceLineNo">702</span>                point = new Point2D.Double(y, -x);<a name="line.702"></a>
+<span class="sourceLineNo">703</span>            } else {<a name="line.703"></a>
+<span class="sourceLineNo">704</span>                point = new Point2D.Double(x, y);<a name="line.704"></a>
+<span class="sourceLineNo">705</span>            }<a name="line.705"></a>
+<span class="sourceLineNo">706</span><a name="line.706"></a>
+<span class="sourceLineNo">707</span>            String point_str = point.toString().replaceAll(" ", "");<a name="line.707"></a>
+<span class="sourceLineNo">708</span>            // if (j == 0) {<a name="line.708"></a>
+<span class="sourceLineNo">709</span>                // point_str = feature.getAttribute("ND1").toString();<a name="line.709"></a>
+<span class="sourceLineNo">710</span>                // Itk.dbgVal("ND1", point_str);<a name="line.710"></a>
+<span class="sourceLineNo">711</span>            // } else if (j == points.length - 1) {<a name="line.711"></a>
+<span class="sourceLineNo">712</span>                // point_str = feature.getAttribute("ND2").toString();<a name="line.712"></a>
+<span class="sourceLineNo">713</span>                // Itk.dbgVal("ND2", point_str);<a name="line.713"></a>
+<span class="sourceLineNo">714</span>            // } else{<a name="line.714"></a>
+<span class="sourceLineNo">715</span>                // Itk.dbgVal("   ", point_str);<a name="line.715"></a>
+<span class="sourceLineNo">716</span>            // }<a name="line.716"></a>
+<span class="sourceLineNo">717</span><a name="line.717"></a>
+<span class="sourceLineNo">718</span>            MapNode node = null;<a name="line.718"></a>
+<span class="sourceLineNo">719</span>            if (nodes.containsKey(point_str)) {<a name="line.719"></a>
+<span class="sourceLineNo">720</span>                node = nodes.get(point_str);<a name="line.720"></a>
+<span class="sourceLineNo">721</span>            } else {<a name="line.721"></a>
+<span class="sourceLineNo">722</span>                node = networkMap.createMapNode(parent_group, point, z);<a name="line.722"></a>
+<span class="sourceLineNo">723</span>                //node.addTag(point_str);<a name="line.723"></a>
+<span class="sourceLineNo">724</span>                if (addCoordinateValueTag) {<a name="line.724"></a>
+<span class="sourceLineNo">725</span>                    node.addTag("" + c.x + "_" + c.y);<a name="line.725"></a>
+<span class="sourceLineNo">726</span>                }<a name="line.726"></a>
+<span class="sourceLineNo">727</span>                nodes.put(point_str, node);<a name="line.727"></a>
+<span class="sourceLineNo">728</span>            }<a name="line.728"></a>
+<span class="sourceLineNo">729</span><a name="line.729"></a>
+<span class="sourceLineNo">730</span>            if (from == node) {<a name="line.730"></a>
+<span class="sourceLineNo">731</span>                Itk.logInfo("","from  === node");<a name="line.731"></a>
+<span class="sourceLineNo">732</span>            } else if (from != null) {<a name="line.732"></a>
+<span class="sourceLineNo">733</span>                if (j == 0)<a name="line.733"></a>
+<span class="sourceLineNo">734</span>                    Itk.logWarn("","\tj 0 but from is not null!");<a name="line.734"></a>
+<span class="sourceLineNo">735</span>                String nodeIdPair = makeNodeIdPair(from, node);<a name="line.735"></a>
+<span class="sourceLineNo">736</span>                if (links.containsKey(nodeIdPair)) {<a name="line.736"></a>
+<span class="sourceLineNo">737</span>                    Itk.logWarn("","Duplicate link! node:" + nodeIdPair);<a name="line.737"></a>
+<span class="sourceLineNo">738</span>                } else {<a name="line.738"></a>
+<span class="sourceLineNo">739</span>                    MapLink link = networkMap.createMapLink(parent_group, from,<a name="line.739"></a>
+<span class="sourceLineNo">740</span>                            node, roundValue(length * ratio[j - 1], 4), width);<a name="line.740"></a>
+<span class="sourceLineNo">741</span>                    links.put(nodeIdPair, link);<a name="line.741"></a>
+<span class="sourceLineNo">742</span>                }<a name="line.742"></a>
+<span class="sourceLineNo">743</span>                /*<a name="line.743"></a>
+<span class="sourceLineNo">744</span>                double dnodes = Math.sqrt(<a name="line.744"></a>
+<span class="sourceLineNo">745</span>                        Math.pow(from.getX() - node.getX(), 2.0) +<a name="line.745"></a>
+<span class="sourceLineNo">746</span>                        Math.pow(from.getY() - node.getY(), 2.0));<a name="line.746"></a>
+<span class="sourceLineNo">747</span>                Itk.dbgVal("","from " + from.ID + " to " + node.ID +<a name="line.747"></a>
+<span class="sourceLineNo">748</span>                    " length " + length + " ratio " + length * ratio[j - 1]<a name="line.748"></a>
+<span class="sourceLineNo">749</span>                    + " distance " + dnodes + " j " + j);<a name="line.749"></a>
+<span class="sourceLineNo">750</span>                */<a name="line.750"></a>
+<span class="sourceLineNo">751</span>            }<a name="line.751"></a>
+<span class="sourceLineNo">752</span>            from = node;<a name="line.752"></a>
+<span class="sourceLineNo">753</span>        }<a name="line.753"></a>
+<span class="sourceLineNo">754</span>    }<a name="line.754"></a>
+<span class="sourceLineNo">755</span><a name="line.755"></a>
+<span class="sourceLineNo">756</span>    private void make_nodes_simple(Object the_geom, SimpleFeature feature,<a name="line.756"></a>
+<span class="sourceLineNo">757</span>            MapPartGroup parent_group, HashMap&lt;String, MapNode&gt; nodes, HashMap&lt;String, MapLink&gt; links,<a name="line.757"></a>
+<span class="sourceLineNo">758</span>            double length, double width, double base_x, double base_y,<a name="line.758"></a>
+<span class="sourceLineNo">759</span>            double scale_x, double scale_y, boolean crowdwalk_coordinate, CoordinateTransform transform) {<a name="line.759"></a>
+<span class="sourceLineNo">760</span>        if (!(the_geom instanceof MultiLineString)) return;<a name="line.760"></a>
+<span class="sourceLineNo">761</span><a name="line.761"></a>
+<span class="sourceLineNo">762</span>        MultiLineString line = (MultiLineString)the_geom;<a name="line.762"></a>
+<span class="sourceLineNo">763</span>        MapNode from = null;<a name="line.763"></a>
+<span class="sourceLineNo">764</span>        Coordinate[] points = line.getCoordinates();<a name="line.764"></a>
+<span class="sourceLineNo">765</span><a name="line.765"></a>
+<span class="sourceLineNo">766</span>        if (scaleOfRoundOff &gt;= 0) {<a name="line.766"></a>
+<span class="sourceLineNo">767</span>            for (int index = 0; index &lt; points.length; index++) {<a name="line.767"></a>
+<span class="sourceLineNo">768</span>                Coordinate c = points[index];<a name="line.768"></a>
+<span class="sourceLineNo">769</span>                points[index] = new Coordinate(roundCoordinate(c.x), roundCoordinate(c.y), roundCoordinate(c.z));<a name="line.769"></a>
+<span class="sourceLineNo">770</span>            }<a name="line.770"></a>
+<span class="sourceLineNo">771</span>        }<a name="line.771"></a>
+<span class="sourceLineNo">772</span><a name="line.772"></a>
+<span class="sourceLineNo">773</span>        for (int j = 0; j &lt; 2; j++) {<a name="line.773"></a>
+<span class="sourceLineNo">774</span>            if (j == 1) j = points.length - 1;<a name="line.774"></a>
+<span class="sourceLineNo">775</span>            Coordinate c = points[j];<a name="line.775"></a>
+<span class="sourceLineNo">776</span>            ProjCoordinate coordinate = transformCoordinate(transform, c);<a name="line.776"></a>
+<span class="sourceLineNo">777</span>            double x = roundValue(coordinate.y, 4);<a name="line.777"></a>
+<span class="sourceLineNo">778</span>            double y = roundValue(coordinate.x, 4);<a name="line.778"></a>
+<span class="sourceLineNo">779</span>            double z = roundValue(c.z, 4);<a name="line.779"></a>
+<span class="sourceLineNo">780</span>            if (! heightEnable || Double.isNaN(z)) {<a name="line.780"></a>
+<span class="sourceLineNo">781</span>                z = 0.0;<a name="line.781"></a>
+<span class="sourceLineNo">782</span>            }<a name="line.782"></a>
+<span class="sourceLineNo">783</span>            //Itk.dbgVal("\t","[" + c.x + ", " + c.y + "] -&gt; [" + x + ", " + y + "]");<a name="line.783"></a>
+<span class="sourceLineNo">784</span><a name="line.784"></a>
+<span class="sourceLineNo">785</span>            Point2D point = null;<a name="line.785"></a>
+<span class="sourceLineNo">786</span>            if (crowdwalk_coordinate) {<a name="line.786"></a>
+<span class="sourceLineNo">787</span>                point = new Point2D.Double(y, -x);<a name="line.787"></a>
+<span class="sourceLineNo">788</span>            } else {<a name="line.788"></a>
+<span class="sourceLineNo">789</span>                point = new Point2D.Double(x, y);<a name="line.789"></a>
+<span class="sourceLineNo">790</span>            }<a name="line.790"></a>
+<span class="sourceLineNo">791</span><a name="line.791"></a>
+<span class="sourceLineNo">792</span>            String point_str = point.toString().replaceAll(" ", "");<a name="line.792"></a>
+<span class="sourceLineNo">793</span>            // if (j == 0) {<a name="line.793"></a>
+<span class="sourceLineNo">794</span>                // point_str = feature.getAttribute("ND1").toString();<a name="line.794"></a>
+<span class="sourceLineNo">795</span>            // } else if (j == points.length - 1) {<a name="line.795"></a>
+<span class="sourceLineNo">796</span>                // point_str = feature.getAttribute("ND2").toString();<a name="line.796"></a>
+<span class="sourceLineNo">797</span>            // }<a name="line.797"></a>
+<span class="sourceLineNo">798</span><a name="line.798"></a>
+<span class="sourceLineNo">799</span>            MapNode node = null;<a name="line.799"></a>
+<span class="sourceLineNo">800</span>            if (nodes.containsKey(point_str)) {<a name="line.800"></a>
+<span class="sourceLineNo">801</span>                node = nodes.get(point_str);<a name="line.801"></a>
+<span class="sourceLineNo">802</span>            } else {<a name="line.802"></a>
+<span class="sourceLineNo">803</span>                node = networkMap.createMapNode(parent_group, point, z);<a name="line.803"></a>
+<span class="sourceLineNo">804</span>                //node.addTag(point_str);<a name="line.804"></a>
+<span class="sourceLineNo">805</span>                if (addCoordinateValueTag) {<a name="line.805"></a>
+<span class="sourceLineNo">806</span>                    node.addTag("" + c.x + "_" + c.y);<a name="line.806"></a>
+<span class="sourceLineNo">807</span>                }<a name="line.807"></a>
+<span class="sourceLineNo">808</span>                nodes.put(point_str, node);<a name="line.808"></a>
+<span class="sourceLineNo">809</span>            }<a name="line.809"></a>
+<span class="sourceLineNo">810</span><a name="line.810"></a>
+<span class="sourceLineNo">811</span>            if (from != null) {<a name="line.811"></a>
+<span class="sourceLineNo">812</span>                String nodeIdPair = makeNodeIdPair(from, node);<a name="line.812"></a>
+<span class="sourceLineNo">813</span>                if (links.containsKey(nodeIdPair)) {<a name="line.813"></a>
+<span class="sourceLineNo">814</span>                    Itk.logWarn("", "Duplicate link! node:" + nodeIdPair);<a name="line.814"></a>
+<span class="sourceLineNo">815</span>                } else {<a name="line.815"></a>
+<span class="sourceLineNo">816</span>                    MapLink link = networkMap.createMapLink(parent_group, from,<a name="line.816"></a>
+<span class="sourceLineNo">817</span>                            node, roundValue(length, 4), width);<a name="line.817"></a>
+<span class="sourceLineNo">818</span>                    links.put(nodeIdPair, link);<a name="line.818"></a>
+<span class="sourceLineNo">819</span>                }<a name="line.819"></a>
+<span class="sourceLineNo">820</span>            }<a name="line.820"></a>
+<span class="sourceLineNo">821</span>            from = node;<a name="line.821"></a>
+<span class="sourceLineNo">822</span>        }<a name="line.822"></a>
+<span class="sourceLineNo">823</span>    }<a name="line.823"></a>
+<span class="sourceLineNo">824</span><a name="line.824"></a>
+<span class="sourceLineNo">825</span>    private boolean save_map() {<a name="line.825"></a>
+<span class="sourceLineNo">826</span>        FileDialog fd = new FileDialog(map_frame, "Export map", FileDialog.SAVE);<a name="line.826"></a>
+<span class="sourceLineNo">827</span>        fd.setFile(settings.get("gis-output-filename", ""));<a name="line.827"></a>
+<span class="sourceLineNo">828</span>        fd.setDirectory(settings.get("inputdir", ""));<a name="line.828"></a>
+<span class="sourceLineNo">829</span>        fd.setVisible (true);<a name="line.829"></a>
+<span class="sourceLineNo">830</span><a name="line.830"></a>
+<span class="sourceLineNo">831</span>        if (fd.getFile() == null) return false;<a name="line.831"></a>
+<span class="sourceLineNo">832</span><a name="line.832"></a>
+<span class="sourceLineNo">833</span>        String filename = fd.getDirectory() + fd.getFile();<a name="line.833"></a>
+<span class="sourceLineNo">834</span>        settings.put("gis-output-filename", fd.getFile());<a name="line.834"></a>
+<span class="sourceLineNo">835</span><a name="line.835"></a>
+<span class="sourceLineNo">836</span>        try {<a name="line.836"></a>
+<span class="sourceLineNo">837</span>            FileOutputStream fos = new FileOutputStream(filename);<a name="line.837"></a>
+<span class="sourceLineNo">838</span><a name="line.838"></a>
+<span class="sourceLineNo">839</span>            Document doc = ItkXmlUtility.singleton.newDocument() ;<a name="line.839"></a>
+<span class="sourceLineNo">840</span>            networkMap.toDOM(doc);<a name="line.840"></a>
+<span class="sourceLineNo">841</span>            boolean result = ItkXmlUtility.singleton.docToStream(doc, fos);<a name="line.841"></a>
+<span class="sourceLineNo">842</span>            if (!result) {<a name="line.842"></a>
+<span class="sourceLineNo">843</span>                JOptionPane.showMessageDialog(map_frame,<a name="line.843"></a>
+<span class="sourceLineNo">844</span>                        "Could no save to:\n" + filename<a name="line.844"></a>
+<span class="sourceLineNo">845</span>                        + "\nAn error occured while actually writing to file.",<a name="line.845"></a>
+<span class="sourceLineNo">846</span>                        "Save failed",<a name="line.846"></a>
+<span class="sourceLineNo">847</span>                        JOptionPane.ERROR_MESSAGE);<a name="line.847"></a>
+<span class="sourceLineNo">848</span>                return false;<a name="line.848"></a>
+<span class="sourceLineNo">849</span>            }<a name="line.849"></a>
+<span class="sourceLineNo">850</span>        } catch (IOException e) {<a name="line.850"></a>
+<span class="sourceLineNo">851</span>            Itk.dumpStackTraceOf(e) ;<a name="line.851"></a>
+<span class="sourceLineNo">852</span>            JOptionPane.showMessageDialog(map_frame,<a name="line.852"></a>
+<span class="sourceLineNo">853</span>                    "Could no save to:\n" + filename,<a name="line.853"></a>
+<span class="sourceLineNo">854</span>                    "Save failed",<a name="line.854"></a>
+<span class="sourceLineNo">855</span>                    JOptionPane.ERROR_MESSAGE);<a name="line.855"></a>
+<span class="sourceLineNo">856</span>            return false;<a name="line.856"></a>
+<span class="sourceLineNo">857</span>        }<a name="line.857"></a>
+<span class="sourceLineNo">858</span><a name="line.858"></a>
+<span class="sourceLineNo">859</span>        return true;<a name="line.859"></a>
+<span class="sourceLineNo">860</span>    }<a name="line.860"></a>
+<span class="sourceLineNo">861</span><a name="line.861"></a>
+<span class="sourceLineNo">862</span>    public File getGisFile() {<a name="line.862"></a>
+<span class="sourceLineNo">863</span>        return new File(settings.get("gisfile", "."));<a name="line.863"></a>
+<span class="sourceLineNo">864</span>    }<a name="line.864"></a>
+<span class="sourceLineNo">865</span><a name="line.865"></a>
+<span class="sourceLineNo">866</span>    public void setGisFile(File file) {<a name="line.866"></a>
+<span class="sourceLineNo">867</span>        settings.put("gisfile", file.toString());<a name="line.867"></a>
+<span class="sourceLineNo">868</span>    }<a name="line.868"></a>
+<span class="sourceLineNo">869</span><a name="line.869"></a>
+<span class="sourceLineNo">870</span>    private void quit() {<a name="line.870"></a>
+<span class="sourceLineNo">871</span>        settings.put("gis-width", map_frame.getWidth());<a name="line.871"></a>
+<span class="sourceLineNo">872</span>        settings.put("gis-height", map_frame.getHeight());<a name="line.872"></a>
+<span class="sourceLineNo">873</span>        Settings.save();<a name="line.873"></a>
+<span class="sourceLineNo">874</span>        Itk.quitSafely() ;<a name="line.874"></a>
+<span class="sourceLineNo">875</span>    }<a name="line.875"></a>
+<span class="sourceLineNo">876</span><a name="line.876"></a>
+<span class="sourceLineNo">877</span>    /**<a name="line.877"></a>
+<span class="sourceLineNo">878</span>     * コマンドラインオプションの定義<a name="line.878"></a>
+<span class="sourceLineNo">879</span>     */<a name="line.879"></a>
+<span class="sourceLineNo">880</span>    private void defineOptions(Options options) {<a name="line.880"></a>
+<span class="sourceLineNo">881</span>        options.addOption("h", "help", false, "この使い方を表示して終了する");<a name="line.881"></a>
+<span class="sourceLineNo">882</span>        // options.addOption("H", "height-enable", false, "シェープファイルの標高情報を height 属性に反映する");<a name="line.882"></a>
+<span class="sourceLineNo">883</span>        options.addOption("p", "output-by-plane-rectangular", false, "平面直角座標系のまま出力する");<a name="line.883"></a>
+<span class="sourceLineNo">884</span>        options.addOption(OptionBuilder.withLongOpt("shapefile-spec")<a name="line.884"></a>
+<span class="sourceLineNo">885</span>            .withDescription("読み込むシェープファイルの形式を指定する\nSPEC = "<a name="line.885"></a>
+<span class="sourceLineNo">886</span>                + String.join(" | ", shapefileSpecNames))<a name="line.886"></a>
+<span class="sourceLineNo">887</span>            .hasArg().withArgName("SPEC").create("s"));<a name="line.887"></a>
+<span class="sourceLineNo">888</span>        options.addOption("S", "make-simple-model", false, "簡易モデルのマップを出力する");<a name="line.888"></a>
+<span class="sourceLineNo">889</span>        options.addOption("t", "add-coordinate-value-tag", false, "経緯度タグをノードに付加する");<a name="line.889"></a>
+<span class="sourceLineNo">890</span>        options.addOption("T", "output-by-tokyo-datum", false, "旧日本測地系で出力する");<a name="line.890"></a>
+<span class="sourceLineNo">891</span>        options.addOption(OptionBuilder.withLongOpt("zone")<a name="line.891"></a>
+<span class="sourceLineNo">892</span>            .withDescription("平面直角座標系の系番号(1～19)を指定する")<a name="line.892"></a>
+<span class="sourceLineNo">893</span>            .hasArg().withArgName("NUMBER").create("z"));<a name="line.893"></a>
+<span class="sourceLineNo">894</span>    }<a name="line.894"></a>
+<span class="sourceLineNo">895</span><a name="line.895"></a>
+<span class="sourceLineNo">896</span>    /**<a name="line.896"></a>
+<span class="sourceLineNo">897</span>     * コマンドラインオプションを解析して指定された処理を実行する<a name="line.897"></a>
+<span class="sourceLineNo">898</span>     * @param args : main メソッドの args 引数<a name="line.898"></a>
+<span class="sourceLineNo">899</span>     */<a name="line.899"></a>
+<span class="sourceLineNo">900</span>    private void parseCommandLine(String[] args, Options options) {<a name="line.900"></a>
+<span class="sourceLineNo">901</span>        try {<a name="line.901"></a>
+<span class="sourceLineNo">902</span>            CommandLine commandLine = new PosixParser().parse(options, args);<a name="line.902"></a>
+<span class="sourceLineNo">903</span>            // ヘルプ表示オプションもしくはコマンドライン引数エラー<a name="line.903"></a>
+<span class="sourceLineNo">904</span>            if (commandLine.hasOption("help") || commandLine.getArgs().length &gt; 1) {<a name="line.904"></a>
+<span class="sourceLineNo">905</span>                printHelp(options);<a name="line.905"></a>
+<span class="sourceLineNo">906</span>                Itk.quitSafely() ;<a name="line.906"></a>
+<span class="sourceLineNo">907</span>            }<a name="line.907"></a>
+<span class="sourceLineNo">908</span><a name="line.908"></a>
+<span class="sourceLineNo">909</span>            // シェープファイルの指定あり<a name="line.909"></a>
+<span class="sourceLineNo">910</span>            if (commandLine.getArgs().length == 1) {<a name="line.910"></a>
+<span class="sourceLineNo">911</span>                shapefilePath = commandLine.getArgs()[0];<a name="line.911"></a>
+<span class="sourceLineNo">912</span>            }<a name="line.912"></a>
+<span class="sourceLineNo">913</span><a name="line.913"></a>
+<span class="sourceLineNo">914</span>            // 読み込むシェープファイルの形式<a name="line.914"></a>
+<span class="sourceLineNo">915</span>            if (commandLine.hasOption("shapefile-spec")) {<a name="line.915"></a>
+<span class="sourceLineNo">916</span>                shapefileSpecName = commandLine.getOptionValue("shapefile-spec");<a name="line.916"></a>
+<span class="sourceLineNo">917</span>                boolean found = false;<a name="line.917"></a>
+<span class="sourceLineNo">918</span>                for (String name : shapefileSpecNames) {<a name="line.918"></a>
+<span class="sourceLineNo">919</span>                    if (name.equals(shapefileSpecName)) {<a name="line.919"></a>
+<span class="sourceLineNo">920</span>                        found = true;<a name="line.920"></a>
+<span class="sourceLineNo">921</span>                    }<a name="line.921"></a>
+<span class="sourceLineNo">922</span>                }<a name="line.922"></a>
+<span class="sourceLineNo">923</span>                if (! found) {<a name="line.923"></a>
+<span class="sourceLineNo">924</span>                    printHelp(options);<a name="line.924"></a>
+<span class="sourceLineNo">925</span>                    Itk.quitByError() ;<a name="line.925"></a>
+<span class="sourceLineNo">926</span>                }<a name="line.926"></a>
+<span class="sourceLineNo">927</span>            }<a name="line.927"></a>
+<span class="sourceLineNo">928</span><a name="line.928"></a>
+<span class="sourceLineNo">929</span>            // シェープファイルが標高情報を持っていたら、その値を height 属性に反映する<a name="line.929"></a>
+<span class="sourceLineNo">930</span>            // heightEnable = commandLine.hasOption("height-enable");<a name="line.930"></a>
+<span class="sourceLineNo">931</span>            // ※標高値に関しては不明な点があるため当面サポートは見送る<a name="line.931"></a>
+<span class="sourceLineNo">932</span><a name="line.932"></a>
+<span class="sourceLineNo">933</span>            // 経緯度タグをノードに付加する<a name="line.933"></a>
+<span class="sourceLineNo">934</span>            addCoordinateValueTag = commandLine.hasOption("add-coordinate-value-tag");<a name="line.934"></a>
+<span class="sourceLineNo">935</span><a name="line.935"></a>
+<span class="sourceLineNo">936</span>            // 旧日本測地系で出力する<a name="line.936"></a>
+<span class="sourceLineNo">937</span>            outputByTokyoDatum = commandLine.hasOption("output-by-tokyo-datum");<a name="line.937"></a>
+<span class="sourceLineNo">938</span><a name="line.938"></a>
+<span class="sourceLineNo">939</span>            // 平面直角座標系のまま出力する<a name="line.939"></a>
+<span class="sourceLineNo">940</span>            outputByPlaneRectangular = commandLine.hasOption("output-by-plane-rectangular");<a name="line.940"></a>
+<span class="sourceLineNo">941</span><a name="line.941"></a>
+<span class="sourceLineNo">942</span>            // 簡易モデルのマップを出力する<a name="line.942"></a>
+<span class="sourceLineNo">943</span>            makeSimpleModel = commandLine.hasOption("make-simple-model");<a name="line.943"></a>
+<span class="sourceLineNo">944</span><a name="line.944"></a>
+<span class="sourceLineNo">945</span>            // 平面直角座標系の系番号(1～19)を指定する<a name="line.945"></a>
+<span class="sourceLineNo">946</span>            if (commandLine.hasOption("zone")) {<a name="line.946"></a>
+<span class="sourceLineNo">947</span>                String _zone = commandLine.getOptionValue("zone");<a name="line.947"></a>
+<span class="sourceLineNo">948</span>                for (Integer num : SYSTEM_NUMBERS) {<a name="line.948"></a>
+<span class="sourceLineNo">949</span>                    if (_zone.equals(num.toString())) {<a name="line.949"></a>
+<span class="sourceLineNo">950</span>                        zone = num;<a name="line.950"></a>
+<span class="sourceLineNo">951</span>                        break;<a name="line.951"></a>
+<span class="sourceLineNo">952</span>                    }<a name="line.952"></a>
+<span class="sourceLineNo">953</span>                }<a name="line.953"></a>
+<span class="sourceLineNo">954</span>                if (zone == -1) {<a name="line.954"></a>
+<span class="sourceLineNo">955</span>                    printHelp(options);<a name="line.955"></a>
+<span class="sourceLineNo">956</span>                    Itk.quitByError() ;<a name="line.956"></a>
+<span class="sourceLineNo">957</span>                }<a name="line.957"></a>
+<span class="sourceLineNo">958</span>            }<a name="line.958"></a>
+<span class="sourceLineNo">959</span>        } catch (ParseException e) {<a name="line.959"></a>
+<span class="sourceLineNo">960</span>            Itk.logError("", e.getMessage());<a name="line.960"></a>
+<span class="sourceLineNo">961</span>            printHelp(options);<a name="line.961"></a>
+<span class="sourceLineNo">962</span>            Itk.quitByError() ;<a name="line.962"></a>
+<span class="sourceLineNo">963</span>        } catch (Exception e) {<a name="line.963"></a>
+<span class="sourceLineNo">964</span>            Itk.quitWithStackTrace(e) ;<a name="line.964"></a>
+<span class="sourceLineNo">965</span>        }<a name="line.965"></a>
+<span class="sourceLineNo">966</span>    }<a name="line.966"></a>
+<span class="sourceLineNo">967</span><a name="line.967"></a>
+<span class="sourceLineNo">968</span>    /**<a name="line.968"></a>
+<span class="sourceLineNo">969</span>     * コマンドラインヘルプを標準出力に表示する<a name="line.969"></a>
+<span class="sourceLineNo">970</span>     */<a name="line.970"></a>
+<span class="sourceLineNo">971</span>    public void printHelp(Options options) {<a name="line.971"></a>
+<span class="sourceLineNo">972</span>        HelpFormatter formatter = new HelpFormatter();<a name="line.972"></a>
+<span class="sourceLineNo">973</span>        int usageWidth = 7 + commandLineSyntax.length();    // "usege: " + commandLineSyntax<a name="line.973"></a>
+<span class="sourceLineNo">974</span>        formatter.setWidth(Math.max(usageWidth, 80));       // 行の折りたたみ最小幅は80桁<a name="line.974"></a>
+<span class="sourceLineNo">975</span>        formatter.printHelp(commandLineSyntax, options);<a name="line.975"></a>
+<span class="sourceLineNo">976</span>    }<a name="line.976"></a>
+<span class="sourceLineNo">977</span><a name="line.977"></a>
+<span class="sourceLineNo">978</span>    /**<a name="line.978"></a>
+<span class="sourceLineNo">979</span>     * シェープファイルのメーカー別仕様定義ファイルを読み込む<a name="line.979"></a>
+<span class="sourceLineNo">980</span>     *<a name="line.980"></a>
+<span class="sourceLineNo">981</span>     * ※カレントディレクトリに定義ファイルがあればそちらを優先する<a name="line.981"></a>
+<span class="sourceLineNo">982</span>     */<a name="line.982"></a>
+<span class="sourceLineNo">983</span>    public void loadShapefileSpecs(String filePath) {<a name="line.983"></a>
+<span class="sourceLineNo">984</span>        JSON json = new JSON(JSON.Mode.TRADITIONAL);<a name="line.984"></a>
+<span class="sourceLineNo">985</span>        try {<a name="line.985"></a>
+<span class="sourceLineNo">986</span>            File file = new File(filePath);<a name="line.986"></a>
+<span class="sourceLineNo">987</span>            if (file.exists()) {<a name="line.987"></a>
+<span class="sourceLineNo">988</span>                shapefileSpecs = json.parse(new FileReader(filePath));<a name="line.988"></a>
+<span class="sourceLineNo">989</span>            } else {<a name="line.989"></a>
+<span class="sourceLineNo">990</span>                shapefileSpecs = json.parse(getClass().getResourceAsStream("/shapefile_specs.json"));<a name="line.990"></a>
+<span class="sourceLineNo">991</span>            }<a name="line.991"></a>
+<span class="sourceLineNo">992</span>        } catch (IOException e) {<a name="line.992"></a>
+<span class="sourceLineNo">993</span>            Itk.quitWithStackTrace(e) ;<a name="line.993"></a>
+<span class="sourceLineNo">994</span>        }<a name="line.994"></a>
+<span class="sourceLineNo">995</span>        shapefileSpecNames = shapefileSpecs.keySet().toArray(new String[0]);<a name="line.995"></a>
+<span class="sourceLineNo">996</span>    }<a name="line.996"></a>
+<span class="sourceLineNo">997</span><a name="line.997"></a>
+<span class="sourceLineNo">998</span>    /* Interface to the outside<a name="line.998"></a>
+<span class="sourceLineNo">999</span>     */<a name="line.999"></a>
+<span class="sourceLineNo">1000</span>    public static void main(String[] args) {<a name="line.1000"></a>
+<span class="sourceLineNo">1001</span>        ImportGis importGis = new ImportGis();<a name="line.1001"></a>
+<span class="sourceLineNo">1002</span>        importGis.loadShapefileSpecs(SHAPEFILE_SPECS_PATH);<a name="line.1002"></a>
+<span class="sourceLineNo">1003</span><a name="line.1003"></a>
+<span class="sourceLineNo">1004</span>        Options options = new Options();<a name="line.1004"></a>
+<span class="sourceLineNo">1005</span>        importGis.defineOptions(options);<a name="line.1005"></a>
+<span class="sourceLineNo">1006</span>        importGis.parseCommandLine(args, options);<a name="line.1006"></a>
+<span class="sourceLineNo">1007</span><a name="line.1007"></a>
+<span class="sourceLineNo">1008</span>        if (shapefileSpecName == null) {<a name="line.1008"></a>
+<span class="sourceLineNo">1009</span>            int index = JOptionPane.showOptionDialog(null,<a name="line.1009"></a>
+<span class="sourceLineNo">1010</span>                    "読み込むシェープファイルの形式を選択してください",<a name="line.1010"></a>
+<span class="sourceLineNo">1011</span>                    "シェープファイルの形式",<a name="line.1011"></a>
+<span class="sourceLineNo">1012</span>                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,<a name="line.1012"></a>
+<span class="sourceLineNo">1013</span>                    null, shapefileSpecNames, shapefileSpecNames[0]);<a name="line.1013"></a>
+<span class="sourceLineNo">1014</span>            if (index == JOptionPane.CLOSED_OPTION) {<a name="line.1014"></a>
+<span class="sourceLineNo">1015</span>                Itk.quitSafely() ;<a name="line.1015"></a>
+<span class="sourceLineNo">1016</span>            }<a name="line.1016"></a>
+<span class="sourceLineNo">1017</span>            shapefileSpecName = shapefileSpecNames[index];<a name="line.1017"></a>
+<span class="sourceLineNo">1018</span>        }<a name="line.1018"></a>
+<span class="sourceLineNo">1019</span><a name="line.1019"></a>
+<span class="sourceLineNo">1020</span>        importGis.initialize();<a name="line.1020"></a>
+<span class="sourceLineNo">1021</span>        JMapFrame mapFrame = importGis.setupMapFrame();<a name="line.1021"></a>
+<span class="sourceLineNo">1022</span>        mapFrame.setVisible(true);<a name="line.1022"></a>
+<span class="sourceLineNo">1023</span>    }<a name="line.1023"></a>
+<span class="sourceLineNo">1024</span>}<a name="line.1024"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

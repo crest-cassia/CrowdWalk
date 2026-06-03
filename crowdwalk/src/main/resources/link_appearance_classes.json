@@ -1,0 +1,8 @@
+{
+    "ActualWidth2D" : "nodagumi.ananPJ.Gui.LinkAppearance.view2d.ActualWidth2D",
+    "ActualWidth3D" : "nodagumi.ananPJ.Gui.LinkAppearance.view3d.ActualWidth3D",
+    "FixedWidth2D" : "nodagumi.ananPJ.Gui.LinkAppearance.view2d.FixedWidth2D",
+    "FixedWidth3D" : "nodagumi.ananPJ.Gui.LinkAppearance.view3d.FixedWidth3D",
+    "SolidLine2D" : "nodagumi.ananPJ.Gui.LinkAppearance.view2d.SolidLine2D",
+    "SolidLine3D" : "nodagumi.ananPJ.Gui.LinkAppearance.view3d.SolidLine3D"
+}

@@ -1,0 +1,911 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">/** Itk Template for Java</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * @author:: Itsuki Noda</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * @version:: 0.0 2014/12/12 I.Noda</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * &lt;B&gt;History:&lt;/B&gt;</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * &lt;UL&gt;</a>
+<span class="sourceLineNo">007</span><a id="line.7"> *   &lt;LI&gt; [2014/03/27]: Create This File. &lt;/LI&gt;</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *   &lt;LI&gt; [YYYY/MM/DD]: add more &lt;/LI&gt;</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * &lt;/UL&gt;</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * &lt;B&gt;Usage:&lt;/B&gt;</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * ...</a>
+<span class="sourceLineNo">012</span><a id="line.12"> */</a>
+<span class="sourceLineNo">013</span><a id="line.13"></a>
+<span class="sourceLineNo">014</span><a id="line.14">package nodagumi.ananPJ.misc ;</a>
+<span class="sourceLineNo">015</span><a id="line.15"></a>
+<span class="sourceLineNo">016</span><a id="line.16">import java.util.ArrayList;</a>
+<span class="sourceLineNo">017</span><a id="line.17">import java.util.Collections;</a>
+<span class="sourceLineNo">018</span><a id="line.18">import java.util.Random;</a>
+<span class="sourceLineNo">019</span><a id="line.19"></a>
+<span class="sourceLineNo">020</span><a id="line.20">import java.awt.geom.Point2D;</a>
+<span class="sourceLineNo">021</span><a id="line.21"></a>
+<span class="sourceLineNo">022</span><a id="line.22">import nodagumi.ananPJ.NetworkMap.Link.*;</a>
+<span class="sourceLineNo">023</span><a id="line.23">import nodagumi.ananPJ.NetworkMap.Link.MapLink.Direction;</a>
+<span class="sourceLineNo">024</span><a id="line.24">import nodagumi.ananPJ.NetworkMap.Node.*;</a>
+<span class="sourceLineNo">025</span><a id="line.25">import nodagumi.ananPJ.Agents.AgentBase;</a>
+<span class="sourceLineNo">026</span><a id="line.26">import nodagumi.ananPJ.misc.Trail;</a>
+<span class="sourceLineNo">027</span><a id="line.27"></a>
+<span class="sourceLineNo">028</span><a id="line.28">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">029</span><a id="line.29"></a>
+<span class="sourceLineNo">030</span><a id="line.30">//======================================================================</a>
+<span class="sourceLineNo">031</span><a id="line.31">/**</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * エージェントの存在位置を示すクラス</a>
+<span class="sourceLineNo">033</span><a id="line.33"> */</a>
+<span class="sourceLineNo">034</span><a id="line.34">public class Place {</a>
+<span class="sourceLineNo">035</span><a id="line.35">    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</a>
+<span class="sourceLineNo">036</span><a id="line.36">    /**</a>
+<span class="sourceLineNo">037</span><a id="line.37">     * リンクを抜け出る直前を計算するための係数</a>
+<span class="sourceLineNo">038</span><a id="line.38">     */</a>
+<span class="sourceLineNo">039</span><a id="line.39">    final static public double AlmostOne = (1.0 - 1.0e-13) ;</a>
+<span class="sourceLineNo">040</span><a id="line.40"></a>
+<span class="sourceLineNo">041</span><a id="line.41">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">042</span><a id="line.42">    /**</a>
+<span class="sourceLineNo">043</span><a id="line.43">     * エージェントが存在するリンク</a>
+<span class="sourceLineNo">044</span><a id="line.44">     */</a>
+<span class="sourceLineNo">045</span><a id="line.45">    protected MapLink link = null ;</a>
+<span class="sourceLineNo">046</span><a id="line.46"></a>
+<span class="sourceLineNo">047</span><a id="line.47">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">048</span><a id="line.48">    /**</a>
+<span class="sourceLineNo">049</span><a id="line.49">     * そのリンクに入った側のノード</a>
+<span class="sourceLineNo">050</span><a id="line.50">     */</a>
+<span class="sourceLineNo">051</span><a id="line.51">    protected MapNode enteringNode = null ;</a>
+<span class="sourceLineNo">052</span><a id="line.52"></a>
+<span class="sourceLineNo">053</span><a id="line.53">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">054</span><a id="line.54">    /**</a>
+<span class="sourceLineNo">055</span><a id="line.55">     * enteringNode から移動した距離</a>
+<span class="sourceLineNo">056</span><a id="line.56">     */</a>
+<span class="sourceLineNo">057</span><a id="line.57">    protected double advancingDistance = 0.0 ;</a>
+<span class="sourceLineNo">058</span><a id="line.58"></a>
+<span class="sourceLineNo">059</span><a id="line.59">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">060</span><a id="line.60">    /**</a>
+<span class="sourceLineNo">061</span><a id="line.61">     * constractor (no arg)</a>
+<span class="sourceLineNo">062</span><a id="line.62">     */</a>
+<span class="sourceLineNo">063</span><a id="line.63">    public Place() {</a>
+<span class="sourceLineNo">064</span><a id="line.64">        set(null, null, true, 0.0) ;</a>
+<span class="sourceLineNo">065</span><a id="line.65">    }</a>
+<span class="sourceLineNo">066</span><a id="line.66"></a>
+<span class="sourceLineNo">067</span><a id="line.67">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">068</span><a id="line.68">    /**</a>
+<span class="sourceLineNo">069</span><a id="line.69">     * constractor</a>
+<span class="sourceLineNo">070</span><a id="line.70">     * @param _link : エージェントのいるリンク</a>
+<span class="sourceLineNo">071</span><a id="line.71">     * @param _enteringNode : 入った側のノード</a>
+<span class="sourceLineNo">072</span><a id="line.72">     */</a>
+<span class="sourceLineNo">073</span><a id="line.73">    public Place(MapLink _link, MapNode _enteringNode) {</a>
+<span class="sourceLineNo">074</span><a id="line.74">        set(_link, _enteringNode, true, 0.0) ;</a>
+<span class="sourceLineNo">075</span><a id="line.75">    }</a>
+<span class="sourceLineNo">076</span><a id="line.76"></a>
+<span class="sourceLineNo">077</span><a id="line.77">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">078</span><a id="line.78">    /**</a>
+<span class="sourceLineNo">079</span><a id="line.79">     * constractor</a>
+<span class="sourceLineNo">080</span><a id="line.80">     * @param _link : エージェントのいるリンク</a>
+<span class="sourceLineNo">081</span><a id="line.81">     * @param _enteringNode : 入った側のノード</a>
+<span class="sourceLineNo">082</span><a id="line.82">     * @param _distance : 進行距離</a>
+<span class="sourceLineNo">083</span><a id="line.83">     */</a>
+<span class="sourceLineNo">084</span><a id="line.84">    public Place(MapLink _link, MapNode _enteringNode, double _distance) {</a>
+<span class="sourceLineNo">085</span><a id="line.85">        set(_link, _enteringNode, true, _distance) ;</a>
+<span class="sourceLineNo">086</span><a id="line.86">    }</a>
+<span class="sourceLineNo">087</span><a id="line.87"></a>
+<span class="sourceLineNo">088</span><a id="line.88">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">089</span><a id="line.89">    /**</a>
+<span class="sourceLineNo">090</span><a id="line.90">     * constractor</a>
+<span class="sourceLineNo">091</span><a id="line.91">     * @param _link : エージェントのいるリンク</a>
+<span class="sourceLineNo">092</span><a id="line.92">     * @param _node : どちらかのノード</a>
+<span class="sourceLineNo">093</span><a id="line.93">     * @param _entering : _node が入った側かどうか？</a>
+<span class="sourceLineNo">094</span><a id="line.94">     */</a>
+<span class="sourceLineNo">095</span><a id="line.95">    public Place(MapLink _link, MapNode _node, boolean _entering) {</a>
+<span class="sourceLineNo">096</span><a id="line.96">        set(_link, _node, _entering, 0.0) ;</a>
+<span class="sourceLineNo">097</span><a id="line.97">    }</a>
+<span class="sourceLineNo">098</span><a id="line.98"></a>
+<span class="sourceLineNo">099</span><a id="line.99">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">100</span><a id="line.100">    /**</a>
+<span class="sourceLineNo">101</span><a id="line.101">     * constractor</a>
+<span class="sourceLineNo">102</span><a id="line.102">     * @param _link : エージェントのいるリンク</a>
+<span class="sourceLineNo">103</span><a id="line.103">     * @param _node : どちらかのノード</a>
+<span class="sourceLineNo">104</span><a id="line.104">     * @param _entering : _node が入った側かどうか？</a>
+<span class="sourceLineNo">105</span><a id="line.105">     * @param _distance : 進行距離</a>
+<span class="sourceLineNo">106</span><a id="line.106">     */</a>
+<span class="sourceLineNo">107</span><a id="line.107">    public Place(MapLink _link, MapNode _node, boolean _entering,</a>
+<span class="sourceLineNo">108</span><a id="line.108">                 double _distance) {</a>
+<span class="sourceLineNo">109</span><a id="line.109">        set(_link, _node, _entering, _distance) ;</a>
+<span class="sourceLineNo">110</span><a id="line.110">    }</a>
+<span class="sourceLineNo">111</span><a id="line.111"></a>
+<span class="sourceLineNo">112</span><a id="line.112">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">113</span><a id="line.113">    /**</a>
+<span class="sourceLineNo">114</span><a id="line.114">     * 各値をセット</a>
+<span class="sourceLineNo">115</span><a id="line.115">     * @param _link : エージェントのいるリンク</a>
+<span class="sourceLineNo">116</span><a id="line.116">     * @param _node : どちらかのノード</a>
+<span class="sourceLineNo">117</span><a id="line.117">     * @param _entering : _node が入った側かどうか？</a>
+<span class="sourceLineNo">118</span><a id="line.118">     * @param _advancingDistance : 進行距離</a>
+<span class="sourceLineNo">119</span><a id="line.119">     */</a>
+<span class="sourceLineNo">120</span><a id="line.120">    public Place set(MapLink _link, MapNode _node, boolean _entering,</a>
+<span class="sourceLineNo">121</span><a id="line.121">                     double _advancingDistance) {</a>
+<span class="sourceLineNo">122</span><a id="line.122">        return set(_link, _node, _entering, _advancingDistance, true) ;</a>
+<span class="sourceLineNo">123</span><a id="line.123">    }</a>
+<span class="sourceLineNo">124</span><a id="line.124"></a>
+<span class="sourceLineNo">125</span><a id="line.125">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">126</span><a id="line.126">    /**</a>
+<span class="sourceLineNo">127</span><a id="line.127">     * 各値をセット</a>
+<span class="sourceLineNo">128</span><a id="line.128">     * @param _link : エージェントのいるリンク</a>
+<span class="sourceLineNo">129</span><a id="line.129">     * @param _node : どちらかのノード</a>
+<span class="sourceLineNo">130</span><a id="line.130">     * @param _entering : _node が入った側かどうか？</a>
+<span class="sourceLineNo">131</span><a id="line.131">     * @param _advancingDistance : 進行距離</a>
+<span class="sourceLineNo">132</span><a id="line.132">     * @param safely : enteringNode の設定で、整合性チェックするかどうか</a>
+<span class="sourceLineNo">133</span><a id="line.133">     */</a>
+<span class="sourceLineNo">134</span><a id="line.134">    public Place set(MapLink _link, MapNode _node, boolean _entering,</a>
+<span class="sourceLineNo">135</span><a id="line.135">                     double _advancingDistance, boolean safely) {</a>
+<span class="sourceLineNo">136</span><a id="line.136">        link = _link ;</a>
+<span class="sourceLineNo">137</span><a id="line.137">        if(_entering) {</a>
+<span class="sourceLineNo">138</span><a id="line.138">            setEnteringNode(_node, safely) ;</a>
+<span class="sourceLineNo">139</span><a id="line.139">        } else {</a>
+<span class="sourceLineNo">140</span><a id="line.140">            setEnteringNode(link.getOther(_node), safely) ;</a>
+<span class="sourceLineNo">141</span><a id="line.141">        }</a>
+<span class="sourceLineNo">142</span><a id="line.142"></a>
+<span class="sourceLineNo">143</span><a id="line.143">        advancingDistance = _advancingDistance ;</a>
+<span class="sourceLineNo">144</span><a id="line.144"></a>
+<span class="sourceLineNo">145</span><a id="line.145">        return this ;</a>
+<span class="sourceLineNo">146</span><a id="line.146">    }</a>
+<span class="sourceLineNo">147</span><a id="line.147"></a>
+<span class="sourceLineNo">148</span><a id="line.148">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">149</span><a id="line.149">    /**</a>
+<span class="sourceLineNo">150</span><a id="line.150">     * 別のPlaceから各値をセット</a>
+<span class="sourceLineNo">151</span><a id="line.151">     * @param _place : コピーする元の値</a>
+<span class="sourceLineNo">152</span><a id="line.152">     */</a>
+<span class="sourceLineNo">153</span><a id="line.153">    public Place set(Place _place) {</a>
+<span class="sourceLineNo">154</span><a id="line.154">        return set(_place.getLink(),</a>
+<span class="sourceLineNo">155</span><a id="line.155">                   _place.getEnteringNode(), true,</a>
+<span class="sourceLineNo">156</span><a id="line.156">                   _place.getAdvancingDistance()) ;</a>
+<span class="sourceLineNo">157</span><a id="line.157">    }</a>
+<span class="sourceLineNo">158</span><a id="line.158"></a>
+<span class="sourceLineNo">159</span><a id="line.159">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">160</span><a id="line.160">    /**</a>
+<span class="sourceLineNo">161</span><a id="line.161">     * リンクをセットし、その上にランダムに配置</a>
+<span class="sourceLineNo">162</span><a id="line.162">     * @param _link : エージェントのいるリンク</a>
+<span class="sourceLineNo">163</span><a id="line.163">     */</a>
+<span class="sourceLineNo">164</span><a id="line.164">    public Place setAtRandomPosition(MapLink _link, Random _random) {</a>
+<span class="sourceLineNo">165</span><a id="line.165">        setLink(_link) ;</a>
+<span class="sourceLineNo">166</span><a id="line.166">        setEnteringNode(null) ;</a>
+<span class="sourceLineNo">167</span><a id="line.167">        double dist = _random.nextDouble() * getLinkLength() ;</a>
+<span class="sourceLineNo">168</span><a id="line.168">        setAdvancingDistance(dist) ;</a>
+<span class="sourceLineNo">169</span><a id="line.169"></a>
+<span class="sourceLineNo">170</span><a id="line.170">        return this ;</a>
+<span class="sourceLineNo">171</span><a id="line.171">    }</a>
+<span class="sourceLineNo">172</span><a id="line.172"></a>
+<span class="sourceLineNo">173</span><a id="line.173">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">174</span><a id="line.174">    /**</a>
+<span class="sourceLineNo">175</span><a id="line.175">     * コピー生成</a>
+<span class="sourceLineNo">176</span><a id="line.176">     */</a>
+<span class="sourceLineNo">177</span><a id="line.177">    public Place duplicate() {</a>
+<span class="sourceLineNo">178</span><a id="line.178">        Place newPlace = new Place() ;</a>
+<span class="sourceLineNo">179</span><a id="line.179">        newPlace.set(this) ;</a>
+<span class="sourceLineNo">180</span><a id="line.180"></a>
+<span class="sourceLineNo">181</span><a id="line.181">        return newPlace ;</a>
+<span class="sourceLineNo">182</span><a id="line.182">    }</a>
+<span class="sourceLineNo">183</span><a id="line.183"></a>
+<span class="sourceLineNo">184</span><a id="line.184">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">185</span><a id="line.185">    /**</a>
+<span class="sourceLineNo">186</span><a id="line.186">     * 空かどうか？</a>
+<span class="sourceLineNo">187</span><a id="line.187">     * リンクもノードも埋まっていない。</a>
+<span class="sourceLineNo">188</span><a id="line.188">     */</a>
+<span class="sourceLineNo">189</span><a id="line.189">    public boolean isEmpty() {</a>
+<span class="sourceLineNo">190</span><a id="line.190">        return (link == null &amp;&amp; enteringNode == null) ;</a>
+<span class="sourceLineNo">191</span><a id="line.191">    }</a>
+<span class="sourceLineNo">192</span><a id="line.192"></a>
+<span class="sourceLineNo">193</span><a id="line.193">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">194</span><a id="line.194">    /**</a>
+<span class="sourceLineNo">195</span><a id="line.195">     * 行動開始前かどうか？</a>
+<span class="sourceLineNo">196</span><a id="line.196">     * リンクのみ埋まっている。</a>
+<span class="sourceLineNo">197</span><a id="line.197">     */</a>
+<span class="sourceLineNo">198</span><a id="line.198">    public boolean isBeforeStartFromLink() {</a>
+<span class="sourceLineNo">199</span><a id="line.199">        return (link != null &amp;&amp; enteringNode == null) ;</a>
+<span class="sourceLineNo">200</span><a id="line.200">    }</a>
+<span class="sourceLineNo">201</span><a id="line.201"></a>
+<span class="sourceLineNo">202</span><a id="line.202">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">203</span><a id="line.203">    /**</a>
+<span class="sourceLineNo">204</span><a id="line.204">     * 行動開始前かどうか？</a>
+<span class="sourceLineNo">205</span><a id="line.205">     * ノードのみ埋まっている。</a>
+<span class="sourceLineNo">206</span><a id="line.206">     */</a>
+<span class="sourceLineNo">207</span><a id="line.207">    public boolean isBeforeStartFromNode() {</a>
+<span class="sourceLineNo">208</span><a id="line.208">        return (link == null &amp;&amp; enteringNode != null) ;</a>
+<span class="sourceLineNo">209</span><a id="line.209">    }</a>
+<span class="sourceLineNo">210</span><a id="line.210"></a>
+<span class="sourceLineNo">211</span><a id="line.211">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">212</span><a id="line.212">    /**</a>
+<span class="sourceLineNo">213</span><a id="line.213">     * 行動中かどうか?</a>
+<span class="sourceLineNo">214</span><a id="line.214">     */</a>
+<span class="sourceLineNo">215</span><a id="line.215">    public boolean isWalking() {</a>
+<span class="sourceLineNo">216</span><a id="line.216">        return (link != null &amp;&amp; enteringNode != null) ;</a>
+<span class="sourceLineNo">217</span><a id="line.217">    }</a>
+<span class="sourceLineNo">218</span><a id="line.218"></a>
+<span class="sourceLineNo">219</span><a id="line.219">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">220</span><a id="line.220">    /**</a>
+<span class="sourceLineNo">221</span><a id="line.221">     * 避難完了かどうか？</a>
+<span class="sourceLineNo">222</span><a id="line.222">     * ノードのみ埋まっている。</a>
+<span class="sourceLineNo">223</span><a id="line.223">     * 初期配置で、ノードに配置された時もこれと同じ状態とする。</a>
+<span class="sourceLineNo">224</span><a id="line.224">     */</a>
+<span class="sourceLineNo">225</span><a id="line.225">    public boolean isEvacuated() {</a>
+<span class="sourceLineNo">226</span><a id="line.226">        return (link == null &amp;&amp; enteringNode != null) ;</a>
+<span class="sourceLineNo">227</span><a id="line.227">    }</a>
+<span class="sourceLineNo">228</span><a id="line.228"></a>
+<span class="sourceLineNo">229</span><a id="line.229">    //############################################################</a>
+<span class="sourceLineNo">230</span><a id="line.230">    /**</a>
+<span class="sourceLineNo">231</span><a id="line.231">     * インスタンス変数アクセス</a>
+<span class="sourceLineNo">232</span><a id="line.232">     */</a>
+<span class="sourceLineNo">233</span><a id="line.233">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">234</span><a id="line.234">    /**</a>
+<span class="sourceLineNo">235</span><a id="line.235">     * リンク</a>
+<span class="sourceLineNo">236</span><a id="line.236">     */</a>
+<span class="sourceLineNo">237</span><a id="line.237">    public MapLink getLink() { return link ; } ;</a>
+<span class="sourceLineNo">238</span><a id="line.238"></a>
+<span class="sourceLineNo">239</span><a id="line.239">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">240</span><a id="line.240">    /**</a>
+<span class="sourceLineNo">241</span><a id="line.241">     * リンク</a>
+<span class="sourceLineNo">242</span><a id="line.242">     */</a>
+<span class="sourceLineNo">243</span><a id="line.243">    public Place setLink(MapLink _link) {</a>
+<span class="sourceLineNo">244</span><a id="line.244">        link = _link ;</a>
+<span class="sourceLineNo">245</span><a id="line.245">        return this ;</a>
+<span class="sourceLineNo">246</span><a id="line.246">    }</a>
+<span class="sourceLineNo">247</span><a id="line.247"></a>
+<span class="sourceLineNo">248</span><a id="line.248">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">249</span><a id="line.249">    /**</a>
+<span class="sourceLineNo">250</span><a id="line.250">     * リンク幅</a>
+<span class="sourceLineNo">251</span><a id="line.251">     */</a>
+<span class="sourceLineNo">252</span><a id="line.252">    public double getLinkWidth() { return getLink().getWidth() ; } ;</a>
+<span class="sourceLineNo">253</span><a id="line.253"></a>
+<span class="sourceLineNo">254</span><a id="line.254">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">255</span><a id="line.255">    /**</a>
+<span class="sourceLineNo">256</span><a id="line.256">     * 進入ノード取得</a>
+<span class="sourceLineNo">257</span><a id="line.257">     */</a>
+<span class="sourceLineNo">258</span><a id="line.258">    public MapNode getEnteringNode() { return enteringNode ; } ;</a>
+<span class="sourceLineNo">259</span><a id="line.259"></a>
+<span class="sourceLineNo">260</span><a id="line.260">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">261</span><a id="line.261">    /**</a>
+<span class="sourceLineNo">262</span><a id="line.262">     * 進入ノードセット</a>
+<span class="sourceLineNo">263</span><a id="line.263">     */</a>
+<span class="sourceLineNo">264</span><a id="line.264">    public Place setEnteringNode(MapNode _node) {</a>
+<span class="sourceLineNo">265</span><a id="line.265">        return setEnteringNode(_node, true) ;</a>
+<span class="sourceLineNo">266</span><a id="line.266">    }</a>
+<span class="sourceLineNo">267</span><a id="line.267"></a>
+<span class="sourceLineNo">268</span><a id="line.268">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">269</span><a id="line.269">    /**</a>
+<span class="sourceLineNo">270</span><a id="line.270">     * 進入ノードセット</a>
+<span class="sourceLineNo">271</span><a id="line.271">     */</a>
+<span class="sourceLineNo">272</span><a id="line.272">    public Place setEnteringNode(MapNode _node, boolean safely) {</a>
+<span class="sourceLineNo">273</span><a id="line.273">        if(safely) {</a>
+<span class="sourceLineNo">274</span><a id="line.274">            return setEnteringNodeSafely(_node) ;</a>
+<span class="sourceLineNo">275</span><a id="line.275">        } else {</a>
+<span class="sourceLineNo">276</span><a id="line.276">            return setEnteringNodeDirectly(_node) ;</a>
+<span class="sourceLineNo">277</span><a id="line.277">        }</a>
+<span class="sourceLineNo">278</span><a id="line.278">    }</a>
+<span class="sourceLineNo">279</span><a id="line.279"></a>
+<span class="sourceLineNo">280</span><a id="line.280">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">281</span><a id="line.281">    /**</a>
+<span class="sourceLineNo">282</span><a id="line.282">     * 進入ノード</a>
+<span class="sourceLineNo">283</span><a id="line.283">     * 念の為、リンクに含まれるかチェックしている。</a>
+<span class="sourceLineNo">284</span><a id="line.284">     */</a>
+<span class="sourceLineNo">285</span><a id="line.285">    public Place setEnteringNodeSafely(MapNode _node) {</a>
+<span class="sourceLineNo">286</span><a id="line.286">        if(getLink() != null &amp;&amp; _node != null &amp;&amp; !isEitherNode(_node)) {</a>
+<span class="sourceLineNo">287</span><a id="line.287">            Itk.dumpStackTrace() ;</a>
+<span class="sourceLineNo">288</span><a id="line.288">            Itk.logWarn("Specified node is not in the link. Instead using null.") ;</a>
+<span class="sourceLineNo">289</span><a id="line.289">            Itk.logWarn_("node", _node) ;</a>
+<span class="sourceLineNo">290</span><a id="line.290">            Itk.logWarn_("link", getLink()) ;</a>
+<span class="sourceLineNo">291</span><a id="line.291">        } else {</a>
+<span class="sourceLineNo">292</span><a id="line.292">            setEnteringNodeDirectly(_node) ;</a>
+<span class="sourceLineNo">293</span><a id="line.293">        }</a>
+<span class="sourceLineNo">294</span><a id="line.294">        return this ;</a>
+<span class="sourceLineNo">295</span><a id="line.295">    }</a>
+<span class="sourceLineNo">296</span><a id="line.296"></a>
+<span class="sourceLineNo">297</span><a id="line.297">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">298</span><a id="line.298">    /**</a>
+<span class="sourceLineNo">299</span><a id="line.299">     * 進入ノード</a>
+<span class="sourceLineNo">300</span><a id="line.300">     * リンクとの整合チェックはしない。</a>
+<span class="sourceLineNo">301</span><a id="line.301">     */</a>
+<span class="sourceLineNo">302</span><a id="line.302">    public Place setEnteringNodeDirectly(MapNode _node) {</a>
+<span class="sourceLineNo">303</span><a id="line.303">        enteringNode = _node ;</a>
+<span class="sourceLineNo">304</span><a id="line.304"></a>
+<span class="sourceLineNo">305</span><a id="line.305">        return this ;</a>
+<span class="sourceLineNo">306</span><a id="line.306">    }</a>
+<span class="sourceLineNo">307</span><a id="line.307"></a>
+<span class="sourceLineNo">308</span><a id="line.308">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">309</span><a id="line.309">    /**</a>
+<span class="sourceLineNo">310</span><a id="line.310">     * 進行方向ノード</a>
+<span class="sourceLineNo">311</span><a id="line.311">     */</a>
+<span class="sourceLineNo">312</span><a id="line.312">    public MapNode getHeadingNode() {</a>
+<span class="sourceLineNo">313</span><a id="line.313">        if(enteringNode == null) {</a>
+<span class="sourceLineNo">314</span><a id="line.314">            return null ;</a>
+<span class="sourceLineNo">315</span><a id="line.315">        } else {</a>
+<span class="sourceLineNo">316</span><a id="line.316">            return link.getOther(enteringNode) ;</a>
+<span class="sourceLineNo">317</span><a id="line.317">        }</a>
+<span class="sourceLineNo">318</span><a id="line.318">    }</a>
+<span class="sourceLineNo">319</span><a id="line.319"></a>
+<span class="sourceLineNo">320</span><a id="line.320">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">321</span><a id="line.321">    /**</a>
+<span class="sourceLineNo">322</span><a id="line.322">     * 進行距離</a>
+<span class="sourceLineNo">323</span><a id="line.323">     */</a>
+<span class="sourceLineNo">324</span><a id="line.324">    public double getAdvancingDistance() { return advancingDistance ; } ;</a>
+<span class="sourceLineNo">325</span><a id="line.325"></a>
+<span class="sourceLineNo">326</span><a id="line.326">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">327</span><a id="line.327">    /**</a>
+<span class="sourceLineNo">328</span><a id="line.328">     * 残りの距離</a>
+<span class="sourceLineNo">329</span><a id="line.329">     */</a>
+<span class="sourceLineNo">330</span><a id="line.330">    public double getRemainingDistance() {</a>
+<span class="sourceLineNo">331</span><a id="line.331">        return getLinkLength() - getAdvancingDistance() ;</a>
+<span class="sourceLineNo">332</span><a id="line.332">    } ;</a>
+<span class="sourceLineNo">333</span><a id="line.333"></a>
+<span class="sourceLineNo">334</span><a id="line.334">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">335</span><a id="line.335">    /**</a>
+<span class="sourceLineNo">336</span><a id="line.336">     * 進入ノード</a>
+<span class="sourceLineNo">337</span><a id="line.337">     */</a>
+<span class="sourceLineNo">338</span><a id="line.338">    public Place setAdvancingDistance(double _distance) {</a>
+<span class="sourceLineNo">339</span><a id="line.339">        advancingDistance = _distance ;</a>
+<span class="sourceLineNo">340</span><a id="line.340">        return this ;</a>
+<span class="sourceLineNo">341</span><a id="line.341">    }</a>
+<span class="sourceLineNo">342</span><a id="line.342"></a>
+<span class="sourceLineNo">343</span><a id="line.343">    //############################################################</a>
+<span class="sourceLineNo">344</span><a id="line.344">    /**</a>
+<span class="sourceLineNo">345</span><a id="line.345">     * ノードのチェック</a>
+<span class="sourceLineNo">346</span><a id="line.346">     */</a>
+<span class="sourceLineNo">347</span><a id="line.347">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">348</span><a id="line.348">    /**</a>
+<span class="sourceLineNo">349</span><a id="line.349">     * 進入ノードチェック</a>
+<span class="sourceLineNo">350</span><a id="line.350">     */</a>
+<span class="sourceLineNo">351</span><a id="line.351">    public boolean isEnteringNode(MapNode _node) {</a>
+<span class="sourceLineNo">352</span><a id="line.352">        return _node == getEnteringNode() ;</a>
+<span class="sourceLineNo">353</span><a id="line.353">    }</a>
+<span class="sourceLineNo">354</span><a id="line.354"></a>
+<span class="sourceLineNo">355</span><a id="line.355">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">356</span><a id="line.356">    /**</a>
+<span class="sourceLineNo">357</span><a id="line.357">     * 進行方向ノードチェック</a>
+<span class="sourceLineNo">358</span><a id="line.358">     */</a>
+<span class="sourceLineNo">359</span><a id="line.359">    public boolean isHeadingNode(MapNode _node) {</a>
+<span class="sourceLineNo">360</span><a id="line.360">        return _node == getHeadingNode() ;</a>
+<span class="sourceLineNo">361</span><a id="line.361">    }</a>
+<span class="sourceLineNo">362</span><a id="line.362"></a>
+<span class="sourceLineNo">363</span><a id="line.363">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">364</span><a id="line.364">    /**</a>
+<span class="sourceLineNo">365</span><a id="line.365">     * リンクの fromNode かどうか？</a>
+<span class="sourceLineNo">366</span><a id="line.366">     */</a>
+<span class="sourceLineNo">367</span><a id="line.367">    public boolean isFromNode(MapNode _node) {</a>
+<span class="sourceLineNo">368</span><a id="line.368">        return _node == getFromNode() ;</a>
+<span class="sourceLineNo">369</span><a id="line.369">    }</a>
+<span class="sourceLineNo">370</span><a id="line.370"></a>
+<span class="sourceLineNo">371</span><a id="line.371">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">372</span><a id="line.372">    /**</a>
+<span class="sourceLineNo">373</span><a id="line.373">     * リンクの toNode かどうか？</a>
+<span class="sourceLineNo">374</span><a id="line.374">     */</a>
+<span class="sourceLineNo">375</span><a id="line.375">    public boolean isToNode(MapNode _node) {</a>
+<span class="sourceLineNo">376</span><a id="line.376">        return _node == getToNode() ;</a>
+<span class="sourceLineNo">377</span><a id="line.377">    }</a>
+<span class="sourceLineNo">378</span><a id="line.378"></a>
+<span class="sourceLineNo">379</span><a id="line.379">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">380</span><a id="line.380">    /**</a>
+<span class="sourceLineNo">381</span><a id="line.381">     * いずれかのノードかどうか?</a>
+<span class="sourceLineNo">382</span><a id="line.382">     */</a>
+<span class="sourceLineNo">383</span><a id="line.383">    public boolean isEitherNode(MapNode _node) {</a>
+<span class="sourceLineNo">384</span><a id="line.384">        return isFromNode(_node) || isToNode(_node) ;</a>
+<span class="sourceLineNo">385</span><a id="line.385">    }</a>
+<span class="sourceLineNo">386</span><a id="line.386"></a>
+<span class="sourceLineNo">387</span><a id="line.387">    //############################################################</a>
+<span class="sourceLineNo">388</span><a id="line.388">    /**</a>
+<span class="sourceLineNo">389</span><a id="line.389">     * 方向チェック</a>
+<span class="sourceLineNo">390</span><a id="line.390">     */</a>
+<span class="sourceLineNo">391</span><a id="line.391"></a>
+<span class="sourceLineNo">392</span><a id="line.392">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">393</span><a id="line.393">    /**</a>
+<span class="sourceLineNo">394</span><a id="line.394">     * リンクの from-to と進行方向が同じか？</a>
+<span class="sourceLineNo">395</span><a id="line.395">     */</a>
+<span class="sourceLineNo">396</span><a id="line.396">    public boolean isForwardDirection() {</a>
+<span class="sourceLineNo">397</span><a id="line.397">        return getEnteringNode() == getFromNode() ;</a>
+<span class="sourceLineNo">398</span><a id="line.398">    }</a>
+<span class="sourceLineNo">399</span><a id="line.399"></a>
+<span class="sourceLineNo">400</span><a id="line.400">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">401</span><a id="line.401">    /**</a>
+<span class="sourceLineNo">402</span><a id="line.402">     * リンクの from-to と進行方向が逆か?</a>
+<span class="sourceLineNo">403</span><a id="line.403">     */</a>
+<span class="sourceLineNo">404</span><a id="line.404">    public boolean isBackwardDirection() {</a>
+<span class="sourceLineNo">405</span><a id="line.405">        return getEnteringNode() == getToNode() ;</a>
+<span class="sourceLineNo">406</span><a id="line.406">    }</a>
+<span class="sourceLineNo">407</span><a id="line.407"></a>
+<span class="sourceLineNo">408</span><a id="line.408">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">409</span><a id="line.409">    /**</a>
+<span class="sourceLineNo">410</span><a id="line.410">     * リンク方向が未定か</a>
+<span class="sourceLineNo">411</span><a id="line.411">     */</a>
+<span class="sourceLineNo">412</span><a id="line.412">    public boolean isNoneDirection() {</a>
+<span class="sourceLineNo">413</span><a id="line.413">        return getEnteringNode() == null ;</a>
+<span class="sourceLineNo">414</span><a id="line.414">    }</a>
+<span class="sourceLineNo">415</span><a id="line.415"></a>
+<span class="sourceLineNo">416</span><a id="line.416">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">417</span><a id="line.417">    /**</a>
+<span class="sourceLineNo">418</span><a id="line.418">     * リンクの from-to と進行方向が逆か?</a>
+<span class="sourceLineNo">419</span><a id="line.419">     */</a>
+<span class="sourceLineNo">420</span><a id="line.420">    public Direction getDirection() {</a>
+<span class="sourceLineNo">421</span><a id="line.421">        if(isForwardDirection()) {</a>
+<span class="sourceLineNo">422</span><a id="line.422">            return Direction.Forward ;</a>
+<span class="sourceLineNo">423</span><a id="line.423">        } else if(isBackwardDirection()) {</a>
+<span class="sourceLineNo">424</span><a id="line.424">            return Direction.Backward ;</a>
+<span class="sourceLineNo">425</span><a id="line.425">        } else {</a>
+<span class="sourceLineNo">426</span><a id="line.426">            return Direction.None ;</a>
+<span class="sourceLineNo">427</span><a id="line.427">        }</a>
+<span class="sourceLineNo">428</span><a id="line.428">    }</a>
+<span class="sourceLineNo">429</span><a id="line.429"></a>
+<span class="sourceLineNo">430</span><a id="line.430">    //############################################################</a>
+<span class="sourceLineNo">431</span><a id="line.431">    /**</a>
+<span class="sourceLineNo">432</span><a id="line.432">     * リンク上の操作</a>
+<span class="sourceLineNo">433</span><a id="line.433">     */</a>
+<span class="sourceLineNo">434</span><a id="line.434">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">435</span><a id="line.435">    /**</a>
+<span class="sourceLineNo">436</span><a id="line.436">     * リンクの長さ</a>
+<span class="sourceLineNo">437</span><a id="line.437">     */</a>
+<span class="sourceLineNo">438</span><a id="line.438">    public double getLinkLength() {</a>
+<span class="sourceLineNo">439</span><a id="line.439">        return getLink().getLength() ;</a>
+<span class="sourceLineNo">440</span><a id="line.440">    }</a>
+<span class="sourceLineNo">441</span><a id="line.441"></a>
+<span class="sourceLineNo">442</span><a id="line.442">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">443</span><a id="line.443">    /**</a>
+<span class="sourceLineNo">444</span><a id="line.444">     * リンク視点の位置</a>
+<span class="sourceLineNo">445</span><a id="line.445">     * 方向が定まっていないとき(noneDirection)は、</a>
+<span class="sourceLineNo">446</span><a id="line.446">     * advancingDistance を絶対位置とする。</a>
+<span class="sourceLineNo">447</span><a id="line.447">     */</a>
+<span class="sourceLineNo">448</span><a id="line.448">    public double getPositionOnLink() {</a>
+<span class="sourceLineNo">449</span><a id="line.449">        if(isNoneDirection()) {</a>
+<span class="sourceLineNo">450</span><a id="line.450">            return getAdvancingDistance() ;</a>
+<span class="sourceLineNo">451</span><a id="line.451">        } else if(isForwardDirection()) {</a>
+<span class="sourceLineNo">452</span><a id="line.452">            return getAdvancingDistance() ;</a>
+<span class="sourceLineNo">453</span><a id="line.453">        } else if(isBackwardDirection()) {</a>
+<span class="sourceLineNo">454</span><a id="line.454">            return getLinkLength() - getAdvancingDistance() ;</a>
+<span class="sourceLineNo">455</span><a id="line.455">        } else {</a>
+<span class="sourceLineNo">456</span><a id="line.456">            return 0.0 ;</a>
+<span class="sourceLineNo">457</span><a id="line.457">        }</a>
+<span class="sourceLineNo">458</span><a id="line.458">    }</a>
+<span class="sourceLineNo">459</span><a id="line.459"></a>
+<span class="sourceLineNo">460</span><a id="line.460">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">461</span><a id="line.461">    /**</a>
+<span class="sourceLineNo">462</span><a id="line.462">     * リンクの fromNode</a>
+<span class="sourceLineNo">463</span><a id="line.463">     */</a>
+<span class="sourceLineNo">464</span><a id="line.464">    public MapNode getFromNode() {</a>
+<span class="sourceLineNo">465</span><a id="line.465">        return getLink().getFrom() ;</a>
+<span class="sourceLineNo">466</span><a id="line.466">    }</a>
+<span class="sourceLineNo">467</span><a id="line.467"></a>
+<span class="sourceLineNo">468</span><a id="line.468">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">469</span><a id="line.469">    /**</a>
+<span class="sourceLineNo">470</span><a id="line.470">     * リンクの toNode</a>
+<span class="sourceLineNo">471</span><a id="line.471">     */</a>
+<span class="sourceLineNo">472</span><a id="line.472">    public MapNode getToNode() {</a>
+<span class="sourceLineNo">473</span><a id="line.473">        return getLink().getTo() ;</a>
+<span class="sourceLineNo">474</span><a id="line.474">    }</a>
+<span class="sourceLineNo">475</span><a id="line.475"></a>
+<span class="sourceLineNo">476</span><a id="line.476">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">477</span><a id="line.477">    /**</a>
+<span class="sourceLineNo">478</span><a id="line.478">     * 制約付きリンクかどうかの判定</a>
+<span class="sourceLineNo">479</span><a id="line.479">     * OneWay もしくはroad closed かどうかのチェック。</a>
+<span class="sourceLineNo">480</span><a id="line.480">     */</a>
+<span class="sourceLineNo">481</span><a id="line.481">    public boolean isRestrictedLink() {</a>
+<span class="sourceLineNo">482</span><a id="line.482">        MapLink _link = getLink() ;</a>
+<span class="sourceLineNo">483</span><a id="line.483">        return (_link.isOneWayForward() ||</a>
+<span class="sourceLineNo">484</span><a id="line.484">                _link.isOneWayBackward() ||</a>
+<span class="sourceLineNo">485</span><a id="line.485">                _link.isRoadClosed()) ;</a>
+<span class="sourceLineNo">486</span><a id="line.486">    }</a>
+<span class="sourceLineNo">487</span><a id="line.487"></a>
+<span class="sourceLineNo">488</span><a id="line.488">    //############################################################</a>
+<span class="sourceLineNo">489</span><a id="line.489">    /**</a>
+<span class="sourceLineNo">490</span><a id="line.490">     * 位置操作</a>
+<span class="sourceLineNo">491</span><a id="line.491">     */</a>
+<span class="sourceLineNo">492</span><a id="line.492">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">493</span><a id="line.493">    /**</a>
+<span class="sourceLineNo">494</span><a id="line.494">     * 前進(単純)</a>
+<span class="sourceLineNo">495</span><a id="line.495">     * @param distance : 進める距離</a>
+<span class="sourceLineNo">496</span><a id="line.496">     * @return Placeそのものを返す。</a>
+<span class="sourceLineNo">497</span><a id="line.497">     */</a>
+<span class="sourceLineNo">498</span><a id="line.498">    public Place makeAdvance(double distance) {</a>
+<span class="sourceLineNo">499</span><a id="line.499">        setAdvancingDistance(getAdvancingDistance() + distance) ;</a>
+<span class="sourceLineNo">500</span><a id="line.500">        return this ;</a>
+<span class="sourceLineNo">501</span><a id="line.501">    }</a>
+<span class="sourceLineNo">502</span><a id="line.502"></a>
+<span class="sourceLineNo">503</span><a id="line.503">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">504</span><a id="line.504">    /**</a>
+<span class="sourceLineNo">505</span><a id="line.505">     * 前進（制約付き）</a>
+<span class="sourceLineNo">506</span><a id="line.506">     * @param distance : 進める距離</a>
+<span class="sourceLineNo">507</span><a id="line.507">     * @param limitOnLink : リンク上にとどまるかどうかのチェック</a>
+<span class="sourceLineNo">508</span><a id="line.508">     * @return Placeそのものを返す。</a>
+<span class="sourceLineNo">509</span><a id="line.509">     */</a>
+<span class="sourceLineNo">510</span><a id="line.510">    public Place makeAdvance(double distance, boolean limitOnLink) {</a>
+<span class="sourceLineNo">511</span><a id="line.511">        makeAdvance(distance) ;</a>
+<span class="sourceLineNo">512</span><a id="line.512">        if(limitOnLink) {</a>
+<span class="sourceLineNo">513</span><a id="line.513">            if(isBeforeLink()) {</a>
+<span class="sourceLineNo">514</span><a id="line.514">                setAdvancingDistance(0.0) ;</a>
+<span class="sourceLineNo">515</span><a id="line.515">            }</a>
+<span class="sourceLineNo">516</span><a id="line.516">            if(isBeyondLink()) {</a>
+<span class="sourceLineNo">517</span><a id="line.517">                setAdvancingDistance(getLinkLength() * AlmostOne) ;</a>
+<span class="sourceLineNo">518</span><a id="line.518">            }</a>
+<span class="sourceLineNo">519</span><a id="line.519">        }</a>
+<span class="sourceLineNo">520</span><a id="line.520">        return this ;</a>
+<span class="sourceLineNo">521</span><a id="line.521">    }</a>
+<span class="sourceLineNo">522</span><a id="line.522"></a>
+<span class="sourceLineNo">523</span><a id="line.523">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">524</span><a id="line.524">    /**</a>
+<span class="sourceLineNo">525</span><a id="line.525">     * 反転</a>
+<span class="sourceLineNo">526</span><a id="line.526">     */</a>
+<span class="sourceLineNo">527</span><a id="line.527">    public final Place turnAround() {</a>
+<span class="sourceLineNo">528</span><a id="line.528">        MapNode newEnteringNode = getHeadingNode() ;</a>
+<span class="sourceLineNo">529</span><a id="line.529">        double distance = getLinkLength() - getAdvancingDistance() ;</a>
+<span class="sourceLineNo">530</span><a id="line.530"></a>
+<span class="sourceLineNo">531</span><a id="line.531">        setEnteringNode(newEnteringNode) ;</a>
+<span class="sourceLineNo">532</span><a id="line.532">        setAdvancingDistance(distance) ;</a>
+<span class="sourceLineNo">533</span><a id="line.533">        return this ;</a>
+<span class="sourceLineNo">534</span><a id="line.534">    }</a>
+<span class="sourceLineNo">535</span><a id="line.535"></a>
+<span class="sourceLineNo">536</span><a id="line.536">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">537</span><a id="line.537">    /**</a>
+<span class="sourceLineNo">538</span><a id="line.538">     * 反転できるかどうか</a>
+<span class="sourceLineNo">539</span><a id="line.539">     */</a>
+<span class="sourceLineNo">540</span><a id="line.540">    public final boolean canTurnAround() {</a>
+<span class="sourceLineNo">541</span><a id="line.541">        return (link != null &amp;&amp;</a>
+<span class="sourceLineNo">542</span><a id="line.542">                link.isAvailableTo(getEnteringNode())) ;</a>
+<span class="sourceLineNo">543</span><a id="line.543">    }</a>
+<span class="sourceLineNo">544</span><a id="line.544"></a>
+<span class="sourceLineNo">545</span><a id="line.545">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">546</span><a id="line.546">    /**</a>
+<span class="sourceLineNo">547</span><a id="line.547">     * 位置チェック。</a>
+<span class="sourceLineNo">548</span><a id="line.548">     * リンク上にあるか。</a>
+<span class="sourceLineNo">549</span><a id="line.549">     * @return リンク上であれば true。</a>
+<span class="sourceLineNo">550</span><a id="line.550">     */</a>
+<span class="sourceLineNo">551</span><a id="line.551">    public boolean isOnLink() {</a>
+<span class="sourceLineNo">552</span><a id="line.552">        return isOnLinkWithAdvance(0.0) ;</a>
+<span class="sourceLineNo">553</span><a id="line.553">    }</a>
+<span class="sourceLineNo">554</span><a id="line.554"></a>
+<span class="sourceLineNo">555</span><a id="line.555">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">556</span><a id="line.556">    /**</a>
+<span class="sourceLineNo">557</span><a id="line.557">     * ある程度進んだ地点の位置チェック。</a>
+<span class="sourceLineNo">558</span><a id="line.558">     * 起点(enteringNode)上は、リンク上とする。</a>
+<span class="sourceLineNo">559</span><a id="line.559">     * 終点(headingNode)上は、リンク外とする。</a>
+<span class="sourceLineNo">560</span><a id="line.560">     * @param advance : 現地点からの相対進行距離</a>
+<span class="sourceLineNo">561</span><a id="line.561">     * @return リンク上であれば true。</a>
+<span class="sourceLineNo">562</span><a id="line.562">     */</a>
+<span class="sourceLineNo">563</span><a id="line.563">    public boolean isOnLinkWithAdvance(double advance) {</a>
+<span class="sourceLineNo">564</span><a id="line.564">        double distance = getAdvancingDistance() + advance ;</a>
+<span class="sourceLineNo">565</span><a id="line.565">        return distance &gt;= 0.0 &amp;&amp; distance &lt; getLinkLength() ;</a>
+<span class="sourceLineNo">566</span><a id="line.566">    }</a>
+<span class="sourceLineNo">567</span><a id="line.567"></a>
+<span class="sourceLineNo">568</span><a id="line.568">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">569</span><a id="line.569">    /**</a>
+<span class="sourceLineNo">570</span><a id="line.570">     * 位置チェック。</a>
+<span class="sourceLineNo">571</span><a id="line.571">     * リンクの手前かどうか？</a>
+<span class="sourceLineNo">572</span><a id="line.572">     * @return 手間であれば true。</a>
+<span class="sourceLineNo">573</span><a id="line.573">     */</a>
+<span class="sourceLineNo">574</span><a id="line.574">    public boolean isBeforeLink() {</a>
+<span class="sourceLineNo">575</span><a id="line.575">        return isBeforeLinkWithAdvance(0.0) ;</a>
+<span class="sourceLineNo">576</span><a id="line.576">    }</a>
+<span class="sourceLineNo">577</span><a id="line.577"></a>
+<span class="sourceLineNo">578</span><a id="line.578">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">579</span><a id="line.579">    /**</a>
+<span class="sourceLineNo">580</span><a id="line.580">     * ある程度進んだ地点の位置チェック。</a>
+<span class="sourceLineNo">581</span><a id="line.581">     * リンクの手前かどうか？</a>
+<span class="sourceLineNo">582</span><a id="line.582">     * 起点(enteringNode)上は、リンク上とする。</a>
+<span class="sourceLineNo">583</span><a id="line.583">     * @param advance : 現地点からの相対進行距離</a>
+<span class="sourceLineNo">584</span><a id="line.584">     * @return 手前であれば true。</a>
+<span class="sourceLineNo">585</span><a id="line.585">     */</a>
+<span class="sourceLineNo">586</span><a id="line.586">    public boolean isBeforeLinkWithAdvance(double advance) {</a>
+<span class="sourceLineNo">587</span><a id="line.587">        double distance = getAdvancingDistance() + advance ;</a>
+<span class="sourceLineNo">588</span><a id="line.588">        return distance &lt; 0.0 ;</a>
+<span class="sourceLineNo">589</span><a id="line.589">    }</a>
+<span class="sourceLineNo">590</span><a id="line.590"></a>
+<span class="sourceLineNo">591</span><a id="line.591">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">592</span><a id="line.592">    /**</a>
+<span class="sourceLineNo">593</span><a id="line.593">     * 位置チェック。</a>
+<span class="sourceLineNo">594</span><a id="line.594">     * リンクを通り過ぎているか？</a>
+<span class="sourceLineNo">595</span><a id="line.595">     * @return 通りすぎていれば true。</a>
+<span class="sourceLineNo">596</span><a id="line.596">     */</a>
+<span class="sourceLineNo">597</span><a id="line.597">    public boolean isBeyondLink() {</a>
+<span class="sourceLineNo">598</span><a id="line.598">        return isBeyondLinkWithAdvance(0.0) ;</a>
+<span class="sourceLineNo">599</span><a id="line.599">    }</a>
+<span class="sourceLineNo">600</span><a id="line.600"></a>
+<span class="sourceLineNo">601</span><a id="line.601">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">602</span><a id="line.602">    /**</a>
+<span class="sourceLineNo">603</span><a id="line.603">     * ある程度進んだ地点の位置チェック。</a>
+<span class="sourceLineNo">604</span><a id="line.604">     * 終点より向こう側か？</a>
+<span class="sourceLineNo">605</span><a id="line.605">     * 終点(headingNode)上は、リンク外とする。</a>
+<span class="sourceLineNo">606</span><a id="line.606">     * @param advance : 現地点からの相対進行距離</a>
+<span class="sourceLineNo">607</span><a id="line.607">     * @return 通りすぎていれば true。</a>
+<span class="sourceLineNo">608</span><a id="line.608">     */</a>
+<span class="sourceLineNo">609</span><a id="line.609">    public boolean isBeyondLinkWithAdvance(double advance) {</a>
+<span class="sourceLineNo">610</span><a id="line.610">        double distance = getAdvancingDistance() + advance ;</a>
+<span class="sourceLineNo">611</span><a id="line.611">        return distance &gt;= getLinkLength() ;</a>
+<span class="sourceLineNo">612</span><a id="line.612">    }</a>
+<span class="sourceLineNo">613</span><a id="line.613"></a>
+<span class="sourceLineNo">614</span><a id="line.614"></a>
+<span class="sourceLineNo">615</span><a id="line.615">    //############################################################</a>
+<span class="sourceLineNo">616</span><a id="line.616">    /**</a>
+<span class="sourceLineNo">617</span><a id="line.617">     * 次のリンクへの移動</a>
+<span class="sourceLineNo">618</span><a id="line.618">     */</a>
+<span class="sourceLineNo">619</span><a id="line.619">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">620</span><a id="line.620">    /**</a>
+<span class="sourceLineNo">621</span><a id="line.621">     * 次のリンクへの移動</a>
+<span class="sourceLineNo">622</span><a id="line.622">     * @param nextLink : 移り先のリンク</a>
+<span class="sourceLineNo">623</span><a id="line.623">     * @return 変更された Place</a>
+<span class="sourceLineNo">624</span><a id="line.624">     */</a>
+<span class="sourceLineNo">625</span><a id="line.625">    public Place transitTo(MapLink nextLink) {</a>
+<span class="sourceLineNo">626</span><a id="line.626">        MapNode passingNode = getHeadingNode() ;</a>
+<span class="sourceLineNo">627</span><a id="line.627">        double newDistance = getAdvancingDistance() - getLinkLength() ;</a>
+<span class="sourceLineNo">628</span><a id="line.628">        set(nextLink, passingNode, true, newDistance) ;</a>
+<span class="sourceLineNo">629</span><a id="line.629">        return this ;</a>
+<span class="sourceLineNo">630</span><a id="line.630">    }</a>
+<span class="sourceLineNo">631</span><a id="line.631"></a>
+<span class="sourceLineNo">632</span><a id="line.632">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">633</span><a id="line.633">    /**</a>
+<span class="sourceLineNo">634</span><a id="line.634">     * 新しい Place で次のリンクへの移動</a>
+<span class="sourceLineNo">635</span><a id="line.635">     * @param nextLink : 移り先のリンク</a>
+<span class="sourceLineNo">636</span><a id="line.636">     * @return 変更された Place</a>
+<span class="sourceLineNo">637</span><a id="line.637">     */</a>
+<span class="sourceLineNo">638</span><a id="line.638">    public Place newPlaceTransitTo(MapLink nextLink) {</a>
+<span class="sourceLineNo">639</span><a id="line.639">        return duplicate().transitTo(nextLink) ;</a>
+<span class="sourceLineNo">640</span><a id="line.640">    }</a>
+<span class="sourceLineNo">641</span><a id="line.641"></a>
+<span class="sourceLineNo">642</span><a id="line.642">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">643</span><a id="line.643">    /**</a>
+<span class="sourceLineNo">644</span><a id="line.644">     * 最後のリンクを抜ける</a>
+<span class="sourceLineNo">645</span><a id="line.645">     * link には null が入る。</a>
+<span class="sourceLineNo">646</span><a id="line.646">     * 最後に通りすぎたノードは、enteringNode に残る。</a>
+<span class="sourceLineNo">647</span><a id="line.647">     * @return 変更された Place</a>
+<span class="sourceLineNo">648</span><a id="line.648">     */</a>
+<span class="sourceLineNo">649</span><a id="line.649">    public Place quitLastLink() {</a>
+<span class="sourceLineNo">650</span><a id="line.650">        enteringNode = getHeadingNode() ;</a>
+<span class="sourceLineNo">651</span><a id="line.651">        link = null ;</a>
+<span class="sourceLineNo">652</span><a id="line.652">        return this ;</a>
+<span class="sourceLineNo">653</span><a id="line.653">    }</a>
+<span class="sourceLineNo">654</span><a id="line.654"></a>
+<span class="sourceLineNo">655</span><a id="line.655">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">656</span><a id="line.656">    /**</a>
+<span class="sourceLineNo">657</span><a id="line.657">     * 最後のノード</a>
+<span class="sourceLineNo">658</span><a id="line.658">     * link が null が入っているときだけ意味がある。</a>
+<span class="sourceLineNo">659</span><a id="line.659">     * @return 最後のノード</a>
+<span class="sourceLineNo">660</span><a id="line.660">     */</a>
+<span class="sourceLineNo">661</span><a id="line.661">    public MapNode getLastNode() {</a>
+<span class="sourceLineNo">662</span><a id="line.662">        return getEnteringNode() ;</a>
+<span class="sourceLineNo">663</span><a id="line.663">    }</a>
+<span class="sourceLineNo">664</span><a id="line.664"></a>
+<span class="sourceLineNo">665</span><a id="line.665">    //############################################################</a>
+<span class="sourceLineNo">666</span><a id="line.666">    /**</a>
+<span class="sourceLineNo">667</span><a id="line.667">     * レーン操作</a>
+<span class="sourceLineNo">668</span><a id="line.668">     */</a>
+<span class="sourceLineNo">669</span><a id="line.669">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">670</span><a id="line.670">    /**</a>
+<span class="sourceLineNo">671</span><a id="line.671">     * レーン取得</a>
+<span class="sourceLineNo">672</span><a id="line.672">     */</a>
+<span class="sourceLineNo">673</span><a id="line.673">    public ArrayList&lt;AgentBase&gt; getLane() {</a>
+<span class="sourceLineNo">674</span><a id="line.674">        return getLink().getLane(getDirection()) ;</a>
+<span class="sourceLineNo">675</span><a id="line.675">    }</a>
+<span class="sourceLineNo">676</span><a id="line.676"></a>
+<span class="sourceLineNo">677</span><a id="line.677">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">678</span><a id="line.678">    /**</a>
+<span class="sourceLineNo">679</span><a id="line.679">     * 対向レーン取得</a>
+<span class="sourceLineNo">680</span><a id="line.680">     */</a>
+<span class="sourceLineNo">681</span><a id="line.681">    public ArrayList&lt;AgentBase&gt; getOtherLane() {</a>
+<span class="sourceLineNo">682</span><a id="line.682">        return getLink().getLane(getDirection().opposite()) ;</a>
+<span class="sourceLineNo">683</span><a id="line.683">    }</a>
+<span class="sourceLineNo">684</span><a id="line.684"></a>
+<span class="sourceLineNo">685</span><a id="line.685">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">686</span><a id="line.686">    /**</a>
+<span class="sourceLineNo">687</span><a id="line.687">     * レーン幅取得</a>
+<span class="sourceLineNo">688</span><a id="line.688">     */</a>
+<span class="sourceLineNo">689</span><a id="line.689">    public int getLaneWidth() {</a>
+<span class="sourceLineNo">690</span><a id="line.690">        return getLink().getLaneWidth(getDirection()) ;</a>
+<span class="sourceLineNo">691</span><a id="line.691">    }</a>
+<span class="sourceLineNo">692</span><a id="line.692"></a>
+<span class="sourceLineNo">693</span><a id="line.693">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">694</span><a id="line.694">    /**</a>
+<span class="sourceLineNo">695</span><a id="line.695">     * レーン幅取得(対向レーン)</a>
+<span class="sourceLineNo">696</span><a id="line.696">     */</a>
+<span class="sourceLineNo">697</span><a id="line.697">    public int getOtherLaneWidth() {</a>
+<span class="sourceLineNo">698</span><a id="line.698">        return getLink().getLaneWidth(getDirection().opposite()) ;</a>
+<span class="sourceLineNo">699</span><a id="line.699">    }</a>
+<span class="sourceLineNo">700</span><a id="line.700"></a>
+<span class="sourceLineNo">701</span><a id="line.701">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">702</span><a id="line.702">    /**</a>
+<span class="sourceLineNo">703</span><a id="line.703">     * レーンの中での順序</a>
+<span class="sourceLineNo">704</span><a id="line.704">     * 進んでいないほど index が小さいとする。</a>
+<span class="sourceLineNo">705</span><a id="line.705">     */</a>
+<span class="sourceLineNo">706</span><a id="line.706">    public int getIndexInLane(AgentBase agent) {</a>
+<span class="sourceLineNo">707</span><a id="line.707">        return Collections.binarySearch(getLane(), agent) ;</a>
+<span class="sourceLineNo">708</span><a id="line.708">    }</a>
+<span class="sourceLineNo">709</span><a id="line.709"></a>
+<span class="sourceLineNo">710</span><a id="line.710">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">711</span><a id="line.711">    /**</a>
+<span class="sourceLineNo">712</span><a id="line.712">     * レーンの中での順序</a>
+<span class="sourceLineNo">713</span><a id="line.713">     * 進んでいるほど index が小さいとする。</a>
+<span class="sourceLineNo">714</span><a id="line.714">     */</a>
+<span class="sourceLineNo">715</span><a id="line.715">    public int getIndexFromHeadingInLane(AgentBase agent) {</a>
+<span class="sourceLineNo">716</span><a id="line.716">        return getLane().size() - getIndexInLane(agent) - 1 ;</a>
+<span class="sourceLineNo">717</span><a id="line.717">    }</a>
+<span class="sourceLineNo">718</span><a id="line.718"></a>
+<span class="sourceLineNo">719</span><a id="line.719">    //############################################################</a>
+<span class="sourceLineNo">720</span><a id="line.720">    /**</a>
+<span class="sourceLineNo">721</span><a id="line.721">     * 表示関係</a>
+<span class="sourceLineNo">722</span><a id="line.722">     */</a>
+<span class="sourceLineNo">723</span><a id="line.723">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">724</span><a id="line.724">    /**</a>
+<span class="sourceLineNo">725</span><a id="line.725">     * 表示上の位置計算 (obsolute)</a>
+<span class="sourceLineNo">726</span><a id="line.726">     */</a>
+<span class="sourceLineNo">727</span><a id="line.727">    public Point2D getPosForDisplay() {</a>
+<span class="sourceLineNo">728</span><a id="line.728">        return getPosition() ;</a>
+<span class="sourceLineNo">729</span><a id="line.729">    }</a>
+<span class="sourceLineNo">730</span><a id="line.730">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">731</span><a id="line.731">    /**</a>
+<span class="sourceLineNo">732</span><a id="line.732">     * 全体での位置計算</a>
+<span class="sourceLineNo">733</span><a id="line.733">     * ただし、リンクが真っ直ぐであると仮定。</a>
+<span class="sourceLineNo">734</span><a id="line.734">     */</a>
+<span class="sourceLineNo">735</span><a id="line.735">    public Point2D getPosition() {</a>
+<span class="sourceLineNo">736</span><a id="line.736">        if (getLink() != null) {</a>
+<span class="sourceLineNo">737</span><a id="line.737">            return getLink().calcPosition(getPositionOnLink());</a>
+<span class="sourceLineNo">738</span><a id="line.738">        } else if (getLastNode() != null){</a>
+<span class="sourceLineNo">739</span><a id="line.739">            return getLastNode().getPosition();</a>
+<span class="sourceLineNo">740</span><a id="line.740">        } else {</a>
+<span class="sourceLineNo">741</span><a id="line.741">            return null;</a>
+<span class="sourceLineNo">742</span><a id="line.742">        }</a>
+<span class="sourceLineNo">743</span><a id="line.743">    }</a>
+<span class="sourceLineNo">744</span><a id="line.744"></a>
+<span class="sourceLineNo">745</span><a id="line.745">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">746</span><a id="line.746">    /**</a>
+<span class="sourceLineNo">747</span><a id="line.747">     * 表示上の高さ計算 (obsolute)</a>
+<span class="sourceLineNo">748</span><a id="line.748">     */</a>
+<span class="sourceLineNo">749</span><a id="line.749">    public double getHeightForDisplay() {</a>
+<span class="sourceLineNo">750</span><a id="line.750">        return getHeight() ;</a>
+<span class="sourceLineNo">751</span><a id="line.751">    }</a>
+<span class="sourceLineNo">752</span><a id="line.752">    </a>
+<span class="sourceLineNo">753</span><a id="line.753">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">754</span><a id="line.754">    /**</a>
+<span class="sourceLineNo">755</span><a id="line.755">     * 全体での高さの計算。</a>
+<span class="sourceLineNo">756</span><a id="line.756">     * ただし、リンクが真っ直ぐであると仮定。</a>
+<span class="sourceLineNo">757</span><a id="line.757">     */</a>
+<span class="sourceLineNo">758</span><a id="line.758">    public double getHeight() {</a>
+<span class="sourceLineNo">759</span><a id="line.759">        if (getLink() != null) {</a>
+<span class="sourceLineNo">760</span><a id="line.760">            return getLink().calcHeight(getPositionOnLink());</a>
+<span class="sourceLineNo">761</span><a id="line.761">        } else {</a>
+<span class="sourceLineNo">762</span><a id="line.762">            return Double.NaN;</a>
+<span class="sourceLineNo">763</span><a id="line.763">        }</a>
+<span class="sourceLineNo">764</span><a id="line.764">    }</a>
+<span class="sourceLineNo">765</span><a id="line.765"></a>
+<span class="sourceLineNo">766</span><a id="line.766">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">767</span><a id="line.767">    /**</a>
+<span class="sourceLineNo">768</span><a id="line.768">     * 文字列化</a>
+<span class="sourceLineNo">769</span><a id="line.769">     */</a>
+<span class="sourceLineNo">770</span><a id="line.770">    public String toString() {</a>
+<span class="sourceLineNo">771</span><a id="line.771">        return ("Place[on:" +</a>
+<span class="sourceLineNo">772</span><a id="line.772">                (getLink() != null ? getLink().toShortInfo() : "(null)") +</a>
+<span class="sourceLineNo">773</span><a id="line.773">                ",enter:" +</a>
+<span class="sourceLineNo">774</span><a id="line.774">                (getEnteringNode() != null ? getEnteringNode().toShortInfo() : "(null)") +</a>
+<span class="sourceLineNo">775</span><a id="line.775">                ",dist:" + getAdvancingDistance() +</a>
+<span class="sourceLineNo">776</span><a id="line.776">                "]") ;</a>
+<span class="sourceLineNo">777</span><a id="line.777">    }</a>
+<span class="sourceLineNo">778</span><a id="line.778"></a>
+<span class="sourceLineNo">779</span><a id="line.779">    </a>
+<span class="sourceLineNo">780</span><a id="line.780">    //============================================================</a>
+<span class="sourceLineNo">781</span><a id="line.781">    /**</a>
+<span class="sourceLineNo">782</span><a id="line.782">     * Place 用の Trail.Content のクラス。</a>
+<span class="sourceLineNo">783</span><a id="line.783">     */</a>
+<span class="sourceLineNo">784</span><a id="line.784">    static public class TrailPlaceContent extends Trail.ContentObject {</a>
+<span class="sourceLineNo">785</span><a id="line.785">        public Object atNode ;</a>
+<span class="sourceLineNo">786</span><a id="line.786">        public Object fromLink ;</a>
+<span class="sourceLineNo">787</span><a id="line.787">        public Object toLink ;</a>
+<span class="sourceLineNo">788</span><a id="line.788">        </a>
+<span class="sourceLineNo">789</span><a id="line.789">        public TrailPlaceContent(Place place, MapLink _toLink) {</a>
+<span class="sourceLineNo">790</span><a id="line.790">            /* [2018.09.23 I.Noda] currentPlace の解釈、間違っていた。*/</a>
+<span class="sourceLineNo">791</span><a id="line.791">            /*</a>
+<span class="sourceLineNo">792</span><a id="line.792">            atNode = (place.getEnteringNode() == null ? null :</a>
+<span class="sourceLineNo">793</span><a id="line.793">                      place.getEnteringNode().getJsonObject()) ;</a>
+<span class="sourceLineNo">794</span><a id="line.794">            */</a>
+<span class="sourceLineNo">795</span><a id="line.795">            atNode = (place.getHeadingNode() == null ? null :</a>
+<span class="sourceLineNo">796</span><a id="line.796">                      place.getHeadingNode().getJsonObject()) ;</a>
+<span class="sourceLineNo">797</span><a id="line.797">            fromLink = (place.getLink() == null ? null :</a>
+<span class="sourceLineNo">798</span><a id="line.798">                        place.getLink().getJsonObject()) ;</a>
+<span class="sourceLineNo">799</span><a id="line.799">            toLink = (_toLink == null ? null :</a>
+<span class="sourceLineNo">800</span><a id="line.800">                      _toLink.getJsonObject()) ;</a>
+<span class="sourceLineNo">801</span><a id="line.801">        }</a>
+<span class="sourceLineNo">802</span><a id="line.802">    }</a>
+<span class="sourceLineNo">803</span><a id="line.803">    </a>
+<span class="sourceLineNo">804</span><a id="line.804">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">805</span><a id="line.805">    /**</a>
+<span class="sourceLineNo">806</span><a id="line.806">     * Trail.Content interface 用 method</a>
+<span class="sourceLineNo">807</span><a id="line.807">     */</a>
+<span class="sourceLineNo">808</span><a id="line.808">    public Trail.Content getTrailContent(MapLink toLink) {</a>
+<span class="sourceLineNo">809</span><a id="line.809">        return new TrailPlaceContent(this, toLink) ;</a>
+<span class="sourceLineNo">810</span><a id="line.810">    }</a>
+<span class="sourceLineNo">811</span><a id="line.811"></a>
+<span class="sourceLineNo">812</span><a id="line.812">    //============================================================</a>
+<span class="sourceLineNo">813</span><a id="line.813">    /**</a>
+<span class="sourceLineNo">814</span><a id="line.814">     * Place 用の Trail.Content のクラス。aux 付き。</a>
+<span class="sourceLineNo">815</span><a id="line.815">     */</a>
+<span class="sourceLineNo">816</span><a id="line.816">    static public class TrailPlaceContentWithAux extends TrailPlaceContent {</a>
+<span class="sourceLineNo">817</span><a id="line.817">        public Object aux ;</a>
+<span class="sourceLineNo">818</span><a id="line.818">        </a>
+<span class="sourceLineNo">819</span><a id="line.819">        public TrailPlaceContentWithAux(Place place, MapLink toLink,</a>
+<span class="sourceLineNo">820</span><a id="line.820">                                        Object _aux) {</a>
+<span class="sourceLineNo">821</span><a id="line.821">            super(place, toLink) ;</a>
+<span class="sourceLineNo">822</span><a id="line.822">            aux = _aux ;</a>
+<span class="sourceLineNo">823</span><a id="line.823">        }</a>
+<span class="sourceLineNo">824</span><a id="line.824">    }</a>
+<span class="sourceLineNo">825</span><a id="line.825">    </a>
+<span class="sourceLineNo">826</span><a id="line.826">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">827</span><a id="line.827">    /**</a>
+<span class="sourceLineNo">828</span><a id="line.828">     * Trail.Content interface 用 method (with aux info)</a>
+<span class="sourceLineNo">829</span><a id="line.829">     */</a>
+<span class="sourceLineNo">830</span><a id="line.830">    public Trail.Content getTrailContent(MapLink toLink, Object aux) {</a>
+<span class="sourceLineNo">831</span><a id="line.831">        return new TrailPlaceContentWithAux(this, toLink, aux) ;</a>
+<span class="sourceLineNo">832</span><a id="line.832">    }</a>
+<span class="sourceLineNo">833</span><a id="line.833">    </a>
+<span class="sourceLineNo">834</span><a id="line.834">    </a>
+<span class="sourceLineNo">835</span><a id="line.835"></a>
+<span class="sourceLineNo">836</span><a id="line.836">} // class Place</a>
+<span class="sourceLineNo">837</span><a id="line.837"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

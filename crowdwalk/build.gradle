@@ -1,0 +1,258 @@
+/**
+ * build.gradle
+ *  generates executable jar using Gradle.
+ */
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'application'
+//    id "com.google.osdetector" version "1.7.0"
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+//apply plugin: 'com.google.osdetector'
+
+// defaultTasks 'clean', 'build', 'javadoc'
+defaultTasks 'clean', 'build'
+
+java {
+// [2016.04.08 I.Noda]
+// コンパイル時に VM のバージョンを指定してみる。
+// 今のところ、まだうまく動かない。
+//targetCompatibility = '1.8' ;
+//sourceCompatibility = '1.6' ;
+}
+
+def javaVersion = Double.valueOf(JavaVersion.current().toString())
+
+/**
+ *  CUI シミュレータ専用版にするフラグ
+ *  gradle -Pcui=true で true になる
+ */
+def onlyCuiSimulator = cui.toBoolean()
+
+println "javaVersion ${javaVersion}"
+if (javaVersion < 1.8) {
+    onlyCuiSimulator = true
+} else if (javaVersion < 11.0) {
+    if (fileTree(dir: System.getenv()['JAVA_HOME']).include('**/javafx.properties').isEmpty()) {
+        println "Warning: JavaFX is not installed."
+        println "         To build with the editor and GUI simulators, please install JavaFX."
+        onlyCuiSimulator = true
+    }
+}
+if (onlyCuiSimulator) {
+    println "build mode: onlyCuiSimulator"
+}
+
+if (! onlyCuiSimulator && javaVersion >= 11.0) {
+    javafx {
+         version = "17"
+         modules = ['javafx.controls', 'javafx.swing', 'javafx.web', 'javafx.media']
+    }
+}
+
+//ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
+//println "Platform: $platform"
+
+repositories {
+    mavenCentral()
+    maven {
+        url = "https://mvn.topobyte.de"
+    }
+    maven {
+        url = "https://mvn.slimjars.com"
+    }
+}
+
+dependencies {
+    implementation localGroovy()   // Gradleに同梱されているGroovyを使う
+    implementation 'commons-cli:commons-cli:1.2'
+    implementation 'commons-codec:commons-codec:1.10'
+    implementation 'org.apache.xmlgraphics:batik-awt-util:1.8'
+    implementation 'xalan:xalan:2.7.0'
+    implementation 'net.arnx:jsonic:1.3.10'
+    implementation 'net.sf.opencsv:opencsv:2.3'
+    implementation 'junit:junit:4.12'
+    // https://mvnrepository.com/artifact/org.jruby/jruby-complete
+    implementation group: 'org.jruby', name: 'jruby-complete', version: '9.2.20.1'
+    implementation 'org.osgeo:proj4j:0.1.0'
+    implementation 'math.geom2d:javaGeom:0.11.1'
+    implementation 'com.opencsv:opencsv:3.8'
+    // https://mvnrepository.com/artifact/org.orbisgis/poly2tri-core
+    implementation group: 'org.orbisgis', name: 'poly2tri-core', version: '0.1.2'
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    // https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark-all
+    implementation group: 'com.vladsch.flexmark', name: 'flexmark-all', version: '0.28.34'
+    // https://jaryard.com/projects/osm4j/
+    implementation 'de.topobyte:osm4j-core:0.1.0'
+    implementation 'de.topobyte:osm4j-utils:0.1.2'
+    implementation 'de.topobyte:osm4j-xml:0.1.2'
+
+    /* [20211116 S.Takami] JavaFXのプラグインに任せるように変更した
+
+    if (! onlyCuiSimulator && javaVersion >= 11.0) {
+        implementation "org.openjfx:javafx-base:11:$platform"
+        implementation "org.openjfx:javafx-graphics:11:$platform"
+        implementation "org.openjfx:javafx-controls:11:$platform"
+        implementation "org.openjfx:javafx-swing:11:$platform"
+        implementation "org.openjfx:javafx-web:11:$platform"
+        implementation "org.openjfx:javafx-media:11:$platform"
+    }
+    */
+}
+
+sourceSets {
+    main {
+        java {
+            if (onlyCuiSimulator) {
+                exclude 'nodagumi/ananPJ/CrowdWalkLauncher.java'
+                exclude 'nodagumi/ananPJ/GuiSimulationLauncher.java'
+                exclude 'nodagumi/ananPJ/GuiSimulationLauncher2D.java'
+                exclude 'nodagumi/ananPJ/GuiSimulationLauncher3D.java'
+                exclude 'nodagumi/ananPJ/Settings.java'
+                exclude 'nodagumi/ananPJ/Editor/**'
+                exclude 'nodagumi/ananPJ/Gui/**'
+                exclude 'nodagumi/ananPJ/misc/GsiAccessor.java'
+            } else {
+                exclude 'nodagumi/ananPJ/CuiCrowdWalkLauncher.java'
+            }
+        }
+    }
+}
+
+def defaultEncoding = 'UTF-8'
+
+compileJava {
+    options.encoding = defaultEncoding
+//    options.compilerArgs = ['-Xlint:unchecked', '-Xdiags:verbose']
+    /* [20211116 S.Takami] JavaFXのプラグインに任せるように変更した
+
+    if (! onlyCuiSimulator && javaVersion >= 11.0) {
+        options.compilerArgs.addAll([
+            '-Xdiags:verbose',
+            '--module-path', classpath.asPath,
+            '--add-modules', 'javafx.controls',
+            '--add-modules', 'javafx.swing',
+            '--add-modules', 'javafx.web',
+            '--add-modules', 'javafx.media'
+        ])
+    } else {
+        options.compilerArgs.addAll(['-Xdiags:verbose'])
+    }
+    */
+    options.compilerArgs.addAll(['-Xdiags:verbose'])
+}
+
+processResources {
+    doFirst {
+        // 最終コミットログの出力をバージョン情報としてリソースファイルにセットする
+        def gitBranch = "#COULD NOT RUN GIT#"
+        def gitLog = "Please install git to get a version message."
+        try {
+            gitBranch = "git symbolic-ref --short HEAD".execute().text.trim()
+            gitLog = "git log -n 1".execute().text.trim()
+        } catch(Exception e) {
+            println "    Git is not found"
+        }
+        def commit_version = "Branch: " + gitBranch + "\n" + gitLog
+        filesMatching("commit_version.txt") {
+            filter(ReplaceTokens, tokens: ['commit_version': commit_version])
+        }
+        println "    commit version -> ${commit_version}"
+    }
+}
+
+application {
+    mainClass = 'nodagumi.ananPJ.CrowdWalkLauncher'
+}
+
+
+/* [2021.03.31 S.Takami] Gradle 6.xからoverwriteをサポートしなくなったため変更
+ * javadocをoverwriteしていたのをjavadocの依存にmyJavadocを指定しjavadocはスキップ
+ */
+task myJavadoc() {
+    doLast {
+        exec {
+            executable "sh"
+            args "-c", "./make_javadoc.sh"
+        }
+    }
+}
+
+tasks.javadoc.configure {
+  onlyIf {false}
+}
+
+tasks.javadoc.dependsOn tasks.myJavadoc
+
+task clearCache() {
+    doFirst {
+        File f = file("${System.getProperty("user.home")}/.gradle/cache/${project.group}/${project.name}")
+        println("Deleting gradle cache at ${f.absolutePath}")
+        delete(f)
+    }
+}
+
+/* [2015.01.28 I.Noda] gradle でトラブルと、どうもここが怪しい。
+ * なので、いざという時、クリアできるようにしておく。
+ */
+task cleanAll {
+     doFirst {
+       File f = file("./.gradle") ;
+       println("deleting ${f.absolutePath}") ;
+       delete(f) ;
+     }
+}
+
+/* [2017.07.14 I.Noda] ruby のファイルを jar に含める。
+ */
+task mkdirForRuby {
+     doFirst {
+       mkdir('build/ruby');
+       mkdir('build/ruby/CrowdWalk') ;
+     }
+}
+
+task copyRubyLib(dependsOn: mkdirForRuby, type: Copy) {
+    from 'src/main/ruby'
+    into 'build/ruby/CrowdWalk'
+}
+
+
+jar {
+    /* [2019.10.01 S.Takami] executeが廃止されたためdependsOnで対応する．
+     * task.copyRubyLibより下に記述する必要あり．
+     */
+    //doFirst {
+        /* for ruby */
+        //tasks.copyRubyLib.execute() ;
+    //}
+    dependsOn copyRubyLib
+
+    /* [20211116 S.Takami] 衝突時の挙動を指定
+     */
+    duplicatesStrategy= DuplicatesStrategy.INCLUDE
+    
+
+    if (onlyCuiSimulator) {
+        manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CuiCrowdWalkLauncher")
+    } else {
+        manifest.mainAttributes("Main-Class" : "nodagumi.ananPJ.CrowdWalkLauncher")
+    }
+    from (configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+    }
+
+    /* for ruby */
+    into('ruby') {
+      from('build/ruby')
+    }
+}

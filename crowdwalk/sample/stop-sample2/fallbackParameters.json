@@ -1,0 +1,130 @@
+{
+  "agentHandler": {
+    "zeroSpeedThreshold": 0.0,
+    "logColumnsOfIndividualPedestrians": [
+      "pedestrianID",
+      "current_time",
+      "current_position_in_model_x",
+      "current_position_in_model_y",
+      "current_traveling_period",
+      "current_linkID",
+      "next_assigned_passage_node",
+      "pedestrian_tag"
+    ],
+    "tickIntervalForIndividualPedestriansLog": 1,
+    "logAgentsOfIndividualPedestrians": {
+        "tags": [ "/^INDEXA/" ],
+        "exclusion": false,
+        "_": null
+    },
+    "_": null
+  },
+  "generation": {
+    "rule": "EACH",
+    "conditions":null,
+    "speedModel": "LANE",
+    "_": null
+  },
+  "agent": {
+    "className": "RationalAgent",
+    "weight": -0.0,
+    "trail": 0.0,
+    "margin": 0.0,
+    "rule": [
+      { "": "if", "condition": {
+          "": "listenAlert", "message": "J1_closed"
+        },
+        "then": [
+          {"": "changeGoal", "goal": "R2-2"},
+          {"": "clearPlannedRoute"},
+          {"": "log","tag": "goto way R2+R3"},
+          {"": "clearAlert", "message": "J1_closed"}
+        ]
+      },
+      { "": "if", "condition": {
+          "": "placeHasTag", "tag": "FL_R2-2"
+        },
+        "then":[
+          {"": "changeGoal", "goal": "EXIT_R2"},
+          {"": "clearPlannedRoute"}
+        ]
+      },
+      { "": "if", "condition": {
+          "": "listenAlert", "message": "J1_open"
+        },
+        "then": [
+          { "": "if", "condition": {
+              "": "<=",
+                "left": {"": "random", "type": "double"},
+                "right": 0.5
+            },
+            "then":[
+              {"": "changeGoal", "goal": "EXIT_R1"},
+              {"": "clearPlannedRoute"},
+              {"": "log","tag": "goto R1"},
+              {"": "addAgentTag", "tag": "R1"},
+              {"": "clearAlert", "message": "J1_open"}
+            ],
+            "else": [
+              {"": "changeGoal", "goal": "R2-2"},
+              {"": "clearPlannedRoute"},
+              {"": "log","tag": "goto 2nd way R2+R3"},
+              {"": "clearAlert", "message": "J1_open"}
+            ]
+          }
+        ]
+      },
+      { "": "if", "condition":{
+          "": "listenAlert", "message": "J2_closed"
+        },
+        "then":[
+          {"": "changeGoal", "goal": "R3-6"},
+          {"": "clearPlannedRoute"},
+          {"": "log","tag": "goto R3"},
+          {"": "addAgentTag", "tag": "R3"},
+          {"": "clearAlert", "message": "J2_closed"}
+        ]
+      },
+      { "": "if", "condition":{
+          "": "placeHasTag", "tag": "FL_R3-6"
+        },
+        "then":[
+          {"": "changeGoal", "goal": "EXIT_R3"},
+          {"": "clearPlannedRoute"}
+        ]
+      },
+      { "": "if", "condition":{
+          "": "listenAlert", "message": "J2_open"
+        },
+        "then": [
+          {"": "clearAlert", "message": "J2_open"},
+          {"": "log","tag": "goto R2"},
+          {"": "addAgentTag", "tag": "R2"}
+        ]
+      },
+      { "": "if", "condition": {
+          "": "placeHasTag", "tag": "GL_R1"
+        },
+        "then":[
+          {"": "log","tag": "goal R1"}
+        ]
+      },
+      { "": "if", "condition": {
+          "": "placeHasTag", "tag": "GL_R2"
+        },
+        "then":[
+          {"": "log","tag": "goal R2"}
+        ]
+      },
+      { "": "if", "condition": {
+          "": "placeHasTag", "tag": "GL_R3"
+        },
+        "then":[
+          {"": "log","tag": "goal R3"}
+        ]
+      }
+    ],
+    "_": null
+  },
+  "_": null
+}

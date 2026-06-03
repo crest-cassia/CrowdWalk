@@ -1,0 +1,22 @@
+<servlet>
+  <servlet-name>restServlet</servlet-name>
+  <servlet-class>net.arnx.jsonic.web.RESTServlet</servlet-class>
+  <init-param>
+    <param-name>config</param-name>
+    <param-value>
+      {
+        "debug":  true,
+        "mappings": {
+          '/{package}/{class}.json':
+          'JSON.${package}.service.${class}Service",
+        }
+      }
+    </param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>restServlet</servlet-name>
+  <url-pattern>/*</url-pattern>
+</servlet-mappings>
+

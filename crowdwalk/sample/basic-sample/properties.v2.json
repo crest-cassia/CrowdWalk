@@ -1,0 +1,14 @@
+{
+    "map_file": "test_model.xml",
+    "generation_file": "test_generation.v2.json",
+    "scenario_file": "test_scenario.json",
+    "node_appearance_file": "node_appearance.json",
+
+    "randseed": 2525,
+    "exit_count": 0,
+    "all_agent_speed_zero_break": false,
+    "exit_with_simulation_finished": false,
+    "agent_size": 0.4,
+    "simulation_window_open": false,
+    "auto_simulation_start": false
+}

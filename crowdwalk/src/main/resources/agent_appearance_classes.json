@@ -1,0 +1,11 @@
+{
+    "SpeedModel" : "nodagumi.ananPJ.Gui.AgentAppearance.model.SpeedModel",
+    "RubyColorModel" : "nodagumi.ananPJ.Gui.AgentAppearance.model.RubyColorModel",
+    "RoundAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view2d.RoundAgent",
+    "SquareAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view2d.SquareAgent",
+    "TriangleAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view2d.TriangleAgent",
+    "SphereAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.SphereAgent",
+    "CubeAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.CubeAgent",
+    "PlaneTriangleAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.PlaneTriangleAgent",
+    "TriangleMeshAgent" : "nodagumi.ananPJ.Gui.AgentAppearance.view3d.TriangleMeshAgent"
+}

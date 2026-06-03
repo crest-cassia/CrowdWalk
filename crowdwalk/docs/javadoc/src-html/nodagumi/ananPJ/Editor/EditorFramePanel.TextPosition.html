@@ -1,0 +1,719 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>// -*- mode: java; indent-tabs-mode: nil -*-<a name="line.1"></a>
+<span class="sourceLineNo">002</span>package nodagumi.ananPJ.Editor;<a name="line.2"></a>
+<span class="sourceLineNo">003</span><a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.awt.AlphaComposite;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.awt.BasicStroke;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.awt.Color;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.awt.Dimension;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.awt.Font;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.awt.FontMetrics;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import java.awt.Graphics;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import java.awt.Graphics2D;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import java.awt.Image;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import java.awt.Point;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import java.awt.geom.AffineTransform;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import java.awt.geom.Line2D;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import java.awt.geom.NoninvertibleTransformException;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import java.awt.geom.Point2D;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import java.awt.geom.Rectangle2D;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.util.HashMap;<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>import javax.swing.JPanel;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import javax.swing.SwingUtilities;<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>import nodagumi.ananPJ.NetworkMap.MapPartGroup;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import nodagumi.ananPJ.NetworkMap.OBNode;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import nodagumi.ananPJ.NetworkMap.OBNodeSymbolicLink;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import nodagumi.ananPJ.NetworkMap.Link.*;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import nodagumi.ananPJ.NetworkMap.Node.*;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import nodagumi.ananPJ.NetworkMap.Area.MapArea;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import nodagumi.ananPJ.misc.Hover;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import nodagumi.ananPJ.navigation.NavigationHint;<a name="line.31"></a>
+<span class="sourceLineNo">032</span><a name="line.32"></a>
+<span class="sourceLineNo">033</span>/* a panel specifically designed to draw objects on a <a name="line.33"></a>
+<span class="sourceLineNo">034</span> * specific editor frame. note that the frame is further related to<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * a specific group.<a name="line.35"></a>
+<span class="sourceLineNo">036</span> */<a name="line.36"></a>
+<span class="sourceLineNo">037</span>public class EditorFramePanel extends JPanel {<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>    public static enum TextPosition { CENTER, UPPER, LOWER, LEFT, RIGHT }<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>    /* -- Parameters<a name="line.41"></a>
+<span class="sourceLineNo">042</span>     */<a name="line.42"></a>
+<span class="sourceLineNo">043</span>    /* parameters related to what is edited */<a name="line.43"></a>
+<span class="sourceLineNo">044</span>    private EditorFrame frame = null;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    private MapPartGroup ob_node = null;<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>    /* parameters related to editing */<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    private Hover hoverNode = null;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>    private Hover hoverLink = null;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>    private MapArea hoverArea = null;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>    private Rectangle2D selectedArea = null;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    private Line2D scaleLine = null;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    public boolean setScaleMode = false;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>    private Line2D tempLine = null;<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>    /* parameters related strictly to drawing */<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    private double tx = 0.0, ty = 0.0;<a name="line.57"></a>
+<span class="sourceLineNo">058</span>    private double scale = 1.0;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    <a name="line.59"></a>
+<span class="sourceLineNo">060</span>    private Image backgroundImage = null;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    private MapPartGroup backgroundGroup = null;    // このグループのマップを背景に表示する(表示のみ)<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    private double imageStrength = 1.0;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    <a name="line.63"></a>
+<span class="sourceLineNo">064</span>    private boolean showNodes = true;<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    private boolean showNodeLabels = false;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    private boolean showLinks = true;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    private boolean showLinkLabels = false;<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    // tkokada, modified initial value<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    //private boolean showGroups = true;<a name="line.69"></a>
+<span class="sourceLineNo">070</span>    private boolean showGroups = false;<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    private boolean showSubGroups = false;<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    private boolean showArea = true;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>    // show objects with scaling mode or not. scaling mode zoomes up or down <a name="line.73"></a>
+<span class="sourceLineNo">074</span>    // objects as wheel control.<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    private boolean showScaling = false;<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    public boolean updateStatusEnabled = false;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    public Point point_on_panel = new Point(0, 0);<a name="line.78"></a>
+<span class="sourceLineNo">079</span><a name="line.79"></a>
+<span class="sourceLineNo">080</span>    Color linkColor = Color.YELLOW;<a name="line.80"></a>
+<span class="sourceLineNo">081</span><a name="line.81"></a>
+<span class="sourceLineNo">082</span>    // 一方通行の編集時に表示するラベル関連<a name="line.82"></a>
+<span class="sourceLineNo">083</span>    private boolean showOneWayIndicator = false;<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    private MapNode oneWayfirstNode = null;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    private MapNode oneWaylastNode = null;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    private TextPosition oneWayLabelPositionA = TextPosition.CENTER;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>    private TextPosition oneWayLabelPositionB = TextPosition.CENTER;<a name="line.87"></a>
+<span class="sourceLineNo">088</span><a name="line.88"></a>
+<span class="sourceLineNo">089</span>    /* constructor<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     */<a name="line.90"></a>
+<span class="sourceLineNo">091</span>    public EditorFramePanel (EditorFrame _frame,<a name="line.91"></a>
+<span class="sourceLineNo">092</span>            MapPartGroup _ob_node) {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>        super ();<a name="line.93"></a>
+<span class="sourceLineNo">094</span>        frame = _frame;<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        ob_node = _ob_node;<a name="line.95"></a>
+<span class="sourceLineNo">096</span>    }<a name="line.96"></a>
+<span class="sourceLineNo">097</span><a name="line.97"></a>
+<span class="sourceLineNo">098</span>    /**<a name="line.98"></a>
+<span class="sourceLineNo">099</span>     * マウスカーソル位置を基準にしてズームイン/ズームアウトする.<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     */<a name="line.100"></a>
+<span class="sourceLineNo">101</span>    public void zoom(int z) {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        double scaleOld = scale;<a name="line.102"></a>
+<span class="sourceLineNo">103</span><a name="line.103"></a>
+<span class="sourceLineNo">104</span>        double r;<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        if (z &gt; 0) {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>            r = 0.8;<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        } else {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            r = 1.25;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span><a name="line.110"></a>
+<span class="sourceLineNo">111</span>        z = Math.abs(z);<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        for (int i = 0; i &lt; z; i++) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            scale *= r;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        <a name="line.115"></a>
+<span class="sourceLineNo">116</span>        if (scale &gt; 100.0) scale = 100.0;<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        if (scale &lt; 0.01) scale = 0.01;<a name="line.117"></a>
+<span class="sourceLineNo">118</span><a name="line.118"></a>
+<span class="sourceLineNo">119</span>        //TODO: needs calculation for rotation<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        tx += frame.mousePoint.getX() * (scaleOld - scale);<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        ty += frame.mousePoint.getY() * (scaleOld - scale);<a name="line.121"></a>
+<span class="sourceLineNo">122</span>    }<a name="line.122"></a>
+<span class="sourceLineNo">123</span>    <a name="line.123"></a>
+<span class="sourceLineNo">124</span>    public double getDrawingScale() {<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        return scale;<a name="line.125"></a>
+<span class="sourceLineNo">126</span>    }<a name="line.126"></a>
+<span class="sourceLineNo">127</span>    <a name="line.127"></a>
+<span class="sourceLineNo">128</span>    public void scroll(int dx, int dy) {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>        tx += dx;<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        ty += dy;<a name="line.130"></a>
+<span class="sourceLineNo">131</span>    }<a name="line.131"></a>
+<span class="sourceLineNo">132</span><a name="line.132"></a>
+<span class="sourceLineNo">133</span>    public void setPosition(int dx, int dy) {<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        tx = dx;<a name="line.134"></a>
+<span class="sourceLineNo">135</span>        ty = dy;<a name="line.135"></a>
+<span class="sourceLineNo">136</span>    }<a name="line.136"></a>
+<span class="sourceLineNo">137</span><a name="line.137"></a>
+<span class="sourceLineNo">138</span>    public void localScroll(int dx, int dy) {<a name="line.138"></a>
+<span class="sourceLineNo">139</span>        ob_node.tx += dx / scale;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        ob_node.ty += dy / scale;<a name="line.140"></a>
+<span class="sourceLineNo">141</span>    }<a name="line.141"></a>
+<span class="sourceLineNo">142</span>    <a name="line.142"></a>
+<span class="sourceLineNo">143</span>    public void localZoomX(int z) {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        if (z &gt; 0) {<a name="line.144"></a>
+<span class="sourceLineNo">145</span>            ob_node.sx -= 0.01;<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        } else {<a name="line.146"></a>
+<span class="sourceLineNo">147</span>            ob_node.sx += 0.01;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        }<a name="line.148"></a>
+<span class="sourceLineNo">149</span>    }<a name="line.149"></a>
+<span class="sourceLineNo">150</span>    <a name="line.150"></a>
+<span class="sourceLineNo">151</span>    public void localZoomY(int z) {<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        if (z &gt; 0) {<a name="line.152"></a>
+<span class="sourceLineNo">153</span>            ob_node.sy -= 0.01;<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        } else {<a name="line.154"></a>
+<span class="sourceLineNo">155</span>            ob_node.sy += 0.01;<a name="line.155"></a>
+<span class="sourceLineNo">156</span>        }<a name="line.156"></a>
+<span class="sourceLineNo">157</span>    }<a name="line.157"></a>
+<span class="sourceLineNo">158</span><a name="line.158"></a>
+<span class="sourceLineNo">159</span>    public void setLocalZoomX(double sx) {<a name="line.159"></a>
+<span class="sourceLineNo">160</span>        ob_node.sx = sx;<a name="line.160"></a>
+<span class="sourceLineNo">161</span>    }<a name="line.161"></a>
+<span class="sourceLineNo">162</span><a name="line.162"></a>
+<span class="sourceLineNo">163</span>    public void setLocalZoomY(double sy) {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>        ob_node.sy = sy;<a name="line.164"></a>
+<span class="sourceLineNo">165</span>    }<a name="line.165"></a>
+<span class="sourceLineNo">166</span>    <a name="line.166"></a>
+<span class="sourceLineNo">167</span>    public void localRotate(int z) {<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        ob_node.r += (z * Math.PI) / 64;<a name="line.168"></a>
+<span class="sourceLineNo">169</span>        repaint();<a name="line.169"></a>
+<span class="sourceLineNo">170</span>    }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>    <a name="line.171"></a>
+<span class="sourceLineNo">172</span>    public void centering(boolean withScaling) {<a name="line.172"></a>
+<span class="sourceLineNo">173</span>        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        // ※Double.MIN_VALUE が何故か正の値と判定されることがあるため Long.MIN_VALUE で代用した<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        double maxX = (double)Long.MIN_VALUE, maxY = (double)Long.MIN_VALUE;<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        for (MapNode node : frame.getChildNodes()) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>            minX = Math.min(minX, node.getX());<a name="line.177"></a>
+<span class="sourceLineNo">178</span>            maxX = Math.max(maxX, node.getX());<a name="line.178"></a>
+<span class="sourceLineNo">179</span>            minY = Math.min(minY, node.getY());<a name="line.179"></a>
+<span class="sourceLineNo">180</span>            maxY = Math.max(maxY, node.getY());<a name="line.180"></a>
+<span class="sourceLineNo">181</span>        }<a name="line.181"></a>
+<span class="sourceLineNo">182</span>        if (minX == Double.MAX_VALUE) {<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            tx = 0.0;<a name="line.183"></a>
+<span class="sourceLineNo">184</span>            ty = 0.0;<a name="line.184"></a>
+<span class="sourceLineNo">185</span>            scale = 1.0;<a name="line.185"></a>
+<span class="sourceLineNo">186</span>            return;<a name="line.186"></a>
+<span class="sourceLineNo">187</span>        }<a name="line.187"></a>
+<span class="sourceLineNo">188</span><a name="line.188"></a>
+<span class="sourceLineNo">189</span>        final double width = maxX - minX;<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        final double height = maxY - minY;<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        final double scaleX = (getWidth() - 20) / width;<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        final double scaleY = (getHeight() - 60) / height;<a name="line.192"></a>
+<span class="sourceLineNo">193</span>        <a name="line.193"></a>
+<span class="sourceLineNo">194</span>        if (withScaling) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>            scale = Math.min(scaleX, scaleY);<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        }<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        tx = -(minX + maxX) / (2) * scale + (getWidth() - 20) / 2;<a name="line.197"></a>
+<span class="sourceLineNo">198</span>        ty = -(minY + maxY) / (2) * scale + (getHeight() - 40) / 2;<a name="line.198"></a>
+<span class="sourceLineNo">199</span>    }<a name="line.199"></a>
+<span class="sourceLineNo">200</span><a name="line.200"></a>
+<span class="sourceLineNo">201</span>    /* theoretical value to display */<a name="line.201"></a>
+<span class="sourceLineNo">202</span>    public Point2D calcPos(Point2D p) {<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        /* translate local position  &lt; reference parent position */ <a name="line.203"></a>
+<span class="sourceLineNo">204</span>        double xx = p.getX() * scale + tx;<a name="line.204"></a>
+<span class="sourceLineNo">205</span>        double yy = p.getY() * scale + ty;<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        return new Point2D.Double(xx, yy);<a name="line.206"></a>
+<span class="sourceLineNo">207</span>    }<a name="line.207"></a>
+<span class="sourceLineNo">208</span>    <a name="line.208"></a>
+<span class="sourceLineNo">209</span>    /* display to theoretical value */<a name="line.209"></a>
+<span class="sourceLineNo">210</span>    /* this method is called by zoom relate function */  <a name="line.210"></a>
+<span class="sourceLineNo">211</span>    public Point2D revCalcPos(int x, int y) {<a name="line.211"></a>
+<span class="sourceLineNo">212</span>        point_on_panel = SwingUtilities.convertPoint(null, x, y, this);<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        <a name="line.213"></a>
+<span class="sourceLineNo">214</span>        AffineTransform trans = new AffineTransform();<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        trans.translate(tx, ty);<a name="line.215"></a>
+<span class="sourceLineNo">216</span>        trans.scale(scale, scale);<a name="line.216"></a>
+<span class="sourceLineNo">217</span><a name="line.217"></a>
+<span class="sourceLineNo">218</span>        try {<a name="line.218"></a>
+<span class="sourceLineNo">219</span>            trans.invert();<a name="line.219"></a>
+<span class="sourceLineNo">220</span>        } catch (NoninvertibleTransformException e) {<a name="line.220"></a>
+<span class="sourceLineNo">221</span>            e.printStackTrace();<a name="line.221"></a>
+<span class="sourceLineNo">222</span>        }<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        return trans.transform(new Point2D.Double(point_on_panel.getX(), point_on_panel.getY()), null);<a name="line.223"></a>
+<span class="sourceLineNo">224</span>    }<a name="line.224"></a>
+<span class="sourceLineNo">225</span><a name="line.225"></a>
+<span class="sourceLineNo">226</span>    @Override<a name="line.226"></a>
+<span class="sourceLineNo">227</span>    public void paintComponent (Graphics g0) {<a name="line.227"></a>
+<span class="sourceLineNo">228</span>        super.paintComponent(g0);<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        <a name="line.229"></a>
+<span class="sourceLineNo">230</span>        // viewArea を使って表示範囲外の無駄な描画処理を省く<a name="line.230"></a>
+<span class="sourceLineNo">231</span>        Dimension frameSize = new Dimension();<a name="line.231"></a>
+<span class="sourceLineNo">232</span>        frame.getSize(frameSize);<a name="line.232"></a>
+<span class="sourceLineNo">233</span>        Point2D position = revCalcPos(0, 0);<a name="line.233"></a>
+<span class="sourceLineNo">234</span>        Point2D size = revCalcPos(frameSize.width, frameSize.height);<a name="line.234"></a>
+<span class="sourceLineNo">235</span>        Rectangle2D viewArea = new Rectangle2D.Double(position.getX(), position.getY(), (size.getX() - position.getX()) + 1, (size.getY() - position.getY()) + 1);<a name="line.235"></a>
+<span class="sourceLineNo">236</span><a name="line.236"></a>
+<span class="sourceLineNo">237</span>        Graphics2D g = (Graphics2D)g0;<a name="line.237"></a>
+<span class="sourceLineNo">238</span><a name="line.238"></a>
+<span class="sourceLineNo">239</span>        if (setScaleMode) {<a name="line.239"></a>
+<span class="sourceLineNo">240</span>            //g.drawString("Scale Mode", 0, 20);<a name="line.240"></a>
+<span class="sourceLineNo">241</span>            frame.setStatus("SET_SCALE");<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        } else {<a name="line.242"></a>
+<span class="sourceLineNo">243</span>            if (updateStatusEnabled) {<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                frame.setStatus();<a name="line.244"></a>
+<span class="sourceLineNo">245</span>            }<a name="line.245"></a>
+<span class="sourceLineNo">246</span>        }<a name="line.246"></a>
+<span class="sourceLineNo">247</span><a name="line.247"></a>
+<span class="sourceLineNo">248</span>        g.translate(tx, ty);<a name="line.248"></a>
+<span class="sourceLineNo">249</span>        g.scale(scale, scale);<a name="line.249"></a>
+<span class="sourceLineNo">250</span><a name="line.250"></a>
+<span class="sourceLineNo">251</span>        AffineTransform t = g.getTransform();<a name="line.251"></a>
+<span class="sourceLineNo">252</span><a name="line.252"></a>
+<span class="sourceLineNo">253</span>        if (backgroundImage != null) {<a name="line.253"></a>
+<span class="sourceLineNo">254</span>            g.translate(ob_node.tx, ob_node.ty);<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            g.scale(ob_node.sx, ob_node.sy);<a name="line.255"></a>
+<span class="sourceLineNo">256</span>            g.rotate(ob_node.r);<a name="line.256"></a>
+<span class="sourceLineNo">257</span><a name="line.257"></a>
+<span class="sourceLineNo">258</span>            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)imageStrength));<a name="line.258"></a>
+<span class="sourceLineNo">259</span>            g.drawImage(backgroundImage, 0, 0,<a name="line.259"></a>
+<span class="sourceLineNo">260</span>                    (int)(backgroundImage.getWidth(null)),<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                    (int)(backgroundImage.getHeight(null)),<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                    this);<a name="line.262"></a>
+<span class="sourceLineNo">263</span>            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));<a name="line.263"></a>
+<span class="sourceLineNo">264</span>            //System.out.println("tx:" + tx + ", ty:" + ty + ", obnode tx:" + ob_node.tx + ", ty:" + ob_node.ty + ", sx:" + ob_node.sx + ", sy:" + ob_node.sy + ", r:" + ob_node.r + ", scale:" + scale);<a name="line.264"></a>
+<span class="sourceLineNo">265</span><a name="line.265"></a>
+<span class="sourceLineNo">266</span>            g.setTransform(t);<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        }<a name="line.267"></a>
+<span class="sourceLineNo">268</span><a name="line.268"></a>
+<span class="sourceLineNo">269</span>        /* show frame */<a name="line.269"></a>
+<span class="sourceLineNo">270</span>        if (frame.getRegion() != null){<a name="line.270"></a>
+<span class="sourceLineNo">271</span>            g.setStroke(MapLink.narrow);<a name="line.271"></a>
+<span class="sourceLineNo">272</span>            g.setColor(Color.ORANGE);<a name="line.272"></a>
+<span class="sourceLineNo">273</span>            //g.draw(frame.getRegion());<a name="line.273"></a>
+<span class="sourceLineNo">274</span>            g.draw(new Rectangle2D.Double(<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                    frame.getRegion().getX(),<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                    frame.getRegion().getY(),<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                    frame.getBounds().getWidth()-40,<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                    frame.getBounds().getHeight()-190));<a name="line.278"></a>
+<span class="sourceLineNo">279</span>        }<a name="line.279"></a>
+<span class="sourceLineNo">280</span>        /* background group */<a name="line.280"></a>
+<span class="sourceLineNo">281</span>        if (backgroundGroup != null) {<a name="line.281"></a>
+<span class="sourceLineNo">282</span>            if (showLinks) {<a name="line.282"></a>
+<span class="sourceLineNo">283</span>                for (final MapLink link : backgroundGroup.getChildLinks()) {<a name="line.283"></a>
+<span class="sourceLineNo">284</span>                    if (viewArea.intersectsLine(link.getLine2D())) {<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                        g.setColor(Color.WHITE);<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                        link.drawInEditor(g, showLinkLabels, false, showScaling);<a name="line.286"></a>
+<span class="sourceLineNo">287</span>                    }<a name="line.287"></a>
+<span class="sourceLineNo">288</span>                }<a name="line.288"></a>
+<span class="sourceLineNo">289</span>            }<a name="line.289"></a>
+<span class="sourceLineNo">290</span>            if (showNodes) {<a name="line.290"></a>
+<span class="sourceLineNo">291</span>                g.setStroke(new BasicStroke(1.0f));<a name="line.291"></a>
+<span class="sourceLineNo">292</span>                if (backgroundGroup.getChildNodes() != null) {<a name="line.292"></a>
+<span class="sourceLineNo">293</span>                    for (MapNode node : backgroundGroup.getChildNodes()) {<a name="line.293"></a>
+<span class="sourceLineNo">294</span>                        if (viewArea.contains(node.getX(), node.getY())) {<a name="line.294"></a>
+<span class="sourceLineNo">295</span>                            node.drawInEditor(g, false, false, Color.LIGHT_GRAY);<a name="line.295"></a>
+<span class="sourceLineNo">296</span>                        }<a name="line.296"></a>
+<span class="sourceLineNo">297</span>                    }<a name="line.297"></a>
+<span class="sourceLineNo">298</span>                }<a name="line.298"></a>
+<span class="sourceLineNo">299</span>            }<a name="line.299"></a>
+<span class="sourceLineNo">300</span>        }<a name="line.300"></a>
+<span class="sourceLineNo">301</span>        <a name="line.301"></a>
+<span class="sourceLineNo">302</span>        /* actual objects */<a name="line.302"></a>
+<span class="sourceLineNo">303</span>        if (showArea) {<a name="line.303"></a>
+<span class="sourceLineNo">304</span>            for (final MapArea area : frame.getChildMapAreas()) {<a name="line.304"></a>
+<span class="sourceLineNo">305</span>                // tkokada<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                // apply a rotation rectangle, here.<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                double angle = area.getAngle();<a name="line.307"></a>
+<span class="sourceLineNo">308</span>                if (!Double.isNaN(angle)) {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>                    AffineTransform af = g.getTransform();<a name="line.309"></a>
+<span class="sourceLineNo">310</span>                    af.rotate(angle, ((Rectangle2D) area.getShape()).getCenterX(), ((Rectangle2D) area.getShape()).getCenterY());<a name="line.310"></a>
+<span class="sourceLineNo">311</span>                    // draw center point of map area<a name="line.311"></a>
+<span class="sourceLineNo">312</span>                    /*<a name="line.312"></a>
+<span class="sourceLineNo">313</span>                    g.setColor(Color.GREEN);<a name="line.313"></a>
+<span class="sourceLineNo">314</span>                    g.fill(new Rectangle2D.Double(<a name="line.314"></a>
+<span class="sourceLineNo">315</span>                            ((Rectangle2D) area.getShape()).getCenterX() - 6 /g.getTransform().getScaleX(),<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                            ((Rectangle2D) area.getShape()).getCenterY() - 6 / g.getTransform().getScaleX(),<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                            6 * 2 / g.getTransform().getScaleX(),<a name="line.317"></a>
+<span class="sourceLineNo">318</span>                            6 * 2 / g.getTransform().getScaleX()));<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                    */<a name="line.319"></a>
+<span class="sourceLineNo">320</span>                    //System.out.println("area cx:" + ((Rectangle2D) area.getShape()).getCenterX() + "cy:" + ((Rectangle2D) area.getShape()).getCenterY());<a name="line.320"></a>
+<span class="sourceLineNo">321</span>                    g.setTransform(af);<a name="line.321"></a>
+<span class="sourceLineNo">322</span>                    //System.out.println("area cx:" + ((Rectangle2D) area.getShape()).getCenterX() + "cy:" + ((Rectangle2D) area.getShape()).getCenterY());<a name="line.322"></a>
+<span class="sourceLineNo">323</span>                    //System.out.println("tx:" + tx + ", ty:" + ty + ", obnode tx:" + ob_node.tx + ", ty:" + ob_node.ty + ", sx:" + ob_node.sx + ", sy:" + ob_node.ty<a name="line.323"></a>
+<span class="sourceLineNo">324</span>                    //      + ", r:" + ob_node.r + ", scaleX:" + g.getTransform().getScaleX());<a name="line.324"></a>
+<span class="sourceLineNo">325</span>                    area.drawInEditor(g) ;<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                    g.setTransform(t);<a name="line.326"></a>
+<span class="sourceLineNo">327</span>                } else {<a name="line.327"></a>
+<span class="sourceLineNo">328</span>                    area.drawInEditor(g) ;<a name="line.328"></a>
+<span class="sourceLineNo">329</span>                }<a name="line.329"></a>
+<span class="sourceLineNo">330</span>            }<a name="line.330"></a>
+<span class="sourceLineNo">331</span>        }<a name="line.331"></a>
+<span class="sourceLineNo">332</span><a name="line.332"></a>
+<span class="sourceLineNo">333</span>        if (showLinks) {<a name="line.333"></a>
+<span class="sourceLineNo">334</span>            for (final MapLink link : frame.getChildLinks()) {<a name="line.334"></a>
+<span class="sourceLineNo">335</span>                if (viewArea.intersectsLine(link.getLine2D())) {<a name="line.335"></a>
+<span class="sourceLineNo">336</span>                    g.setColor(linkColor);<a name="line.336"></a>
+<span class="sourceLineNo">337</span>                    link.drawInEditor(g, showLinkLabels, false, showScaling);<a name="line.337"></a>
+<span class="sourceLineNo">338</span>                }<a name="line.338"></a>
+<span class="sourceLineNo">339</span>            }<a name="line.339"></a>
+<span class="sourceLineNo">340</span>        }<a name="line.340"></a>
+<span class="sourceLineNo">341</span>        <a name="line.341"></a>
+<span class="sourceLineNo">342</span>        if (showNodes) {<a name="line.342"></a>
+<span class="sourceLineNo">343</span>            g.setStroke(new BasicStroke(1.0f));<a name="line.343"></a>
+<span class="sourceLineNo">344</span>            if (frame.getChildNodes() != null) {<a name="line.344"></a>
+<span class="sourceLineNo">345</span>                for (MapNode node : frame.getChildNodes()) {<a name="line.345"></a>
+<span class="sourceLineNo">346</span>                    if (viewArea.contains(node.getX(), node.getY())) {<a name="line.346"></a>
+<span class="sourceLineNo">347</span>                        node.drawInEditor(g, showNodeLabels, false);<a name="line.347"></a>
+<span class="sourceLineNo">348</span>                    }<a name="line.348"></a>
+<span class="sourceLineNo">349</span>                }<a name="line.349"></a>
+<span class="sourceLineNo">350</span>            }<a name="line.350"></a>
+<span class="sourceLineNo">351</span>        }<a name="line.351"></a>
+<span class="sourceLineNo">352</span>        <a name="line.352"></a>
+<span class="sourceLineNo">353</span>        if (showGroups) {<a name="line.353"></a>
+<span class="sourceLineNo">354</span>            for (MapPartGroup group : frame.getChildGroups()) {<a name="line.354"></a>
+<span class="sourceLineNo">355</span>                group.drawInEditor(g, showSubGroups);<a name="line.355"></a>
+<span class="sourceLineNo">356</span>            }<a name="line.356"></a>
+<span class="sourceLineNo">357</span>        }<a name="line.357"></a>
+<span class="sourceLineNo">358</span>        <a name="line.358"></a>
+<span class="sourceLineNo">359</span>        /* symbolic links */<a name="line.359"></a>
+<span class="sourceLineNo">360</span>        /* first try links */<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        if (showLinks) {<a name="line.361"></a>
+<span class="sourceLineNo">362</span>            for (OBNodeSymbolicLink symlink : frame.getSymbolicLinks()) {<a name="line.362"></a>
+<span class="sourceLineNo">363</span>                OBNode orig = symlink.getOriginal();<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                if (orig == null) {<a name="line.364"></a>
+<span class="sourceLineNo">365</span>                    System.err.println("Dangling symlink? " + symlink.ID);<a name="line.365"></a>
+<span class="sourceLineNo">366</span>                }<a name="line.366"></a>
+<span class="sourceLineNo">367</span>                OBNode.NType ntype = orig.getNodeType();<a name="line.367"></a>
+<span class="sourceLineNo">368</span>            <a name="line.368"></a>
+<span class="sourceLineNo">369</span>                if (ntype == OBNode.NType.LINK) {<a name="line.369"></a>
+<span class="sourceLineNo">370</span>                    MapLink link = (MapLink)orig;<a name="line.370"></a>
+<span class="sourceLineNo">371</span>                    link.drawInEditor(g, showLinkLabels, true, showScaling);<a name="line.371"></a>
+<span class="sourceLineNo">372</span>                }<a name="line.372"></a>
+<span class="sourceLineNo">373</span>            }<a name="line.373"></a>
+<span class="sourceLineNo">374</span>        }<a name="line.374"></a>
+<span class="sourceLineNo">375</span>        /* then nodes links */<a name="line.375"></a>
+<span class="sourceLineNo">376</span>        if (showNodes) {<a name="line.376"></a>
+<span class="sourceLineNo">377</span>            for (OBNodeSymbolicLink symlink : frame.getSymbolicLinks()) {<a name="line.377"></a>
+<span class="sourceLineNo">378</span>                OBNode orig = symlink.getOriginal();<a name="line.378"></a>
+<span class="sourceLineNo">379</span>                OBNode.NType ntype = orig.getNodeType();<a name="line.379"></a>
+<span class="sourceLineNo">380</span>            <a name="line.380"></a>
+<span class="sourceLineNo">381</span>                if (ntype == OBNode.NType.NODE) {<a name="line.381"></a>
+<span class="sourceLineNo">382</span>                    MapNode node = (MapNode)orig;<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                    node.drawInEditor(g, showNodeLabels, true);<a name="line.383"></a>
+<span class="sourceLineNo">384</span>                }<a name="line.384"></a>
+<span class="sourceLineNo">385</span>            }<a name="line.385"></a>
+<span class="sourceLineNo">386</span>        }<a name="line.386"></a>
+<span class="sourceLineNo">387</span><a name="line.387"></a>
+<span class="sourceLineNo">388</span>        /* temporary objects */<a name="line.388"></a>
+<span class="sourceLineNo">389</span>        if (hoverNode != null) {<a name="line.389"></a>
+<span class="sourceLineNo">390</span>            if (hoverNode.orig_node != null) {<a name="line.390"></a>
+<span class="sourceLineNo">391</span>                hoverNode.orig_node.drawInEditor(g, true, true);<a name="line.391"></a>
+<span class="sourceLineNo">392</span>            }<a name="line.392"></a>
+<span class="sourceLineNo">393</span>            g.setColor(Color.MAGENTA);<a name="line.393"></a>
+<span class="sourceLineNo">394</span>            final double scale = g.getTransform().getScaleX();<a name="line.394"></a>
+<span class="sourceLineNo">395</span>            Rectangle2D rect = new Rectangle2D.Double(hoverNode.getX() - 6 / scale,<a name="line.395"></a>
+<span class="sourceLineNo">396</span>                    hoverNode.getY() - 6 / scale,<a name="line.396"></a>
+<span class="sourceLineNo">397</span>                    12 / scale,<a name="line.397"></a>
+<span class="sourceLineNo">398</span>                    12 / scale);<a name="line.398"></a>
+<span class="sourceLineNo">399</span>            g.fill(rect);<a name="line.399"></a>
+<span class="sourceLineNo">400</span>            g.setColor(Color.CYAN);<a name="line.400"></a>
+<span class="sourceLineNo">401</span>            rect = new Rectangle2D.Double(hoverNode.getX() - 5 / scale,<a name="line.401"></a>
+<span class="sourceLineNo">402</span>                    hoverNode.getY() - 5 / scale,<a name="line.402"></a>
+<span class="sourceLineNo">403</span>                    10 / scale,<a name="line.403"></a>
+<span class="sourceLineNo">404</span>                    10 / scale);<a name="line.404"></a>
+<span class="sourceLineNo">405</span>            g.fill(rect);<a name="line.405"></a>
+<span class="sourceLineNo">406</span>            if (frame.getChildNodes().contains(hoverNode)) {<a name="line.406"></a>
+<span class="sourceLineNo">407</span>                showHoverNodeInfo(g);<a name="line.407"></a>
+<span class="sourceLineNo">408</span>            }<a name="line.408"></a>
+<span class="sourceLineNo">409</span>        }<a name="line.409"></a>
+<span class="sourceLineNo">410</span>        <a name="line.410"></a>
+<span class="sourceLineNo">411</span>        if (hoverLink != null) {<a name="line.411"></a>
+<span class="sourceLineNo">412</span>            //g.setStroke(MapLink.narrow);<a name="line.412"></a>
+<span class="sourceLineNo">413</span>            g.setColor(Color.BLUE);<a name="line.413"></a>
+<span class="sourceLineNo">414</span>            //g.draw(hoverLink.getRect(g));<a name="line.414"></a>
+<span class="sourceLineNo">415</span>            g.fill(hoverLink.getRect(g, showScaling));<a name="line.415"></a>
+<span class="sourceLineNo">416</span>            // ラベルの描画<a name="line.416"></a>
+<span class="sourceLineNo">417</span>            if (hoverLink.orig_link != null) {<a name="line.417"></a>
+<span class="sourceLineNo">418</span>                hoverLink.orig_link.drawLabel(g, showScaling);<a name="line.418"></a>
+<span class="sourceLineNo">419</span>            }<a name="line.419"></a>
+<span class="sourceLineNo">420</span>        }<a name="line.420"></a>
+<span class="sourceLineNo">421</span>        <a name="line.421"></a>
+<span class="sourceLineNo">422</span>        if (hoverArea != null) {<a name="line.422"></a>
+<span class="sourceLineNo">423</span>            g.setColor(Color.BLUE);<a name="line.423"></a>
+<span class="sourceLineNo">424</span>            // tkokada<a name="line.424"></a>
+<span class="sourceLineNo">425</span>            // apply the rotated rectangles to show.<a name="line.425"></a>
+<span class="sourceLineNo">426</span>            boolean drawSelectedArea = false;<a name="line.426"></a>
+<span class="sourceLineNo">427</span>            for (MapArea area : frame.getChildMapAreas()) {<a name="line.427"></a>
+<span class="sourceLineNo">428</span>                if (((Rectangle2D) area.getShape()).contains((Rectangle2D) hoverArea.getShape())) {<a name="line.428"></a>
+<span class="sourceLineNo">429</span>                    double angle = area.getAngle();<a name="line.429"></a>
+<span class="sourceLineNo">430</span>                    if (!Double.isNaN(angle)) {<a name="line.430"></a>
+<span class="sourceLineNo">431</span>                        AffineTransform af = g.getTransform();<a name="line.431"></a>
+<span class="sourceLineNo">432</span>                        af.rotate(angle, ((Rectangle2D) area.getShape()).getCenterX(), ((Rectangle2D) area.getShape()).getCenterY());<a name="line.432"></a>
+<span class="sourceLineNo">433</span>                        g.setTransform(af);<a name="line.433"></a>
+<span class="sourceLineNo">434</span>                        g.draw(hoverArea.getShape());<a name="line.434"></a>
+<span class="sourceLineNo">435</span>                        g.setTransform(t); <a name="line.435"></a>
+<span class="sourceLineNo">436</span>                        drawSelectedArea = true;<a name="line.436"></a>
+<span class="sourceLineNo">437</span>                        break;<a name="line.437"></a>
+<span class="sourceLineNo">438</span>                    }<a name="line.438"></a>
+<span class="sourceLineNo">439</span>                }<a name="line.439"></a>
+<span class="sourceLineNo">440</span>            }<a name="line.440"></a>
+<span class="sourceLineNo">441</span>            if (!drawSelectedArea) {<a name="line.441"></a>
+<span class="sourceLineNo">442</span>                g.draw(hoverArea.getShape());<a name="line.442"></a>
+<span class="sourceLineNo">443</span>            }<a name="line.443"></a>
+<span class="sourceLineNo">444</span>        }<a name="line.444"></a>
+<span class="sourceLineNo">445</span>        // draw selected MapArea by using EDIT_AREA multi selection<a name="line.445"></a>
+<span class="sourceLineNo">446</span>        for (MapArea area: frame.getChildMapAreas()) {<a name="line.446"></a>
+<span class="sourceLineNo">447</span>            if (area.selected) {<a name="line.447"></a>
+<span class="sourceLineNo">448</span>                double angle = area.getAngle();<a name="line.448"></a>
+<span class="sourceLineNo">449</span>                if (!Double.isNaN(angle)) {<a name="line.449"></a>
+<span class="sourceLineNo">450</span>                    AffineTransform af = g.getTransform();<a name="line.450"></a>
+<span class="sourceLineNo">451</span>                    af.rotate(angle, ((Rectangle2D) area.getShape()).getCenterX(), ((Rectangle2D) area.getShape()).getCenterY());<a name="line.451"></a>
+<span class="sourceLineNo">452</span>                    g.setTransform(af);<a name="line.452"></a>
+<span class="sourceLineNo">453</span>                    g.setColor(Color.BLUE);<a name="line.453"></a>
+<span class="sourceLineNo">454</span>                    g.draw(area.getShape());<a name="line.454"></a>
+<span class="sourceLineNo">455</span>                    g.setTransform(t); <a name="line.455"></a>
+<span class="sourceLineNo">456</span>                }<a name="line.456"></a>
+<span class="sourceLineNo">457</span>            }<a name="line.457"></a>
+<span class="sourceLineNo">458</span>        }<a name="line.458"></a>
+<span class="sourceLineNo">459</span><a name="line.459"></a>
+<span class="sourceLineNo">460</span>        if (selectedArea != null) {<a name="line.460"></a>
+<span class="sourceLineNo">461</span>            g.setColor(Color.BLUE);<a name="line.461"></a>
+<span class="sourceLineNo">462</span>            g.draw(selectedArea);<a name="line.462"></a>
+<span class="sourceLineNo">463</span>            <a name="line.463"></a>
+<span class="sourceLineNo">464</span>        }<a name="line.464"></a>
+<span class="sourceLineNo">465</span>        <a name="line.465"></a>
+<span class="sourceLineNo">466</span>        if (scaleLine != null) {<a name="line.466"></a>
+<span class="sourceLineNo">467</span>            g.setStroke(MapLink.broad);<a name="line.467"></a>
+<span class="sourceLineNo">468</span>            g.setColor(Color.WHITE);<a name="line.468"></a>
+<span class="sourceLineNo">469</span>            g.draw(scaleLine);<a name="line.469"></a>
+<span class="sourceLineNo">470</span>            g.setStroke(MapLink.narrow);<a name="line.470"></a>
+<span class="sourceLineNo">471</span>            g.setColor(Color.BLACK);<a name="line.471"></a>
+<span class="sourceLineNo">472</span>            g.draw(scaleLine);<a name="line.472"></a>
+<span class="sourceLineNo">473</span>        }<a name="line.473"></a>
+<span class="sourceLineNo">474</span>        <a name="line.474"></a>
+<span class="sourceLineNo">475</span>        if (tempLine != null) {<a name="line.475"></a>
+<span class="sourceLineNo">476</span>            g.setStroke(MapLink.broad);<a name="line.476"></a>
+<span class="sourceLineNo">477</span>            g.setColor(Color.YELLOW);<a name="line.477"></a>
+<span class="sourceLineNo">478</span>            g.draw(tempLine);<a name="line.478"></a>
+<span class="sourceLineNo">479</span>            g.setStroke(MapLink.narrow);<a name="line.479"></a>
+<span class="sourceLineNo">480</span>            g.setColor(Color.BLACK);<a name="line.480"></a>
+<span class="sourceLineNo">481</span>            g.draw(tempLine);<a name="line.481"></a>
+<span class="sourceLineNo">482</span>        }       <a name="line.482"></a>
+<span class="sourceLineNo">483</span><a name="line.483"></a>
+<span class="sourceLineNo">484</span>        if (showOneWayIndicator) {<a name="line.484"></a>
+<span class="sourceLineNo">485</span>            g.setColor(Color.RED);<a name="line.485"></a>
+<span class="sourceLineNo">486</span>            drawScaleFixedText(g, oneWayfirstNode.getX(), oneWayfirstNode.getY(),<a name="line.486"></a>
+<span class="sourceLineNo">487</span>                    "A", oneWayLabelPositionA, Font.BOLD, 18);<a name="line.487"></a>
+<span class="sourceLineNo">488</span>            drawScaleFixedText(g, oneWaylastNode.getX(), oneWaylastNode.getY(),<a name="line.488"></a>
+<span class="sourceLineNo">489</span>                    "B", oneWayLabelPositionB, Font.BOLD, 18);<a name="line.489"></a>
+<span class="sourceLineNo">490</span>        }<a name="line.490"></a>
+<span class="sourceLineNo">491</span>    }<a name="line.491"></a>
+<span class="sourceLineNo">492</span><a name="line.492"></a>
+<span class="sourceLineNo">493</span>    // 背景画像を読み込み後直ちに表示する<a name="line.493"></a>
+<span class="sourceLineNo">494</span>    @Override<a name="line.494"></a>
+<span class="sourceLineNo">495</span>    public boolean imageUpdate(Image img, int infoflags, int x, int y, int w, int h) {<a name="line.495"></a>
+<span class="sourceLineNo">496</span>        if ((infoflags &amp; ALLBITS) == 0) {<a name="line.496"></a>
+<span class="sourceLineNo">497</span>            return true;<a name="line.497"></a>
+<span class="sourceLineNo">498</span>        } else {<a name="line.498"></a>
+<span class="sourceLineNo">499</span>            repaint();<a name="line.499"></a>
+<span class="sourceLineNo">500</span>            return false;<a name="line.500"></a>
+<span class="sourceLineNo">501</span>        }<a name="line.501"></a>
+<span class="sourceLineNo">502</span>    }<a name="line.502"></a>
+<span class="sourceLineNo">503</span><a name="line.503"></a>
+<span class="sourceLineNo">504</span>    private void showHoverNodeInfo(Graphics2D g) {<a name="line.504"></a>
+<span class="sourceLineNo">505</span>        g.setColor(Color.MAGENTA);<a name="line.505"></a>
+<span class="sourceLineNo">506</span>        g.setFont(new Font("Roman", Font.ITALIC, (int) (24 / scale)));<a name="line.506"></a>
+<span class="sourceLineNo">507</span>        g.drawString(hoverNode.getTagString(),<a name="line.507"></a>
+<span class="sourceLineNo">508</span>                (int)hoverNode.getX(), (int)hoverNode.getY());<a name="line.508"></a>
+<span class="sourceLineNo">509</span><a name="line.509"></a>
+<span class="sourceLineNo">510</span>        for (MapLink path : hoverNode.getUsableLinkTable()) {<a name="line.510"></a>
+<span class="sourceLineNo">511</span>            MapNode otherNode = path.getOther(hoverNode.getDummyHoverNode());<a name="line.511"></a>
+<span class="sourceLineNo">512</span>            HashMap&lt;String, NavigationHint&gt; hints<a name="line.512"></a>
+<span class="sourceLineNo">513</span>                = otherNode.getHints(NavigationHint.DefaultMentalMode);<a name="line.513"></a>
+<span class="sourceLineNo">514</span>            float dy = 0;<a name="line.514"></a>
+<span class="sourceLineNo">515</span>            for (String key : hints.keySet()) {<a name="line.515"></a>
+<span class="sourceLineNo">516</span>                dy += 10 / scale;<a name="line.516"></a>
+<span class="sourceLineNo">517</span>                NavigationHint hint = hints.get(key);<a name="line.517"></a>
+<span class="sourceLineNo">518</span>                g.drawString(key + " " + hint.distance,<a name="line.518"></a>
+<span class="sourceLineNo">519</span>                             (float)otherNode.getX(),<a name="line.519"></a>
+<span class="sourceLineNo">520</span>                             (float)otherNode.getY() + dy);<a name="line.520"></a>
+<span class="sourceLineNo">521</span>            }<a name="line.521"></a>
+<span class="sourceLineNo">522</span>        }<a name="line.522"></a>
+<span class="sourceLineNo">523</span>    }<a name="line.523"></a>
+<span class="sourceLineNo">524</span><a name="line.524"></a>
+<span class="sourceLineNo">525</span>    /**<a name="line.525"></a>
+<span class="sourceLineNo">526</span>     * 指定された位置、フォントスタイル、フォントサイズで text を描画する。<a name="line.526"></a>
+<span class="sourceLineNo">527</span>     * フォントサイズは描画スケールの影響を受けない。<a name="line.527"></a>
+<span class="sourceLineNo">528</span>     */<a name="line.528"></a>
+<span class="sourceLineNo">529</span>    public void drawScaleFixedText(Graphics2D g, double x, double y,<a name="line.529"></a>
+<span class="sourceLineNo">530</span>            String text, TextPosition position, int fontStyle, int fontSize) {<a name="line.530"></a>
+<span class="sourceLineNo">531</span>        double scale = g.getTransform().getScaleX();<a name="line.531"></a>
+<span class="sourceLineNo">532</span>        Font font = new Font("SansSerif", fontStyle, (int)(fontSize / scale));<a name="line.532"></a>
+<span class="sourceLineNo">533</span>        g.setFont(font);<a name="line.533"></a>
+<span class="sourceLineNo">534</span>        FontMetrics fm = g.getFontMetrics();<a name="line.534"></a>
+<span class="sourceLineNo">535</span>        int textWidth = fm.stringWidth(text);<a name="line.535"></a>
+<span class="sourceLineNo">536</span>        int textHeight = fm.getHeight();<a name="line.536"></a>
+<span class="sourceLineNo">537</span><a name="line.537"></a>
+<span class="sourceLineNo">538</span>        double dx = 0.0;<a name="line.538"></a>
+<span class="sourceLineNo">539</span>        double dy = 0.0;<a name="line.539"></a>
+<span class="sourceLineNo">540</span>        switch (position) {<a name="line.540"></a>
+<span class="sourceLineNo">541</span>        case CENTER:<a name="line.541"></a>
+<span class="sourceLineNo">542</span>            dx = textWidth / -2.0;<a name="line.542"></a>
+<span class="sourceLineNo">543</span>            dy = textHeight / 5.0;<a name="line.543"></a>
+<span class="sourceLineNo">544</span>            break;<a name="line.544"></a>
+<span class="sourceLineNo">545</span>        case UPPER:<a name="line.545"></a>
+<span class="sourceLineNo">546</span>            dx = textWidth / -2.0;<a name="line.546"></a>
+<span class="sourceLineNo">547</span>            dy = textHeight / -3.0;<a name="line.547"></a>
+<span class="sourceLineNo">548</span>            break;<a name="line.548"></a>
+<span class="sourceLineNo">549</span>        case LOWER:<a name="line.549"></a>
+<span class="sourceLineNo">550</span>            dx = textWidth / -2.0;<a name="line.550"></a>
+<span class="sourceLineNo">551</span>            dy = textHeight / 1.3;<a name="line.551"></a>
+<span class="sourceLineNo">552</span>            break;<a name="line.552"></a>
+<span class="sourceLineNo">553</span>        case LEFT:<a name="line.553"></a>
+<span class="sourceLineNo">554</span>            dx = -textWidth - textHeight / 3.0;<a name="line.554"></a>
+<span class="sourceLineNo">555</span>            dy = textHeight / 5.0;<a name="line.555"></a>
+<span class="sourceLineNo">556</span>            break;<a name="line.556"></a>
+<span class="sourceLineNo">557</span>        case RIGHT:<a name="line.557"></a>
+<span class="sourceLineNo">558</span>            dx = textHeight / 3.0;<a name="line.558"></a>
+<span class="sourceLineNo">559</span>            dy = textHeight / 5.0;<a name="line.559"></a>
+<span class="sourceLineNo">560</span>            break;<a name="line.560"></a>
+<span class="sourceLineNo">561</span>        }<a name="line.561"></a>
+<span class="sourceLineNo">562</span><a name="line.562"></a>
+<span class="sourceLineNo">563</span>        g.drawString(text, (float)(x + dx), (float)(y + dy));<a name="line.563"></a>
+<span class="sourceLineNo">564</span>    }<a name="line.564"></a>
+<span class="sourceLineNo">565</span><a name="line.565"></a>
+<span class="sourceLineNo">566</span>    /* -- Methods to set how drawn <a name="line.566"></a>
+<span class="sourceLineNo">567</span>     */<a name="line.567"></a>
+<span class="sourceLineNo">568</span>    public void addBackground(Image img) {<a name="line.568"></a>
+<span class="sourceLineNo">569</span>        backgroundImage = img;<a name="line.569"></a>
+<span class="sourceLineNo">570</span>    }<a name="line.570"></a>
+<span class="sourceLineNo">571</span>    <a name="line.571"></a>
+<span class="sourceLineNo">572</span>    public void setImageStrength(double d) {<a name="line.572"></a>
+<span class="sourceLineNo">573</span>        imageStrength = d;<a name="line.573"></a>
+<span class="sourceLineNo">574</span>    }<a name="line.574"></a>
+<span class="sourceLineNo">575</span><a name="line.575"></a>
+<span class="sourceLineNo">576</span>    public void updateHoverNode(Hover _hoverNode) {<a name="line.576"></a>
+<span class="sourceLineNo">577</span>        hoverNode = _hoverNode;<a name="line.577"></a>
+<span class="sourceLineNo">578</span>    }<a name="line.578"></a>
+<span class="sourceLineNo">579</span>    <a name="line.579"></a>
+<span class="sourceLineNo">580</span>    public void updateHoverLink(Hover _hoverLink) {<a name="line.580"></a>
+<span class="sourceLineNo">581</span>        hoverLink = _hoverLink;<a name="line.581"></a>
+<span class="sourceLineNo">582</span>    }<a name="line.582"></a>
+<span class="sourceLineNo">583</span>    <a name="line.583"></a>
+<span class="sourceLineNo">584</span>    public void updateHoverArea(MapArea area) {<a name="line.584"></a>
+<span class="sourceLineNo">585</span>        hoverArea = area;<a name="line.585"></a>
+<span class="sourceLineNo">586</span>    }<a name="line.586"></a>
+<span class="sourceLineNo">587</span>    <a name="line.587"></a>
+<span class="sourceLineNo">588</span>    public void updateSelectedArea(Rectangle2D rect) {<a name="line.588"></a>
+<span class="sourceLineNo">589</span>        selectedArea = rect;<a name="line.589"></a>
+<span class="sourceLineNo">590</span>    }<a name="line.590"></a>
+<span class="sourceLineNo">591</span>    <a name="line.591"></a>
+<span class="sourceLineNo">592</span>    public void setLinkColor(Color c) {<a name="line.592"></a>
+<span class="sourceLineNo">593</span>        linkColor = c;<a name="line.593"></a>
+<span class="sourceLineNo">594</span>    }<a name="line.594"></a>
+<span class="sourceLineNo">595</span><a name="line.595"></a>
+<span class="sourceLineNo">596</span>    public void setShowNodes(boolean showNodes) {<a name="line.596"></a>
+<span class="sourceLineNo">597</span>        this.showNodes = showNodes;<a name="line.597"></a>
+<span class="sourceLineNo">598</span>    }<a name="line.598"></a>
+<span class="sourceLineNo">599</span><a name="line.599"></a>
+<span class="sourceLineNo">600</span>    public void setShowNodeNames(boolean showNodeNames) {<a name="line.600"></a>
+<span class="sourceLineNo">601</span>        this.showNodeLabels = showNodeNames;<a name="line.601"></a>
+<span class="sourceLineNo">602</span>    }<a name="line.602"></a>
+<span class="sourceLineNo">603</span>    <a name="line.603"></a>
+<span class="sourceLineNo">604</span>    public void setShowLinkNames(boolean showLinkNames) {<a name="line.604"></a>
+<span class="sourceLineNo">605</span>        this.showLinkLabels = showLinkNames;<a name="line.605"></a>
+<span class="sourceLineNo">606</span>    }<a name="line.606"></a>
+<span class="sourceLineNo">607</span><a name="line.607"></a>
+<span class="sourceLineNo">608</span>    public void setShowLinks(boolean showLinks) {<a name="line.608"></a>
+<span class="sourceLineNo">609</span>        this.showLinks = showLinks;<a name="line.609"></a>
+<span class="sourceLineNo">610</span>    }<a name="line.610"></a>
+<span class="sourceLineNo">611</span><a name="line.611"></a>
+<span class="sourceLineNo">612</span>    public void setShowGroups(boolean showGroups) {<a name="line.612"></a>
+<span class="sourceLineNo">613</span>        this.showGroups = showGroups;<a name="line.613"></a>
+<span class="sourceLineNo">614</span>    }<a name="line.614"></a>
+<span class="sourceLineNo">615</span>    <a name="line.615"></a>
+<span class="sourceLineNo">616</span>    public void setShowArea(boolean showArea) {<a name="line.616"></a>
+<span class="sourceLineNo">617</span>        this.showArea = showArea;<a name="line.617"></a>
+<span class="sourceLineNo">618</span>    }<a name="line.618"></a>
+<span class="sourceLineNo">619</span><a name="line.619"></a>
+<span class="sourceLineNo">620</span>    public void setShowScaling(boolean showScaling) {<a name="line.620"></a>
+<span class="sourceLineNo">621</span>        this.showScaling = showScaling;<a name="line.621"></a>
+<span class="sourceLineNo">622</span>    }<a name="line.622"></a>
+<span class="sourceLineNo">623</span>    <a name="line.623"></a>
+<span class="sourceLineNo">624</span>    public void setScaleLine(Line2D line) {<a name="line.624"></a>
+<span class="sourceLineNo">625</span>        scaleLine = line;<a name="line.625"></a>
+<span class="sourceLineNo">626</span>    }<a name="line.626"></a>
+<span class="sourceLineNo">627</span>    <a name="line.627"></a>
+<span class="sourceLineNo">628</span>    public void setTempLine(Line2D line) {<a name="line.628"></a>
+<span class="sourceLineNo">629</span>        tempLine = line;<a name="line.629"></a>
+<span class="sourceLineNo">630</span>    }<a name="line.630"></a>
+<span class="sourceLineNo">631</span>    <a name="line.631"></a>
+<span class="sourceLineNo">632</span>    public void setOneWayIndicator(boolean enabled, MapNode firstNode, TextPosition positionA, MapNode lastNode, TextPosition positionB) {<a name="line.632"></a>
+<span class="sourceLineNo">633</span>        showOneWayIndicator = enabled;<a name="line.633"></a>
+<span class="sourceLineNo">634</span>        oneWayfirstNode = firstNode;<a name="line.634"></a>
+<span class="sourceLineNo">635</span>        oneWaylastNode = lastNode;<a name="line.635"></a>
+<span class="sourceLineNo">636</span>        oneWayLabelPositionA = positionA;<a name="line.636"></a>
+<span class="sourceLineNo">637</span>        oneWayLabelPositionB = positionB;<a name="line.637"></a>
+<span class="sourceLineNo">638</span>    }<a name="line.638"></a>
+<span class="sourceLineNo">639</span><a name="line.639"></a>
+<span class="sourceLineNo">640</span>    public void setBackgroundGroup(MapPartGroup group) {<a name="line.640"></a>
+<span class="sourceLineNo">641</span>        backgroundGroup = group;<a name="line.641"></a>
+<span class="sourceLineNo">642</span>    }<a name="line.642"></a>
+<span class="sourceLineNo">643</span>}<a name="line.643"></a>
+<span class="sourceLineNo">644</span>// ;;; Local Variables:<a name="line.644"></a>
+<span class="sourceLineNo">645</span>// ;;; mode:java<a name="line.645"></a>
+<span class="sourceLineNo">646</span>// ;;; tab-width:4<a name="line.646"></a>
+<span class="sourceLineNo">647</span>// ;;; End:<a name="line.647"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">// -*- mode: java; indent-tabs-mode: nil -*-</a>
+<span class="sourceLineNo">002</span><a id="line.2">/** Rational Agent</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * @author:: Itsuki Noda</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * @version:: 0.0 2015/02/15 I.Noda</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * &lt;B&gt;History:&lt;/B&gt;</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * &lt;UL&gt;</a>
+<span class="sourceLineNo">007</span><a id="line.7"> *   &lt;LI&gt; [2015/02/15]: Create This File. &lt;/LI&gt;</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *   &lt;LI&gt; [YYYY/MM/DD]: add more &lt;/LI&gt;</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * &lt;/UL&gt;</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * &lt;B&gt;Usage:&lt;/B&gt;</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * ...</a>
+<span class="sourceLineNo">012</span><a id="line.12"> */</a>
+<span class="sourceLineNo">013</span><a id="line.13"></a>
+<span class="sourceLineNo">014</span><a id="line.14">package nodagumi.ananPJ.Agents;</a>
+<span class="sourceLineNo">015</span><a id="line.15"></a>
+<span class="sourceLineNo">016</span><a id="line.16">import java.util.Random;</a>
+<span class="sourceLineNo">017</span><a id="line.17">import java.util.HashMap;</a>
+<span class="sourceLineNo">018</span><a id="line.18"></a>
+<span class="sourceLineNo">019</span><a id="line.19">import nodagumi.ananPJ.NetworkMap.Link.*;</a>
+<span class="sourceLineNo">020</span><a id="line.20">import nodagumi.ananPJ.NetworkMap.Node.*;</a>
+<span class="sourceLineNo">021</span><a id="line.21">import nodagumi.ananPJ.Agents.AgentBase;</a>
+<span class="sourceLineNo">022</span><a id="line.22">import nodagumi.ananPJ.Agents.BustleAgent ;</a>
+<span class="sourceLineNo">023</span><a id="line.23">import nodagumi.ananPJ.Agents.Think.ThinkEngine;</a>
+<span class="sourceLineNo">024</span><a id="line.24">import nodagumi.ananPJ.misc.SimTime;</a>
+<span class="sourceLineNo">025</span><a id="line.25"></a>
+<span class="sourceLineNo">026</span><a id="line.26">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">027</span><a id="line.27"></a>
+<span class="sourceLineNo">028</span><a id="line.28">//======================================================================</a>
+<span class="sourceLineNo">029</span><a id="line.29">/**</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * 理性のある、ルールに基づいて行動するエージェント</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * &lt;h3&gt; config, fallbackResources に書ける設定 &lt;/h3&gt;</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * {@link BustleAgent} に加えて、</a>
+<span class="sourceLineNo">034</span><a id="line.34"> * &lt;pre&gt;</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *  {</a>
+<span class="sourceLineNo">036</span><a id="line.36"> *    "margin" : __double__ // 距離コストに重畳するノイズの大きさ。一様乱数。</a>
+<span class="sourceLineNo">037</span><a id="line.37"> *    "rule" : __ThinkRule__ // 思考ルール</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * }</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * &lt;/pre&gt;</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 思考ルールの記述法については {@link nodagumi.ananPJ.Agents.Think.ThinkEngine ThinkEngine} 参照。</a>
+<span class="sourceLineNo">041</span><a id="line.41"> */</a>
+<span class="sourceLineNo">042</span><a id="line.42">public class RationalAgent extends BustleAgent {</a>
+<span class="sourceLineNo">043</span><a id="line.43">    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</a>
+<span class="sourceLineNo">044</span><a id="line.44">    /**</a>
+<span class="sourceLineNo">045</span><a id="line.45">     * クラス名。</a>
+<span class="sourceLineNo">046</span><a id="line.46">     * ClassFinder でも参照できるようにしておく。</a>
+<span class="sourceLineNo">047</span><a id="line.47">     */</a>
+<span class="sourceLineNo">048</span><a id="line.48">    public static String typeString = "RationalAgent" ;</a>
+<span class="sourceLineNo">049</span><a id="line.49">    public static String getTypeName() { return typeString ;}</a>
+<span class="sourceLineNo">050</span><a id="line.50"></a>
+<span class="sourceLineNo">051</span><a id="line.51">    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</a>
+<span class="sourceLineNo">052</span><a id="line.52">    /**</a>
+<span class="sourceLineNo">053</span><a id="line.53">     * 気まぐれ度合い（cost への random の度合い）の規定値</a>
+<span class="sourceLineNo">054</span><a id="line.54">     */</a>
+<span class="sourceLineNo">055</span><a id="line.55">    static final public double Fallback_CapriciousMargin = 200.0 ;</a>
+<span class="sourceLineNo">056</span><a id="line.56"></a>
+<span class="sourceLineNo">057</span><a id="line.57">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">058</span><a id="line.58">    /**</a>
+<span class="sourceLineNo">059</span><a id="line.59">     * 気まぐれ度合い（cost への random の度合い）</a>
+<span class="sourceLineNo">060</span><a id="line.60">     */</a>
+<span class="sourceLineNo">061</span><a id="line.61">    public double capriciousMargin = Fallback_CapriciousMargin ;</a>
+<span class="sourceLineNo">062</span><a id="line.62"></a>
+<span class="sourceLineNo">063</span><a id="line.63">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">064</span><a id="line.64">    /**</a>
+<span class="sourceLineNo">065</span><a id="line.65">     * その場Uターンをするかどうかのフラグ。</a>
+<span class="sourceLineNo">066</span><a id="line.66">     * これが true になると、</a>
+<span class="sourceLineNo">067</span><a id="line.67">     * calcSpeed() で speed = 0.0 とし、</a>
+<span class="sourceLineNo">068</span><a id="line.68">     * advanceNextPlace で、対向レーンに移る。</a>
+<span class="sourceLineNo">069</span><a id="line.69">     */</a>
+<span class="sourceLineNo">070</span><a id="line.70">    private boolean turnAroundP = false ;</a>
+<span class="sourceLineNo">071</span><a id="line.71"></a>
+<span class="sourceLineNo">072</span><a id="line.72">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">073</span><a id="line.73">    /**</a>
+<span class="sourceLineNo">074</span><a id="line.74">     * 推論エンジン</a>
+<span class="sourceLineNo">075</span><a id="line.75">     */</a>
+<span class="sourceLineNo">076</span><a id="line.76">    public ThinkEngine thinkEngine = new ThinkEngine() ;</a>
+<span class="sourceLineNo">077</span><a id="line.77"></a>
+<span class="sourceLineNo">078</span><a id="line.78">    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</a>
+<span class="sourceLineNo">079</span><a id="line.79">    /**</a>
+<span class="sourceLineNo">080</span><a id="line.80">     * alert された message</a>
+<span class="sourceLineNo">081</span><a id="line.81">     */</a>
+<span class="sourceLineNo">082</span><a id="line.82">    public HashMap&lt;Term, SimTime&gt; alertedMessageTable =</a>
+<span class="sourceLineNo">083</span><a id="line.83">        new HashMap&lt;Term, SimTime&gt;() ;</a>
+<span class="sourceLineNo">084</span><a id="line.84"></a>
+<span class="sourceLineNo">085</span><a id="line.85">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">086</span><a id="line.86">    // コンストラクタ</a>
+<span class="sourceLineNo">087</span><a id="line.87">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">088</span><a id="line.88">    /**</a>
+<span class="sourceLineNo">089</span><a id="line.89">     * 引数なしconstractor。 ClassFinder.newByName で必要。</a>
+<span class="sourceLineNo">090</span><a id="line.90">     */</a>
+<span class="sourceLineNo">091</span><a id="line.91">    public RationalAgent(){}</a>
+<span class="sourceLineNo">092</span><a id="line.92"></a>
+<span class="sourceLineNo">093</span><a id="line.93">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">094</span><a id="line.94">    /**</a>
+<span class="sourceLineNo">095</span><a id="line.95">     * Conf による初期化。</a>
+<span class="sourceLineNo">096</span><a id="line.96">     */</a>
+<span class="sourceLineNo">097</span><a id="line.97">    @Override</a>
+<span class="sourceLineNo">098</span><a id="line.98">    public void initByConf(Term conf, Term fallback) {</a>
+<span class="sourceLineNo">099</span><a id="line.99">        super.initByConf(conf, fallback) ;</a>
+<span class="sourceLineNo">100</span><a id="line.100"></a>
+<span class="sourceLineNo">101</span><a id="line.101">        capriciousMargin = getDoubleFromConfig("margin", capriciousMargin) ;</a>
+<span class="sourceLineNo">102</span><a id="line.102"></a>
+<span class="sourceLineNo">103</span><a id="line.103">        thinkEngine.setAgent(this) ;</a>
+<span class="sourceLineNo">104</span><a id="line.104">        thinkEngine.setRule(getTermFromConfig("rule", null)) ;</a>
+<span class="sourceLineNo">105</span><a id="line.105">    } ;</a>
+<span class="sourceLineNo">106</span><a id="line.106"></a>
+<span class="sourceLineNo">107</span><a id="line.107">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">108</span><a id="line.108">    /**</a>
+<span class="sourceLineNo">109</span><a id="line.109">     * あるwayを選択した場合の目的地(_target)までのコスト。</a>
+<span class="sourceLineNo">110</span><a id="line.110">     * 正規のコストに、ランダム要素を加味する。</a>
+<span class="sourceLineNo">111</span><a id="line.111">     */</a>
+<span class="sourceLineNo">112</span><a id="line.112">    @Override</a>
+<span class="sourceLineNo">113</span><a id="line.113">    public double calcCostFromNodeViaLink(MapLink _link, MapNode _node, Term _target) throws TargetNotFoundException {</a>
+<span class="sourceLineNo">114</span><a id="line.114">        double cost = super.calcCostFromNodeViaLink(_link, _node, _target) ;</a>
+<span class="sourceLineNo">115</span><a id="line.115">        double noise = capriciousMargin * getRandomDouble() ;</a>
+<span class="sourceLineNo">116</span><a id="line.116">        return cost + noise;</a>
+<span class="sourceLineNo">117</span><a id="line.117">    }</a>
+<span class="sourceLineNo">118</span><a id="line.118"></a>
+<span class="sourceLineNo">119</span><a id="line.119">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">120</span><a id="line.120">    // alertMessage</a>
+<span class="sourceLineNo">121</span><a id="line.121">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">122</span><a id="line.122">    /**</a>
+<span class="sourceLineNo">123</span><a id="line.123">     * Alert 関係</a>
+<span class="sourceLineNo">124</span><a id="line.124">     */</a>
+<span class="sourceLineNo">125</span><a id="line.125">    public void alertMessage(Term message, SimTime alertTime) {</a>
+<span class="sourceLineNo">126</span><a id="line.126">        alertedMessageTable.put(message, alertTime) ;</a>
+<span class="sourceLineNo">127</span><a id="line.127">        Itk.logInfo("hear Alert Message", this, message, alertTime,</a>
+<span class="sourceLineNo">128</span><a id="line.128">                    currentPlace) ;</a>
+<span class="sourceLineNo">129</span><a id="line.129">    }</a>
+<span class="sourceLineNo">130</span><a id="line.130"></a>
+<span class="sourceLineNo">131</span><a id="line.131">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">132</span><a id="line.132">    // 推論</a>
+<span class="sourceLineNo">133</span><a id="line.133">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">134</span><a id="line.134">    /**</a>
+<span class="sourceLineNo">135</span><a id="line.135">     * シミュレーション各サイクルの前半に呼ばれる。</a>
+<span class="sourceLineNo">136</span><a id="line.136">     */</a>
+<span class="sourceLineNo">137</span><a id="line.137">    @Override</a>
+<span class="sourceLineNo">138</span><a id="line.138">    public void preUpdate(SimTime currentTime) {</a>
+<span class="sourceLineNo">139</span><a id="line.139">        this.currentTime = currentTime ;</a>
+<span class="sourceLineNo">140</span><a id="line.140">        thinkCycle() ;</a>
+<span class="sourceLineNo">141</span><a id="line.141">        super.preUpdate(currentTime) ;</a>
+<span class="sourceLineNo">142</span><a id="line.142">    }</a>
+<span class="sourceLineNo">143</span><a id="line.143"></a>
+<span class="sourceLineNo">144</span><a id="line.144">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">145</span><a id="line.145">    /**</a>
+<span class="sourceLineNo">146</span><a id="line.146">     * 思考ルーチン</a>
+<span class="sourceLineNo">147</span><a id="line.147">     * 状態が変わる毎に呼ばれるべき。</a>
+<span class="sourceLineNo">148</span><a id="line.148">     */</a>
+<span class="sourceLineNo">149</span><a id="line.149">    public Term thinkCycle() {</a>
+<span class="sourceLineNo">150</span><a id="line.150">        return thinkEngine.think() ;</a>
+<span class="sourceLineNo">151</span><a id="line.151">    }</a>
+<span class="sourceLineNo">152</span><a id="line.152"></a>
+<span class="sourceLineNo">153</span><a id="line.153">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">154</span><a id="line.154">    // Uターン関連</a>
+<span class="sourceLineNo">155</span><a id="line.155">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">156</span><a id="line.156">    /**</a>
+<span class="sourceLineNo">157</span><a id="line.157">     * Uターンフラグを on</a>
+<span class="sourceLineNo">158</span><a id="line.158">     */</a>
+<span class="sourceLineNo">159</span><a id="line.159">    public boolean setTurnAround() {</a>
+<span class="sourceLineNo">160</span><a id="line.160">        return setTurnAround(true) ;</a>
+<span class="sourceLineNo">161</span><a id="line.161">    }</a>
+<span class="sourceLineNo">162</span><a id="line.162">    </a>
+<span class="sourceLineNo">163</span><a id="line.163">    /**</a>
+<span class="sourceLineNo">164</span><a id="line.164">     * Uターンフラグを on/off</a>
+<span class="sourceLineNo">165</span><a id="line.165">     */</a>
+<span class="sourceLineNo">166</span><a id="line.166">    public boolean setTurnAround(boolean _turnAroundP) {</a>
+<span class="sourceLineNo">167</span><a id="line.167">        return turnAroundP = _turnAroundP ;</a>
+<span class="sourceLineNo">168</span><a id="line.168">    }</a>
+<span class="sourceLineNo">169</span><a id="line.169"></a>
+<span class="sourceLineNo">170</span><a id="line.170">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">171</span><a id="line.171">    /**</a>
+<span class="sourceLineNo">172</span><a id="line.172">     * 速度計算(turn around を考慮)</a>
+<span class="sourceLineNo">173</span><a id="line.173">     */</a>
+<span class="sourceLineNo">174</span><a id="line.174">    @Override</a>
+<span class="sourceLineNo">175</span><a id="line.175">    protected double calcSpeed(double previousSpeed, SimTime currentTime) {</a>
+<span class="sourceLineNo">176</span><a id="line.176">        if(turnAroundP) {</a>
+<span class="sourceLineNo">177</span><a id="line.177">            return 0.0 ;</a>
+<span class="sourceLineNo">178</span><a id="line.178">        } else {</a>
+<span class="sourceLineNo">179</span><a id="line.179">            return super.calcSpeed(previousSpeed, currentTime) ;</a>
+<span class="sourceLineNo">180</span><a id="line.180">        }</a>
+<span class="sourceLineNo">181</span><a id="line.181">    }</a>
+<span class="sourceLineNo">182</span><a id="line.182">    </a>
+<span class="sourceLineNo">183</span><a id="line.183">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">184</span><a id="line.184">    /**</a>
+<span class="sourceLineNo">185</span><a id="line.185">     * 次の位置の計算(turn around を考慮)</a>
+<span class="sourceLineNo">186</span><a id="line.186">     */</a>
+<span class="sourceLineNo">187</span><a id="line.187">    @Override</a>
+<span class="sourceLineNo">188</span><a id="line.188">    protected boolean advanceNextPlace(double _speed, SimTime currentTime,</a>
+<span class="sourceLineNo">189</span><a id="line.189">                                       boolean stayOnLink) {</a>
+<span class="sourceLineNo">190</span><a id="line.190">        boolean _turnAroundP = turnAroundP ;</a>
+<span class="sourceLineNo">191</span><a id="line.191">        turnAroundP = false ;</a>
+<span class="sourceLineNo">192</span><a id="line.192">        if(_turnAroundP &amp;&amp; canTurnAround()) {</a>
+<span class="sourceLineNo">193</span><a id="line.193">            nextPlace.set(currentPlace) ;</a>
+<span class="sourceLineNo">194</span><a id="line.194">            nextPlace.turnAround() ;</a>
+<span class="sourceLineNo">195</span><a id="line.195">            return false ;</a>
+<span class="sourceLineNo">196</span><a id="line.196">        } else {</a>
+<span class="sourceLineNo">197</span><a id="line.197">            return super.advanceNextPlace(_speed, currentTime, stayOnLink) ;</a>
+<span class="sourceLineNo">198</span><a id="line.198">        }</a>
+<span class="sourceLineNo">199</span><a id="line.199">    }</a>
+<span class="sourceLineNo">200</span><a id="line.200"></a>
+<span class="sourceLineNo">201</span><a id="line.201">    //------------------------------------------------------------</a>
+<span class="sourceLineNo">202</span><a id="line.202">    /**</a>
+<span class="sourceLineNo">203</span><a id="line.203">     * 現在地でturn around できるかどうか。</a>
+<span class="sourceLineNo">204</span><a id="line.204">     */</a>
+<span class="sourceLineNo">205</span><a id="line.205">    protected boolean canTurnAround() {</a>
+<span class="sourceLineNo">206</span><a id="line.206">        return currentPlace.canTurnAround() ;</a>
+<span class="sourceLineNo">207</span><a id="line.207">    }</a>
+<span class="sourceLineNo">208</span><a id="line.208">    </a>
+<span class="sourceLineNo">209</span><a id="line.209">} // class RationalAgent</a>
+<span class="sourceLineNo">210</span><a id="line.210"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

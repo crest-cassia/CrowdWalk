@@ -1,0 +1,14 @@
+{
+  "debug": "false",
+  "input_directory": "data/mesh/hanran_kaiseki/1675k",
+  "map_file": "data/input_map.xml",
+  "output_map_file": "data/output_map.xml",
+  "output_pollution_file": "data/output_pollution.csv",
+  "max_height": 5.0,
+  "min_height": -5.0,
+  "start_tag_number": 1,
+  "map_number": 9,
+  "default_latitude": 36.0,
+  "default_longitude": 139.0,
+  "map_type": "japan"
+}

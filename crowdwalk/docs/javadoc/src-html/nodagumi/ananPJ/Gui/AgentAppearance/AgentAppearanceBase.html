@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">package nodagumi.ananPJ.Gui.AgentAppearance;</a>
+<span class="sourceLineNo">002</span><a id="line.2"></a>
+<span class="sourceLineNo">003</span><a id="line.3">import java.util.HashMap;</a>
+<span class="sourceLineNo">004</span><a id="line.4">import java.util.regex.Matcher;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import java.util.regex.Pattern;</a>
+<span class="sourceLineNo">006</span><a id="line.6"></a>
+<span class="sourceLineNo">007</span><a id="line.7">import nodagumi.ananPJ.CrowdWalkLauncher;</a>
+<span class="sourceLineNo">008</span><a id="line.8">import nodagumi.ananPJ.Gui.AgentAppearance.model.AgentAppearanceModel;</a>
+<span class="sourceLineNo">009</span><a id="line.9">import nodagumi.ananPJ.GuiSimulationLauncher;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import nodagumi.ananPJ.misc.JsonicHashMapGetter;</a>
+<span class="sourceLineNo">011</span><a id="line.11">import nodagumi.ananPJ.Simulator.Obstructer.ObstructerBase;</a>
+<span class="sourceLineNo">012</span><a id="line.12">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">013</span><a id="line.13"></a>
+<span class="sourceLineNo">014</span><a id="line.14">/**</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * エージェント表示の定義情報を扱うベースクラス。</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * &lt;ul&gt;</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * &lt;li&gt;設定方法: </a>
+<span class="sourceLineNo">018</span><a id="line.18"> * propaties_file の "agent_appearance_file" に、その定義ファイルを指定する。</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * &lt;/li&gt;</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * &lt;li&gt;定義ファイルの形式は</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * &lt;a target="_blank" href="https://github.com/crest-cassia/CrowdWalk/wiki/Agent-appearance-%E3%81%AE%E8%A8%AD%E5%AE%9A%E6%96%B9%E6%B3%95"&gt;こちら&lt;/a&gt;を参照。</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * &lt;/li&gt;</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * &lt;/ul&gt;</a>
+<span class="sourceLineNo">024</span><a id="line.24"> */</a>
+<span class="sourceLineNo">025</span><a id="line.25">public class AgentAppearanceBase extends JsonicHashMapGetter {</a>
+<span class="sourceLineNo">026</span><a id="line.26">    /**</a>
+<span class="sourceLineNo">027</span><a id="line.27">     * エージェントの表示スタイルを決めるクラスの一覧</a>
+<span class="sourceLineNo">028</span><a id="line.28">     */</a>
+<span class="sourceLineNo">029</span><a id="line.29">    public static final String CLASSES = "/agent_appearance_classes.json";</a>
+<span class="sourceLineNo">030</span><a id="line.30"></a>
+<span class="sourceLineNo">031</span><a id="line.31">    /**</a>
+<span class="sourceLineNo">032</span><a id="line.32">     * クラスローダー</a>
+<span class="sourceLineNo">033</span><a id="line.33">     */</a>
+<span class="sourceLineNo">034</span><a id="line.34">    protected ClassFinder classFinder = new ClassFinder();</a>
+<span class="sourceLineNo">035</span><a id="line.35"></a>
+<span class="sourceLineNo">036</span><a id="line.36">    /**</a>
+<span class="sourceLineNo">037</span><a id="line.37">     * このスタイルを適用するエージェントのタグ</a>
+<span class="sourceLineNo">038</span><a id="line.38">     */</a>
+<span class="sourceLineNo">039</span><a id="line.39">    protected String tag;</a>
+<span class="sourceLineNo">040</span><a id="line.40"></a>
+<span class="sourceLineNo">041</span><a id="line.41">    /**</a>
+<span class="sourceLineNo">042</span><a id="line.42">     * タグが正規表現だった場合の正規表現パターン</a>
+<span class="sourceLineNo">043</span><a id="line.43">     */</a>
+<span class="sourceLineNo">044</span><a id="line.44">    protected Pattern tagPattern = null;</a>
+<span class="sourceLineNo">045</span><a id="line.45"></a>
+<span class="sourceLineNo">046</span><a id="line.46">    /**</a>
+<span class="sourceLineNo">047</span><a id="line.47">     * エージェントの表現値を計算するクラスのインスタンス</a>
+<span class="sourceLineNo">048</span><a id="line.48">     */</a>
+<span class="sourceLineNo">049</span><a id="line.49">    protected AgentAppearanceModel model;</a>
+<span class="sourceLineNo">050</span><a id="line.50"></a>
+<span class="sourceLineNo">051</span><a id="line.51">    /**</a>
+<span class="sourceLineNo">052</span><a id="line.52">     * エージェントの表現値を計算するクラスの初期化パラメータ</a>
+<span class="sourceLineNo">053</span><a id="line.53">     */</a>
+<span class="sourceLineNo">054</span><a id="line.54">    protected HashMap modelParameters;</a>
+<span class="sourceLineNo">055</span><a id="line.55"></a>
+<span class="sourceLineNo">056</span><a id="line.56">    /**</a>
+<span class="sourceLineNo">057</span><a id="line.57">     * エージェントを 2D 描画するクラスの名前</a>
+<span class="sourceLineNo">058</span><a id="line.58">     */</a>
+<span class="sourceLineNo">059</span><a id="line.59">    protected String viewClassName2D;</a>
+<span class="sourceLineNo">060</span><a id="line.60"></a>
+<span class="sourceLineNo">061</span><a id="line.61">    /**</a>
+<span class="sourceLineNo">062</span><a id="line.62">     * エージェントを 2D 描画するクラスの初期化パラメータ</a>
+<span class="sourceLineNo">063</span><a id="line.63">     */</a>
+<span class="sourceLineNo">064</span><a id="line.64">    protected HashMap viewParameters2D;</a>
+<span class="sourceLineNo">065</span><a id="line.65"></a>
+<span class="sourceLineNo">066</span><a id="line.66">    /**</a>
+<span class="sourceLineNo">067</span><a id="line.67">     * エージェントを 3D 描画するクラスの名前</a>
+<span class="sourceLineNo">068</span><a id="line.68">     */</a>
+<span class="sourceLineNo">069</span><a id="line.69">    protected String viewClassName3D;</a>
+<span class="sourceLineNo">070</span><a id="line.70"></a>
+<span class="sourceLineNo">071</span><a id="line.71">    /**</a>
+<span class="sourceLineNo">072</span><a id="line.72">     * エージェントを 3D 描画するクラスの初期化パラメータ</a>
+<span class="sourceLineNo">073</span><a id="line.73">     */</a>
+<span class="sourceLineNo">074</span><a id="line.74">    protected HashMap viewParameters3D;</a>
+<span class="sourceLineNo">075</span><a id="line.75"></a>
+<span class="sourceLineNo">076</span><a id="line.76">    /**</a>
+<span class="sourceLineNo">077</span><a id="line.77">     * コンストラクタ</a>
+<span class="sourceLineNo">078</span><a id="line.78">     */</a>
+<span class="sourceLineNo">079</span><a id="line.79">    public AgentAppearanceBase(GuiSimulationLauncher launcher, HashMap parameters) {</a>
+<span class="sourceLineNo">080</span><a id="line.80">        classFinder.aliasByJson(ObstructerBase.resourceToString(CLASSES));</a>
+<span class="sourceLineNo">081</span><a id="line.81"></a>
+<span class="sourceLineNo">082</span><a id="line.82">        setParameters(parameters);</a>
+<span class="sourceLineNo">083</span><a id="line.83">        try {</a>
+<span class="sourceLineNo">084</span><a id="line.84">            // 適用対象となるエージェントタグ</a>
+<span class="sourceLineNo">085</span><a id="line.85">            tag = getStringParameter("tag", "*");</a>
+<span class="sourceLineNo">086</span><a id="line.86">            Matcher matcher = Pattern.compile("^\\/(.*)\\/$").matcher(tag);</a>
+<span class="sourceLineNo">087</span><a id="line.87">            // タグが正規表現か?</a>
+<span class="sourceLineNo">088</span><a id="line.88">            if (matcher.find()) {</a>
+<span class="sourceLineNo">089</span><a id="line.89">                tagPattern = Pattern.compile(matcher.group(1));</a>
+<span class="sourceLineNo">090</span><a id="line.90">            }</a>
+<span class="sourceLineNo">091</span><a id="line.91"></a>
+<span class="sourceLineNo">092</span><a id="line.92">            // AgentAppearanceModel インスタンスの生成と初期設定</a>
+<span class="sourceLineNo">093</span><a id="line.93">            HashMap&lt;String, Object&gt; modelPart = getHashMapParameter("model", null);</a>
+<span class="sourceLineNo">094</span><a id="line.94">            if (modelPart == null) {</a>
+<span class="sourceLineNo">095</span><a id="line.95">                throw new Exception("Agent appearance file format error.");</a>
+<span class="sourceLineNo">096</span><a id="line.96">            }</a>
+<span class="sourceLineNo">097</span><a id="line.97">            String modelClassName = (String)modelPart.get("className");</a>
+<span class="sourceLineNo">098</span><a id="line.98">            if (modelClassName == null) {</a>
+<span class="sourceLineNo">099</span><a id="line.99">                throw new Exception("Agent appearance file format error.");</a>
+<span class="sourceLineNo">100</span><a id="line.100">            }</a>
+<span class="sourceLineNo">101</span><a id="line.101">            if (! isUsableClass(modelClassName)) {</a>
+<span class="sourceLineNo">102</span><a id="line.102">                throw new Exception("Agent appearance file error: invalid className - " + modelClassName);</a>
+<span class="sourceLineNo">103</span><a id="line.103">            }</a>
+<span class="sourceLineNo">104</span><a id="line.104">            modelParameters = (HashMap&lt;String, Object&gt;)modelPart.get("parameters");</a>
+<span class="sourceLineNo">105</span><a id="line.105">            model = (AgentAppearanceModel)classFinder.newByName(modelClassName);</a>
+<span class="sourceLineNo">106</span><a id="line.106">            model._init(launcher, modelParameters);</a>
+<span class="sourceLineNo">107</span><a id="line.107">            model.init();</a>
+<span class="sourceLineNo">108</span><a id="line.108"></a>
+<span class="sourceLineNo">109</span><a id="line.109">            // AgentViewBase2D インスタンス生成用の情報を取得</a>
+<span class="sourceLineNo">110</span><a id="line.110">            HashMap&lt;String, Object&gt; view2DPart = getHashMapParameter("2D_View", null);</a>
+<span class="sourceLineNo">111</span><a id="line.111">            if (view2DPart != null) {</a>
+<span class="sourceLineNo">112</span><a id="line.112">                viewClassName2D = (String)view2DPart.get("className");</a>
+<span class="sourceLineNo">113</span><a id="line.113">                if (viewClassName2D == null) {</a>
+<span class="sourceLineNo">114</span><a id="line.114">                    throw new Exception("Agent appearance file format error.");</a>
+<span class="sourceLineNo">115</span><a id="line.115">                }</a>
+<span class="sourceLineNo">116</span><a id="line.116">                if (! isUsableClass(viewClassName2D)) {</a>
+<span class="sourceLineNo">117</span><a id="line.117">                    throw new Exception("Agent appearance file error: invalid className - " + viewClassName2D);</a>
+<span class="sourceLineNo">118</span><a id="line.118">                }</a>
+<span class="sourceLineNo">119</span><a id="line.119">                viewParameters2D = (HashMap&lt;String, Object&gt;)view2DPart.get("parameters");</a>
+<span class="sourceLineNo">120</span><a id="line.120">            }</a>
+<span class="sourceLineNo">121</span><a id="line.121"></a>
+<span class="sourceLineNo">122</span><a id="line.122">            // AgentViewBase3D インスタンス生成用の情報を取得</a>
+<span class="sourceLineNo">123</span><a id="line.123">            HashMap&lt;String, Object&gt; view3DPart = getHashMapParameter("3D_View", null);</a>
+<span class="sourceLineNo">124</span><a id="line.124">            if (view3DPart != null &amp;&amp; CrowdWalkLauncher.isUsable3dSimulator()) {</a>
+<span class="sourceLineNo">125</span><a id="line.125">                viewClassName3D = (String)view3DPart.get("className");</a>
+<span class="sourceLineNo">126</span><a id="line.126">                if (viewClassName3D == null) {</a>
+<span class="sourceLineNo">127</span><a id="line.127">                    throw new Exception("Agent appearance file format error.");</a>
+<span class="sourceLineNo">128</span><a id="line.128">                }</a>
+<span class="sourceLineNo">129</span><a id="line.129">                if (! isUsableClass(viewClassName3D)) {</a>
+<span class="sourceLineNo">130</span><a id="line.130">                    throw new Exception("Agent appearance file error: invalid className - " + viewClassName3D);</a>
+<span class="sourceLineNo">131</span><a id="line.131">                }</a>
+<span class="sourceLineNo">132</span><a id="line.132">                viewParameters3D = (HashMap&lt;String, Object&gt;)view3DPart.get("parameters");</a>
+<span class="sourceLineNo">133</span><a id="line.133">            }</a>
+<span class="sourceLineNo">134</span><a id="line.134">        } catch (Exception e) {</a>
+<span class="sourceLineNo">135</span><a id="line.135">            Itk.quitWithStackTrace(e) ;</a>
+<span class="sourceLineNo">136</span><a id="line.136">        }</a>
+<span class="sourceLineNo">137</span><a id="line.137">    }</a>
+<span class="sourceLineNo">138</span><a id="line.138"></a>
+<span class="sourceLineNo">139</span><a id="line.139">    /**</a>
+<span class="sourceLineNo">140</span><a id="line.140">     * 使用可能なクラスか?</a>
+<span class="sourceLineNo">141</span><a id="line.141">     */</a>
+<span class="sourceLineNo">142</span><a id="line.142">    protected boolean isUsableClass(String className) {</a>
+<span class="sourceLineNo">143</span><a id="line.143">        return classFinder.isClassName(className);</a>
+<span class="sourceLineNo">144</span><a id="line.144">    }</a>
+<span class="sourceLineNo">145</span><a id="line.145"></a>
+<span class="sourceLineNo">146</span><a id="line.146">    public String getTag() {</a>
+<span class="sourceLineNo">147</span><a id="line.147">        return tag;</a>
+<span class="sourceLineNo">148</span><a id="line.148">    }</a>
+<span class="sourceLineNo">149</span><a id="line.149"></a>
+<span class="sourceLineNo">150</span><a id="line.150">    public AgentAppearanceModel getModel() {</a>
+<span class="sourceLineNo">151</span><a id="line.151">        return model;</a>
+<span class="sourceLineNo">152</span><a id="line.152">    }</a>
+<span class="sourceLineNo">153</span><a id="line.153"></a>
+<span class="sourceLineNo">154</span><a id="line.154">    /**</a>
+<span class="sourceLineNo">155</span><a id="line.155">     * タグに該当する文字列か?</a>
+<span class="sourceLineNo">156</span><a id="line.156">     */</a>
+<span class="sourceLineNo">157</span><a id="line.157">    public boolean isTagApplied(String text) {</a>
+<span class="sourceLineNo">158</span><a id="line.158">        if (tagPattern == null) {</a>
+<span class="sourceLineNo">159</span><a id="line.159">            if (tag.equals("*") || text.indexOf(tag) != -1) {</a>
+<span class="sourceLineNo">160</span><a id="line.160">                return true;</a>
+<span class="sourceLineNo">161</span><a id="line.161">            }</a>
+<span class="sourceLineNo">162</span><a id="line.162">        } else {</a>
+<span class="sourceLineNo">163</span><a id="line.163">            return tagPattern.matcher(text).find();</a>
+<span class="sourceLineNo">164</span><a id="line.164">        }</a>
+<span class="sourceLineNo">165</span><a id="line.165">        return false;</a>
+<span class="sourceLineNo">166</span><a id="line.166">    }</a>
+<span class="sourceLineNo">167</span><a id="line.167"></a>
+<span class="sourceLineNo">168</span><a id="line.168">    /**</a>
+<span class="sourceLineNo">169</span><a id="line.169">     * 2D View に使用可能</a>
+<span class="sourceLineNo">170</span><a id="line.170">     */</a>
+<span class="sourceLineNo">171</span><a id="line.171">    public boolean isValidFor2D() {</a>
+<span class="sourceLineNo">172</span><a id="line.172">        return viewClassName2D != null;</a>
+<span class="sourceLineNo">173</span><a id="line.173">    }</a>
+<span class="sourceLineNo">174</span><a id="line.174"></a>
+<span class="sourceLineNo">175</span><a id="line.175">    /**</a>
+<span class="sourceLineNo">176</span><a id="line.176">     * 3D View に使用可能</a>
+<span class="sourceLineNo">177</span><a id="line.177">     */</a>
+<span class="sourceLineNo">178</span><a id="line.178">    public boolean isValidFor3D() {</a>
+<span class="sourceLineNo">179</span><a id="line.179">        return viewClassName3D != null;</a>
+<span class="sourceLineNo">180</span><a id="line.180">    }</a>
+<span class="sourceLineNo">181</span><a id="line.181">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

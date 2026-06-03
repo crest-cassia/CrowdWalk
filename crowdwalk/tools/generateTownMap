@@ -1,0 +1,131 @@
+#! /usr/bin/env ruby
+## -*- mode: ruby -*-
+## = Itk Template for Ruby
+## Author:: Itsuki Noda
+## Version:: 0.0 2015/03/21 I.Noda
+##
+## === History
+## * [2015/03/21]: Create This File.
+## * [YYYY/MM/DD]: add more
+## == Usage
+## * ...
+
+$toolBaseDir = File::dirname(__FILE__) ;
+
+$LOAD_PATH.push("#{$toolBaseDir}/./RubyLib");
+
+require 'optparse' ;
+require 'ostruct' ;
+require 'pp' ;
+
+require 'ItkXml.rb' ;
+require 'GridTown.rb' ;
+require 'RadialTown.rb' ;
+
+#------------------------------------------------------------------------
+#++
+$conf =
+  OpenStruct.new({ :outFile => nil,
+                   :townType => :grid,
+                   :gridConf => GridTown::DefaultConf.dup,
+                   :radialConf => RadialTown::DefaultConf.dup,
+                   :pruneN => 0,
+                   }) ;
+
+#------------------------------------------------------------------------
+#++
+$op = OptionParser.new() {|op|
+  op.banner = <<_END_
+  Usage: #{$0} [Options]*
+_END_
+
+  op.separator("Options:") ;
+  op.set_summary_indent("") ;
+  op.set_summary_width(60) ;
+  sep = "\n\t\t" ;
+
+  op.on("-o FILE", "--out FILE", String, sep + "output file.") {|file|
+    p file ;
+    $conf.outFile = ((file == "-") ? nil : file) ;
+  }
+  op.on("--grid", sep + "generate grid town.") {
+    $conf.townType = :grid ;
+  }
+  op.on("--radial", "--circle", sep + "generate radial/circle town.") {
+    $conf.townType = :radial ;
+  }
+  op.on("--unit LENGTH", Float, sep + "[grid/radial] unit grid length.") {|len|
+    $conf.gridConf[:gridLength] = len ;
+    $conf.radialConf[:gridLength] = len ;
+  }
+  op.on("--size N", Integer, sep + "[grid/radial] size.") {|size|
+    $conf.gridConf[:sizeX] = size ;
+    $conf.gridConf[:sizeY] = size ;
+    $conf.radialConf[:size] = size ;
+  }
+  op.on("--sizeX X", Integer, sep + "[grid] size X.") {|size|
+    $conf.gridConf[:sizeX] = size ;
+  }
+  op.on("--sizeY Y", Integer, sep + "[grid] size Y.") {|size|
+    $conf.gridConf[:sizeY] = size ;
+  }
+  op.on("--width WIDTH", Float, sep + "[grid/radial] line weidth.") {|width|
+    $conf.gridConf[:lineWidth] = width ;
+    $conf.radialConf[:lineWidth] = width  ;
+  }
+  op.on("--divide FACTOR", Float, sep + "[radial] dividing factor.") {|factor|
+    $conf.radialConf[:divideFactor] = factor ;
+  }
+  op.on("--angleUnit RATIO", Float, sep + "[radial] angle unit ratio.") {|ratio|
+    $conf.radialConf[:angleRatio] = ratio ;
+  }
+  op.on("--random SIZE", Float, sep + "[grid] line weidth.") {|random|
+    $conf.gridConf[:randomSize] = random ;
+    $conf.radialConf[:randomSize] = random ;
+  }
+  op.on("--prune N", Integer, sep + "[grid] line weidth.") {|n|
+    $conf.pruneN = n ;
+  }
+  op.on_tail("--help", sep + "show this message.") { |h|
+    puts(op)
+    exit(1)
+  }
+}
+
+$op.parse!(ARGV) ;
+$restArg = ARGV ;
+p [:rest, ARGV], [:conf,$conf] ;
+
+########################################################################
+########################################################################
+########################################################################
+
+town = nil ;
+
+p [Time.now, :start]
+
+case($conf.townType)
+when :grid ;
+  town = GridTown.new($conf.gridConf) ;
+when :radial ;
+  town = RadialTown.new($conf.radialConf) ;
+else
+  raise "unknown town type:" + $conf.type ;
+end
+
+p [Time.now, :done, :generation, ]
+
+town.pruneLinks($conf.pruneN) ;
+
+p [Time.now, :done, :prune]
+
+if($conf.outFile.nil?) then
+  $stdout << town.to_XmlString() ;
+else
+  open($conf.outFile,"w"){|strm|
+    strm <<  town.to_XmlString() ;
+  }
+end
+
+p [Time.now, :done, :output]
+

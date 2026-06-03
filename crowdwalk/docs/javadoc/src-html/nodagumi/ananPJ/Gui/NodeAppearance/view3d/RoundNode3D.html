@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">package nodagumi.ananPJ.Gui.NodeAppearance.view3d;</a>
+<span class="sourceLineNo">002</span><a id="line.2"></a>
+<span class="sourceLineNo">003</span><a id="line.3">import java.util.HashMap;</a>
+<span class="sourceLineNo">004</span><a id="line.4"></a>
+<span class="sourceLineNo">005</span><a id="line.5">import javafx.scene.shape.Cylinder;</a>
+<span class="sourceLineNo">006</span><a id="line.6">import javafx.scene.shape.Shape3D;</a>
+<span class="sourceLineNo">007</span><a id="line.7"></a>
+<span class="sourceLineNo">008</span><a id="line.8">import nodagumi.ananPJ.Gui.SimulationPanel3D;</a>
+<span class="sourceLineNo">009</span><a id="line.9">import nodagumi.ananPJ.NetworkMap.Node.MapNode;</a>
+<span class="sourceLineNo">010</span><a id="line.10"></a>
+<span class="sourceLineNo">011</span><a id="line.11">/**</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * 丸いノードの 3D 表示</a>
+<span class="sourceLineNo">013</span><a id="line.13"> */</a>
+<span class="sourceLineNo">014</span><a id="line.14">public class RoundNode3D extends NodeViewBase3D {</a>
+<span class="sourceLineNo">015</span><a id="line.15">    /**</a>
+<span class="sourceLineNo">016</span><a id="line.16">     * 直径(m)</a>
+<span class="sourceLineNo">017</span><a id="line.17">     */</a>
+<span class="sourceLineNo">018</span><a id="line.18">    protected double diameter = 1.5;</a>
+<span class="sourceLineNo">019</span><a id="line.19"></a>
+<span class="sourceLineNo">020</span><a id="line.20">    /**</a>
+<span class="sourceLineNo">021</span><a id="line.21">     * 高さ(m)</a>
+<span class="sourceLineNo">022</span><a id="line.22">     */</a>
+<span class="sourceLineNo">023</span><a id="line.23">    protected double height = NODE_THICKNESS;</a>
+<span class="sourceLineNo">024</span><a id="line.24"></a>
+<span class="sourceLineNo">025</span><a id="line.25">    /**</a>
+<span class="sourceLineNo">026</span><a id="line.26">     * コンストラクタ</a>
+<span class="sourceLineNo">027</span><a id="line.27">     */</a>
+<span class="sourceLineNo">028</span><a id="line.28">    public RoundNode3D() {}</a>
+<span class="sourceLineNo">029</span><a id="line.29"></a>
+<span class="sourceLineNo">030</span><a id="line.30">    /**</a>
+<span class="sourceLineNo">031</span><a id="line.31">     * 初期設定</a>
+<span class="sourceLineNo">032</span><a id="line.32">     */</a>
+<span class="sourceLineNo">033</span><a id="line.33">    public void init(SimulationPanel3D panel, HashMap parameters, NodeAppearance3D nodeAppearance) throws Exception {</a>
+<span class="sourceLineNo">034</span><a id="line.34">        super.init(panel, parameters, nodeAppearance);</a>
+<span class="sourceLineNo">035</span><a id="line.35"></a>
+<span class="sourceLineNo">036</span><a id="line.36">        diameter = getDoubleParameter("diameter", diameter);</a>
+<span class="sourceLineNo">037</span><a id="line.37">        height = getDoubleParameter("height", height);</a>
+<span class="sourceLineNo">038</span><a id="line.38">    }</a>
+<span class="sourceLineNo">039</span><a id="line.39"></a>
+<span class="sourceLineNo">040</span><a id="line.40">    /**</a>
+<span class="sourceLineNo">041</span><a id="line.41">     * ノードのシェイプを生成する</a>
+<span class="sourceLineNo">042</span><a id="line.42">     */</a>
+<span class="sourceLineNo">043</span><a id="line.43">    public Shape3D[] createShapes(MapNode node) {</a>
+<span class="sourceLineNo">044</span><a id="line.44">        Cylinder shape = new Cylinder(diameter / 2.0, height);</a>
+<span class="sourceLineNo">045</span><a id="line.45">        shape.setMaterial(material);</a>
+<span class="sourceLineNo">046</span><a id="line.46">        java.awt.geom.Point2D pos = node.getPosition();</a>
+<span class="sourceLineNo">047</span><a id="line.47">        shape.setTranslateX(pos.getX());</a>
+<span class="sourceLineNo">048</span><a id="line.48">        shape.setTranslateY(pos.getY());</a>
+<span class="sourceLineNo">049</span><a id="line.49">        shape.setTranslateZ(-node.getHeight() * panel.getVerticalScale() - (height / 2.0));</a>
+<span class="sourceLineNo">050</span><a id="line.50">        shape.getTransforms().add(NODE_ROTATE);</a>
+<span class="sourceLineNo">051</span><a id="line.51"></a>
+<span class="sourceLineNo">052</span><a id="line.52">        Shape3D[] shapes = { shape };</a>
+<span class="sourceLineNo">053</span><a id="line.53">        return shapes;</a>
+<span class="sourceLineNo">054</span><a id="line.54">    }</a>
+<span class="sourceLineNo">055</span><a id="line.55">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

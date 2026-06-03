@@ -1,0 +1,237 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">package nodagumi.ananPJ.NetworkMap.Polygon;</a>
+<span class="sourceLineNo">002</span><a id="line.2"></a>
+<span class="sourceLineNo">003</span><a id="line.3">import java.awt.geom.Point2D;</a>
+<span class="sourceLineNo">004</span><a id="line.4">import java.util.ArrayList;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import org.w3c.dom.Document;</a>
+<span class="sourceLineNo">006</span><a id="line.6">import org.w3c.dom.Element;</a>
+<span class="sourceLineNo">007</span><a id="line.7"></a>
+<span class="sourceLineNo">008</span><a id="line.8">import math.geom3d.Point3D;</a>
+<span class="sourceLineNo">009</span><a id="line.9"></a>
+<span class="sourceLineNo">010</span><a id="line.10">/**</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * MapPolygon 用の座標データリスト</a>
+<span class="sourceLineNo">012</span><a id="line.12"> */</a>
+<span class="sourceLineNo">013</span><a id="line.13">public class Coordinates {</a>
+<span class="sourceLineNo">014</span><a id="line.14">    /**</a>
+<span class="sourceLineNo">015</span><a id="line.15">     * DOM 要素のタグ名</a>
+<span class="sourceLineNo">016</span><a id="line.16">     */</a>
+<span class="sourceLineNo">017</span><a id="line.17">    public static final String TAG_NAME = "coordinates";</a>
+<span class="sourceLineNo">018</span><a id="line.18"></a>
+<span class="sourceLineNo">019</span><a id="line.19">    /**</a>
+<span class="sourceLineNo">020</span><a id="line.20">     * 座標の次元数</a>
+<span class="sourceLineNo">021</span><a id="line.21">     */</a>
+<span class="sourceLineNo">022</span><a id="line.22">    private int numberOfDimensions;</a>
+<span class="sourceLineNo">023</span><a id="line.23"></a>
+<span class="sourceLineNo">024</span><a id="line.24">    /**</a>
+<span class="sourceLineNo">025</span><a id="line.25">     * 座標リスト(次元数によらず Point3D を使用する)</a>
+<span class="sourceLineNo">026</span><a id="line.26">     */</a>
+<span class="sourceLineNo">027</span><a id="line.27">    private ArrayList&lt;Point3D&gt; coordinates = new ArrayList&lt;Point3D&gt;();</a>
+<span class="sourceLineNo">028</span><a id="line.28"></a>
+<span class="sourceLineNo">029</span><a id="line.29">    /**</a>
+<span class="sourceLineNo">030</span><a id="line.30">     * コンストラクタ</a>
+<span class="sourceLineNo">031</span><a id="line.31">     */</a>
+<span class="sourceLineNo">032</span><a id="line.32">    public Coordinates(int numberOfDimensions) {</a>
+<span class="sourceLineNo">033</span><a id="line.33">        this.numberOfDimensions = numberOfDimensions;</a>
+<span class="sourceLineNo">034</span><a id="line.34">    }</a>
+<span class="sourceLineNo">035</span><a id="line.35"></a>
+<span class="sourceLineNo">036</span><a id="line.36">    /**</a>
+<span class="sourceLineNo">037</span><a id="line.37">     * コンストラクタ</a>
+<span class="sourceLineNo">038</span><a id="line.38">     */</a>
+<span class="sourceLineNo">039</span><a id="line.39">    public Coordinates(ArrayList&lt;Point3D&gt; coordinates, int numberOfDimensions) {</a>
+<span class="sourceLineNo">040</span><a id="line.40">        this.coordinates = (ArrayList&lt;Point3D&gt;)coordinates.clone();</a>
+<span class="sourceLineNo">041</span><a id="line.41">        this.numberOfDimensions = numberOfDimensions;</a>
+<span class="sourceLineNo">042</span><a id="line.42">    }</a>
+<span class="sourceLineNo">043</span><a id="line.43"></a>
+<span class="sourceLineNo">044</span><a id="line.44">    /**</a>
+<span class="sourceLineNo">045</span><a id="line.45">     * コンストラクタ</a>
+<span class="sourceLineNo">046</span><a id="line.46">     */</a>
+<span class="sourceLineNo">047</span><a id="line.47">    public Coordinates(ArrayList&lt;Point2D&gt; points) {</a>
+<span class="sourceLineNo">048</span><a id="line.48">        numberOfDimensions = 2;</a>
+<span class="sourceLineNo">049</span><a id="line.49">        for (Point2D point : points) {</a>
+<span class="sourceLineNo">050</span><a id="line.50">            coordinates.add(new Point3D(point.getX(), point.getY(), 0.0));</a>
+<span class="sourceLineNo">051</span><a id="line.51">        }</a>
+<span class="sourceLineNo">052</span><a id="line.52">    }</a>
+<span class="sourceLineNo">053</span><a id="line.53"></a>
+<span class="sourceLineNo">054</span><a id="line.54">    /**</a>
+<span class="sourceLineNo">055</span><a id="line.55">     * コンストラクタ</a>
+<span class="sourceLineNo">056</span><a id="line.56">     */</a>
+<span class="sourceLineNo">057</span><a id="line.57">    public Coordinates(String coordinatesText, int numberOfDimensions) throws Exception {</a>
+<span class="sourceLineNo">058</span><a id="line.58">        if (coordinatesText == null) {</a>
+<span class="sourceLineNo">059</span><a id="line.59">            throw new Exception("Coordinates text is null");</a>
+<span class="sourceLineNo">060</span><a id="line.60">        }</a>
+<span class="sourceLineNo">061</span><a id="line.61">        if (coordinatesText.trim().isEmpty()) {</a>
+<span class="sourceLineNo">062</span><a id="line.62">            throw new Exception("Coordinates text is empty");</a>
+<span class="sourceLineNo">063</span><a id="line.63">        }</a>
+<span class="sourceLineNo">064</span><a id="line.64"></a>
+<span class="sourceLineNo">065</span><a id="line.65">        this.numberOfDimensions = numberOfDimensions;</a>
+<span class="sourceLineNo">066</span><a id="line.66">        for (String text : coordinatesText.trim().split("\\s+")) {</a>
+<span class="sourceLineNo">067</span><a id="line.67">            String xyz[] = text.split(",");</a>
+<span class="sourceLineNo">068</span><a id="line.68">            if (xyz.length != numberOfDimensions) {</a>
+<span class="sourceLineNo">069</span><a id="line.69">                throw new Exception("Coordinate value dimension error: " + text);</a>
+<span class="sourceLineNo">070</span><a id="line.70">            }</a>
+<span class="sourceLineNo">071</span><a id="line.71">            double x = Double.parseDouble(xyz[0]);</a>
+<span class="sourceLineNo">072</span><a id="line.72">            double y = Double.parseDouble(xyz[1]);</a>
+<span class="sourceLineNo">073</span><a id="line.73">            double z = (xyz.length == 2 ? 0.0 : Double.parseDouble(xyz[2]));</a>
+<span class="sourceLineNo">074</span><a id="line.74">            coordinates.add(new Point3D(x, y, z));</a>
+<span class="sourceLineNo">075</span><a id="line.75">        }</a>
+<span class="sourceLineNo">076</span><a id="line.76">    }</a>
+<span class="sourceLineNo">077</span><a id="line.77"></a>
+<span class="sourceLineNo">078</span><a id="line.78">    /**</a>
+<span class="sourceLineNo">079</span><a id="line.79">     * コンストラクタ</a>
+<span class="sourceLineNo">080</span><a id="line.80">     *</a>
+<span class="sourceLineNo">081</span><a id="line.81">     * @param element DOM の coordinates 要素</a>
+<span class="sourceLineNo">082</span><a id="line.82">     */</a>
+<span class="sourceLineNo">083</span><a id="line.83">    public Coordinates(Element element, int numberOfDimensions) throws Exception {</a>
+<span class="sourceLineNo">084</span><a id="line.84">        this.numberOfDimensions = numberOfDimensions;</a>
+<span class="sourceLineNo">085</span><a id="line.85"></a>
+<span class="sourceLineNo">086</span><a id="line.86">        String tagName = element.getTagName();</a>
+<span class="sourceLineNo">087</span><a id="line.87">        if (! tagName.equals(TAG_NAME)) {</a>
+<span class="sourceLineNo">088</span><a id="line.88">            throw new Exception("Tag name is not \"" + TAG_NAME + "\" : " + tagName);</a>
+<span class="sourceLineNo">089</span><a id="line.89">        }</a>
+<span class="sourceLineNo">090</span><a id="line.90"></a>
+<span class="sourceLineNo">091</span><a id="line.91">        for (String text : element.getTextContent().trim().split("\\s+")) {</a>
+<span class="sourceLineNo">092</span><a id="line.92">            String xyz[] = text.split(",");</a>
+<span class="sourceLineNo">093</span><a id="line.93">            if (xyz.length &lt; 2 || xyz.length &gt; 3) {</a>
+<span class="sourceLineNo">094</span><a id="line.94">                throw new Exception("Polygon coordinate value format error: " + text);</a>
+<span class="sourceLineNo">095</span><a id="line.95">            }</a>
+<span class="sourceLineNo">096</span><a id="line.96">            double x = Double.parseDouble(xyz[0]);</a>
+<span class="sourceLineNo">097</span><a id="line.97">            double y = Double.parseDouble(xyz[1]);</a>
+<span class="sourceLineNo">098</span><a id="line.98">            double z = (xyz.length == 2 ? 0.0 : Double.parseDouble(xyz[2]));</a>
+<span class="sourceLineNo">099</span><a id="line.99">            coordinates.add(new Point3D(x, y, z));</a>
+<span class="sourceLineNo">100</span><a id="line.100">        }</a>
+<span class="sourceLineNo">101</span><a id="line.101">    }</a>
+<span class="sourceLineNo">102</span><a id="line.102"></a>
+<span class="sourceLineNo">103</span><a id="line.103">    /**</a>
+<span class="sourceLineNo">104</span><a id="line.104">     * 座標の次元数を取得する</a>
+<span class="sourceLineNo">105</span><a id="line.105">     */</a>
+<span class="sourceLineNo">106</span><a id="line.106">    public int getNumberOfDimensions() {</a>
+<span class="sourceLineNo">107</span><a id="line.107">        return numberOfDimensions;</a>
+<span class="sourceLineNo">108</span><a id="line.108">    }</a>
+<span class="sourceLineNo">109</span><a id="line.109"></a>
+<span class="sourceLineNo">110</span><a id="line.110">    /**</a>
+<span class="sourceLineNo">111</span><a id="line.111">     * 座標リストをセットする</a>
+<span class="sourceLineNo">112</span><a id="line.112">     */</a>
+<span class="sourceLineNo">113</span><a id="line.113">    public void setCoordinates(ArrayList&lt;Point3D&gt; coordinates) {</a>
+<span class="sourceLineNo">114</span><a id="line.114">        this.coordinates = (ArrayList&lt;Point3D&gt;)coordinates.clone();</a>
+<span class="sourceLineNo">115</span><a id="line.115">    }</a>
+<span class="sourceLineNo">116</span><a id="line.116"></a>
+<span class="sourceLineNo">117</span><a id="line.117">    /**</a>
+<span class="sourceLineNo">118</span><a id="line.118">     * 座標リストを取得する</a>
+<span class="sourceLineNo">119</span><a id="line.119">     */</a>
+<span class="sourceLineNo">120</span><a id="line.120">    public ArrayList&lt;Point3D&gt; getValue() {</a>
+<span class="sourceLineNo">121</span><a id="line.121">        return coordinates;</a>
+<span class="sourceLineNo">122</span><a id="line.122">    }</a>
+<span class="sourceLineNo">123</span><a id="line.123"></a>
+<span class="sourceLineNo">124</span><a id="line.124">    /**</a>
+<span class="sourceLineNo">125</span><a id="line.125">     * 座標リストを取得する</a>
+<span class="sourceLineNo">126</span><a id="line.126">     */</a>
+<span class="sourceLineNo">127</span><a id="line.127">    public ArrayList&lt;Point2D&gt; getPoints2D() {</a>
+<span class="sourceLineNo">128</span><a id="line.128">        ArrayList&lt;Point2D&gt; points = new ArrayList();</a>
+<span class="sourceLineNo">129</span><a id="line.129">        for (Point3D point : coordinates) {</a>
+<span class="sourceLineNo">130</span><a id="line.130">            points.add(new Point2D.Double(point.getX(), point.getY()));</a>
+<span class="sourceLineNo">131</span><a id="line.131">        }</a>
+<span class="sourceLineNo">132</span><a id="line.132">        return points;</a>
+<span class="sourceLineNo">133</span><a id="line.133">    }</a>
+<span class="sourceLineNo">134</span><a id="line.134"></a>
+<span class="sourceLineNo">135</span><a id="line.135">    /**</a>
+<span class="sourceLineNo">136</span><a id="line.136">     * 座標リストを文字列化して取得する</a>
+<span class="sourceLineNo">137</span><a id="line.137">     */</a>
+<span class="sourceLineNo">138</span><a id="line.138">    public String getCoordinatesText() {</a>
+<span class="sourceLineNo">139</span><a id="line.139">        StringBuilder buff = new StringBuilder();</a>
+<span class="sourceLineNo">140</span><a id="line.140">        for (Point3D point : coordinates) {</a>
+<span class="sourceLineNo">141</span><a id="line.141">            if (buff.length() &gt; 0) {</a>
+<span class="sourceLineNo">142</span><a id="line.142">                buff.append(" ");</a>
+<span class="sourceLineNo">143</span><a id="line.143">            }</a>
+<span class="sourceLineNo">144</span><a id="line.144">            buff.append(point.getX());</a>
+<span class="sourceLineNo">145</span><a id="line.145">            buff.append(",");</a>
+<span class="sourceLineNo">146</span><a id="line.146">            buff.append(point.getY());</a>
+<span class="sourceLineNo">147</span><a id="line.147">            if (numberOfDimensions == 3) {</a>
+<span class="sourceLineNo">148</span><a id="line.148">                buff.append(",");</a>
+<span class="sourceLineNo">149</span><a id="line.149">                buff.append(point.getZ());</a>
+<span class="sourceLineNo">150</span><a id="line.150">            }</a>
+<span class="sourceLineNo">151</span><a id="line.151">        }</a>
+<span class="sourceLineNo">152</span><a id="line.152">        return buff.toString();</a>
+<span class="sourceLineNo">153</span><a id="line.153">    }</a>
+<span class="sourceLineNo">154</span><a id="line.154"></a>
+<span class="sourceLineNo">155</span><a id="line.155">    /**</a>
+<span class="sourceLineNo">156</span><a id="line.156">     * DOM 要素を生成する</a>
+<span class="sourceLineNo">157</span><a id="line.157">     */</a>
+<span class="sourceLineNo">158</span><a id="line.158">    public Element createElement(Document dom) {</a>
+<span class="sourceLineNo">159</span><a id="line.159">        Element element = dom.createElement(TAG_NAME);</a>
+<span class="sourceLineNo">160</span><a id="line.160">        element.appendChild(dom.createTextNode(getCoordinatesText()));</a>
+<span class="sourceLineNo">161</span><a id="line.161">        return element;</a>
+<span class="sourceLineNo">162</span><a id="line.162">    }</a>
+<span class="sourceLineNo">163</span><a id="line.163">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

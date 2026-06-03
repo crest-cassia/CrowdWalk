@@ -1,0 +1,279 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">package nodagumi.ananPJ.Gui.LinkAppearance.view3d;</a>
+<span class="sourceLineNo">002</span><a id="line.2"></a>
+<span class="sourceLineNo">003</span><a id="line.3">import java.util.HashMap;</a>
+<span class="sourceLineNo">004</span><a id="line.4"></a>
+<span class="sourceLineNo">005</span><a id="line.5">import javafx.geometry.Point2D;</a>
+<span class="sourceLineNo">006</span><a id="line.6">import javafx.geometry.Point3D;</a>
+<span class="sourceLineNo">007</span><a id="line.7">import javafx.scene.paint.Color;</a>
+<span class="sourceLineNo">008</span><a id="line.8">import javafx.scene.paint.PhongMaterial;</a>
+<span class="sourceLineNo">009</span><a id="line.9">import javafx.scene.shape.CullFace;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import javafx.scene.shape.DrawMode;</a>
+<span class="sourceLineNo">011</span><a id="line.11">import javafx.scene.shape.MeshView;</a>
+<span class="sourceLineNo">012</span><a id="line.12">import javafx.scene.shape.Shape3D;</a>
+<span class="sourceLineNo">013</span><a id="line.13"></a>
+<span class="sourceLineNo">014</span><a id="line.14">import nodagumi.ananPJ.Gui.FxColor;</a>
+<span class="sourceLineNo">015</span><a id="line.15">import nodagumi.ananPJ.Gui.LinkAppearance.EdgePoints;</a>
+<span class="sourceLineNo">016</span><a id="line.16">import nodagumi.ananPJ.Gui.SimulationPanel3D;</a>
+<span class="sourceLineNo">017</span><a id="line.17">import nodagumi.ananPJ.NetworkMap.Link.MapLink;</a>
+<span class="sourceLineNo">018</span><a id="line.18">import nodagumi.ananPJ.NetworkMap.Node.MapNode;</a>
+<span class="sourceLineNo">019</span><a id="line.19">import nodagumi.ananPJ.misc.JsonicHashMapGetter;</a>
+<span class="sourceLineNo">020</span><a id="line.20"></a>
+<span class="sourceLineNo">021</span><a id="line.21">/**</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * リンク 3D 描画のベースクラス</a>
+<span class="sourceLineNo">023</span><a id="line.23"> */</a>
+<span class="sourceLineNo">024</span><a id="line.24">public abstract class LinkViewBase3D extends JsonicHashMapGetter {</a>
+<span class="sourceLineNo">025</span><a id="line.25">    /**</a>
+<span class="sourceLineNo">026</span><a id="line.26">     * リンクの描画方法</a>
+<span class="sourceLineNo">027</span><a id="line.27">     */</a>
+<span class="sourceLineNo">028</span><a id="line.28">    public enum Method {</a>
+<span class="sourceLineNo">029</span><a id="line.29">        FILLING,</a>
+<span class="sourceLineNo">030</span><a id="line.30">        BORDERING</a>
+<span class="sourceLineNo">031</span><a id="line.31">    };</a>
+<span class="sourceLineNo">032</span><a id="line.32"></a>
+<span class="sourceLineNo">033</span><a id="line.33">    /**</a>
+<span class="sourceLineNo">034</span><a id="line.34">     * リンクを擬似的な1ドット幅のラインで表示する時の幅(1mm)</a>
+<span class="sourceLineNo">035</span><a id="line.35">     */</a>
+<span class="sourceLineNo">036</span><a id="line.36">    public static double THIN_LINK_WIDTH = 0.001;</a>
+<span class="sourceLineNo">037</span><a id="line.37"></a>
+<span class="sourceLineNo">038</span><a id="line.38">    /**</a>
+<span class="sourceLineNo">039</span><a id="line.39">     * ピッキング用マテリアル</a>
+<span class="sourceLineNo">040</span><a id="line.40">     */</a>
+<span class="sourceLineNo">041</span><a id="line.41">    private static PhongMaterial pickingMaterial;</a>
+<span class="sourceLineNo">042</span><a id="line.42"></a>
+<span class="sourceLineNo">043</span><a id="line.43">    /**</a>
+<span class="sourceLineNo">044</span><a id="line.44">     * 3D シミュレーションパネル</a>
+<span class="sourceLineNo">045</span><a id="line.45">     */</a>
+<span class="sourceLineNo">046</span><a id="line.46">    protected SimulationPanel3D panel;</a>
+<span class="sourceLineNo">047</span><a id="line.47"></a>
+<span class="sourceLineNo">048</span><a id="line.48">    /**</a>
+<span class="sourceLineNo">049</span><a id="line.49">     * リンクの 3D 表示の定義情報</a>
+<span class="sourceLineNo">050</span><a id="line.50">     */</a>
+<span class="sourceLineNo">051</span><a id="line.51">    protected LinkAppearance3D linkAppearance;</a>
+<span class="sourceLineNo">052</span><a id="line.52"></a>
+<span class="sourceLineNo">053</span><a id="line.53">    /**</a>
+<span class="sourceLineNo">054</span><a id="line.54">     * リンクのマテリアル</a>
+<span class="sourceLineNo">055</span><a id="line.55">     */</a>
+<span class="sourceLineNo">056</span><a id="line.56">    protected PhongMaterial material;</a>
+<span class="sourceLineNo">057</span><a id="line.57"></a>
+<span class="sourceLineNo">058</span><a id="line.58">    /**</a>
+<span class="sourceLineNo">059</span><a id="line.59">     * リンクの描画方法</a>
+<span class="sourceLineNo">060</span><a id="line.60">     */</a>
+<span class="sourceLineNo">061</span><a id="line.61">    protected Method method = Method.FILLING;</a>
+<span class="sourceLineNo">062</span><a id="line.62"></a>
+<span class="sourceLineNo">063</span><a id="line.63">    static {</a>
+<span class="sourceLineNo">064</span><a id="line.64">        pickingMaterial = new PhongMaterial();</a>
+<span class="sourceLineNo">065</span><a id="line.65">        pickingMaterial.setDiffuseColor(Color.TRANSPARENT);</a>
+<span class="sourceLineNo">066</span><a id="line.66">    }</a>
+<span class="sourceLineNo">067</span><a id="line.67"></a>
+<span class="sourceLineNo">068</span><a id="line.68">    /**</a>
+<span class="sourceLineNo">069</span><a id="line.69">     * 初期設定</a>
+<span class="sourceLineNo">070</span><a id="line.70">     */</a>
+<span class="sourceLineNo">071</span><a id="line.71">    public void init(SimulationPanel3D panel, HashMap parameters, LinkAppearance3D linkAppearance) throws Exception {</a>
+<span class="sourceLineNo">072</span><a id="line.72">        this.panel = panel;</a>
+<span class="sourceLineNo">073</span><a id="line.73">        this.linkAppearance = linkAppearance;</a>
+<span class="sourceLineNo">074</span><a id="line.74">        setParameters(parameters);</a>
+<span class="sourceLineNo">075</span><a id="line.75"></a>
+<span class="sourceLineNo">076</span><a id="line.76">        String colorName = getStringParameter("color", "DEFAULT_LINK_COLOR");</a>
+<span class="sourceLineNo">077</span><a id="line.77">        Color color = FxColor.getColor(colorName);</a>
+<span class="sourceLineNo">078</span><a id="line.78">        if (color == null) {</a>
+<span class="sourceLineNo">079</span><a id="line.79">            color = FxColor.DEFAULT_LINK_COLOR;</a>
+<span class="sourceLineNo">080</span><a id="line.80">        }</a>
+<span class="sourceLineNo">081</span><a id="line.81">        double transparency = getDoubleParameter("transparency", 0.0);</a>
+<span class="sourceLineNo">082</span><a id="line.82">        color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 1.0 - transparency);</a>
+<span class="sourceLineNo">083</span><a id="line.83"></a>
+<span class="sourceLineNo">084</span><a id="line.84">        material = new PhongMaterial();</a>
+<span class="sourceLineNo">085</span><a id="line.85">        material.setDiffuseColor(color);</a>
+<span class="sourceLineNo">086</span><a id="line.86"></a>
+<span class="sourceLineNo">087</span><a id="line.87">        String methodName = getStringParameter("method", method.name());</a>
+<span class="sourceLineNo">088</span><a id="line.88">        method = Method.valueOf(methodName.toUpperCase());</a>
+<span class="sourceLineNo">089</span><a id="line.89">    }</a>
+<span class="sourceLineNo">090</span><a id="line.90"></a>
+<span class="sourceLineNo">091</span><a id="line.91">    /**</a>
+<span class="sourceLineNo">092</span><a id="line.92">     * 最終的なリンクの幅を取得する</a>
+<span class="sourceLineNo">093</span><a id="line.93">     */</a>
+<span class="sourceLineNo">094</span><a id="line.94">    public abstract double getWidth(MapLink link);</a>
+<span class="sourceLineNo">095</span><a id="line.95"></a>
+<span class="sourceLineNo">096</span><a id="line.96">    /**</a>
+<span class="sourceLineNo">097</span><a id="line.97">     * リンクをポリゴン表示するための頂点座標を求める</a>
+<span class="sourceLineNo">098</span><a id="line.98">     */</a>
+<span class="sourceLineNo">099</span><a id="line.99">    public Point3D[] calcVertices(MapNode from, MapNode to, double width, double dz) {</a>
+<span class="sourceLineNo">100</span><a id="line.100">        Point3D p1 = new Point3D(to.getX() - from.getX(), to.getY() - from.getY(), 0);</a>
+<span class="sourceLineNo">101</span><a id="line.101">        Point3D p2 = p1.normalize().crossProduct(0, 0, width / 2.0);</a>
+<span class="sourceLineNo">102</span><a id="line.102">        double dx = p2.getX();</a>
+<span class="sourceLineNo">103</span><a id="line.103">        double dy = p2.getY();</a>
+<span class="sourceLineNo">104</span><a id="line.104"></a>
+<span class="sourceLineNo">105</span><a id="line.105">        Point3D[] vertices = new Point3D[4];</a>
+<span class="sourceLineNo">106</span><a id="line.106">        vertices[0] = new Point3D(from.getX() + dx, from.getY() + dy, -from.getHeight() + dz);</a>
+<span class="sourceLineNo">107</span><a id="line.107">        vertices[1] = new Point3D(from.getX() - dx, from.getY() - dy, -from.getHeight() + dz);</a>
+<span class="sourceLineNo">108</span><a id="line.108">        vertices[3] = new Point3D(to.getX() - dx, to.getY() - dy, -to.getHeight() + dz);</a>
+<span class="sourceLineNo">109</span><a id="line.109">        vertices[2] = new Point3D(to.getX() + dx, to.getY() + dy, -to.getHeight() + dz);</a>
+<span class="sourceLineNo">110</span><a id="line.110">        return vertices;</a>
+<span class="sourceLineNo">111</span><a id="line.111">    }</a>
+<span class="sourceLineNo">112</span><a id="line.112"></a>
+<span class="sourceLineNo">113</span><a id="line.113">    /**</a>
+<span class="sourceLineNo">114</span><a id="line.114">     * リンクをポリゴン表示するための頂点座標を求める</a>
+<span class="sourceLineNo">115</span><a id="line.115">     */</a>
+<span class="sourceLineNo">116</span><a id="line.116">    public Point3D[] calcVertices(Point3D point1, Point3D point2, double width, double dz) {</a>
+<span class="sourceLineNo">117</span><a id="line.117">        Point3D p1 = new Point3D(point2.getX() - point1.getX(), point2.getY() - point1.getY(), 0);</a>
+<span class="sourceLineNo">118</span><a id="line.118">        Point3D p2 = p1.normalize().crossProduct(0, 0, width / 2.0);</a>
+<span class="sourceLineNo">119</span><a id="line.119">        double dx = p2.getX();</a>
+<span class="sourceLineNo">120</span><a id="line.120">        double dy = p2.getY();</a>
+<span class="sourceLineNo">121</span><a id="line.121"></a>
+<span class="sourceLineNo">122</span><a id="line.122">        Point3D[] vertices = new Point3D[4];</a>
+<span class="sourceLineNo">123</span><a id="line.123">        vertices[0] = new Point3D(point1.getX() + dx, point1.getY() + dy, -point1.getZ() + dz);</a>
+<span class="sourceLineNo">124</span><a id="line.124">        vertices[1] = new Point3D(point1.getX() - dx, point1.getY() - dy, -point1.getZ() + dz);</a>
+<span class="sourceLineNo">125</span><a id="line.125">        vertices[3] = new Point3D(point2.getX() - dx, point2.getY() - dy, -point2.getZ() + dz);</a>
+<span class="sourceLineNo">126</span><a id="line.126">        vertices[2] = new Point3D(point2.getX() + dx, point2.getY() + dy, -point2.getZ() + dz);</a>
+<span class="sourceLineNo">127</span><a id="line.127">        return vertices;</a>
+<span class="sourceLineNo">128</span><a id="line.128">    }</a>
+<span class="sourceLineNo">129</span><a id="line.129"></a>
+<span class="sourceLineNo">130</span><a id="line.130">    /**</a>
+<span class="sourceLineNo">131</span><a id="line.131">     * 幅のある実線(中を塗りつぶした長方形シェイプ)を生成する</a>
+<span class="sourceLineNo">132</span><a id="line.132">     */</a>
+<span class="sourceLineNo">133</span><a id="line.133">    public Shape3D createSingleLine(MapLink link) {</a>
+<span class="sourceLineNo">134</span><a id="line.134">        Point3D[] vertices = calcVertices(link.getFrom(), link.getTo(), getWidth(link), 0.0);</a>
+<span class="sourceLineNo">135</span><a id="line.135">        Shape3D shape = new MeshView(panel.new QuadPolygon(vertices));</a>
+<span class="sourceLineNo">136</span><a id="line.136">        shape.setDrawMode(DrawMode.FILL);</a>
+<span class="sourceLineNo">137</span><a id="line.137">        shape.setMaterial(material);</a>
+<span class="sourceLineNo">138</span><a id="line.138">        return shape;</a>
+<span class="sourceLineNo">139</span><a id="line.139">    }</a>
+<span class="sourceLineNo">140</span><a id="line.140"></a>
+<span class="sourceLineNo">141</span><a id="line.141">    /**</a>
+<span class="sourceLineNo">142</span><a id="line.142">     * 実線(線分と見分けが付かない超鋭角の三角形シェイプ)を生成する</a>
+<span class="sourceLineNo">143</span><a id="line.143">     */</a>
+<span class="sourceLineNo">144</span><a id="line.144">    public Shape3D createSolidLine(Point3D point1, Point3D point2) {</a>
+<span class="sourceLineNo">145</span><a id="line.145">        Point3D[] vertices = calcVertices(point1, point2, THIN_LINK_WIDTH, 0.0);</a>
+<span class="sourceLineNo">146</span><a id="line.146">        Shape3D shape = new MeshView(panel.new TrianglePolygon(vertices));</a>
+<span class="sourceLineNo">147</span><a id="line.147">        shape.setDrawMode(DrawMode.LINE);</a>
+<span class="sourceLineNo">148</span><a id="line.148">        shape.setCullFace(CullFace.NONE);    // これがないと時々表示が消える</a>
+<span class="sourceLineNo">149</span><a id="line.149">        shape.setMaterial(material);</a>
+<span class="sourceLineNo">150</span><a id="line.150">        return shape;</a>
+<span class="sourceLineNo">151</span><a id="line.151">    }</a>
+<span class="sourceLineNo">152</span><a id="line.152"></a>
+<span class="sourceLineNo">153</span><a id="line.153">    /**</a>
+<span class="sourceLineNo">154</span><a id="line.154">     * リンクの縁取りラインを生成する</a>
+<span class="sourceLineNo">155</span><a id="line.155">     */</a>
+<span class="sourceLineNo">156</span><a id="line.156">    public Shape3D[] createBorderLine(MapLink link) {</a>
+<span class="sourceLineNo">157</span><a id="line.157">        EdgePoints.Points points = linkAppearance.getEdgePoints(link);</a>
+<span class="sourceLineNo">158</span><a id="line.158">        if (points == null) {</a>
+<span class="sourceLineNo">159</span><a id="line.159">            return null;</a>
+<span class="sourceLineNo">160</span><a id="line.160">        }</a>
+<span class="sourceLineNo">161</span><a id="line.161">        Point2D a1 = points.fromNodeLeftPoint;</a>
+<span class="sourceLineNo">162</span><a id="line.162">        Point2D a2 = points.toNodeRightPoint;</a>
+<span class="sourceLineNo">163</span><a id="line.163">        Point2D b1 = points.fromNodeRightPoint;</a>
+<span class="sourceLineNo">164</span><a id="line.164">        Point2D b2 = points.toNodeLeftPoint;</a>
+<span class="sourceLineNo">165</span><a id="line.165">        if (a1 == null || a2 == null || b1 == null || b2 == null) {</a>
+<span class="sourceLineNo">166</span><a id="line.166">            return null;</a>
+<span class="sourceLineNo">167</span><a id="line.167">        }</a>
+<span class="sourceLineNo">168</span><a id="line.168"></a>
+<span class="sourceLineNo">169</span><a id="line.169">        Point3D point1 = new Point3D(a1.getX(), a1.getY(), link.getFrom().getHeight());</a>
+<span class="sourceLineNo">170</span><a id="line.170">        Point3D point2 = new Point3D(a2.getX(), a2.getY(), link.getTo().getHeight());</a>
+<span class="sourceLineNo">171</span><a id="line.171">        Shape3D borderLine1 = createSolidLine(point1, point2);</a>
+<span class="sourceLineNo">172</span><a id="line.172"></a>
+<span class="sourceLineNo">173</span><a id="line.173">        Point3D point3 = new Point3D(b1.getX(), b1.getY(), link.getFrom().getHeight());</a>
+<span class="sourceLineNo">174</span><a id="line.174">        Point3D point4 = new Point3D(b2.getX(), b2.getY(), link.getTo().getHeight());</a>
+<span class="sourceLineNo">175</span><a id="line.175">        Shape3D borderLine2 = createSolidLine(point3, point4);</a>
+<span class="sourceLineNo">176</span><a id="line.176"></a>
+<span class="sourceLineNo">177</span><a id="line.177">        Shape3D[] shapes = { borderLine1, borderLine2 };</a>
+<span class="sourceLineNo">178</span><a id="line.178">        return shapes;</a>
+<span class="sourceLineNo">179</span><a id="line.179">    }</a>
+<span class="sourceLineNo">180</span><a id="line.180"></a>
+<span class="sourceLineNo">181</span><a id="line.181">    /**</a>
+<span class="sourceLineNo">182</span><a id="line.182">     * リンクのシェイプを生成する</a>
+<span class="sourceLineNo">183</span><a id="line.183">     */</a>
+<span class="sourceLineNo">184</span><a id="line.184">    public Shape3D[] createShapes(MapLink link) {</a>
+<span class="sourceLineNo">185</span><a id="line.185">        switch (method) {</a>
+<span class="sourceLineNo">186</span><a id="line.186">        case FILLING:</a>
+<span class="sourceLineNo">187</span><a id="line.187">            Shape3D[] shapes = { createSingleLine(link) };</a>
+<span class="sourceLineNo">188</span><a id="line.188">            return shapes;</a>
+<span class="sourceLineNo">189</span><a id="line.189">        case BORDERING:</a>
+<span class="sourceLineNo">190</span><a id="line.190">            return createBorderLine(link);</a>
+<span class="sourceLineNo">191</span><a id="line.191">        }</a>
+<span class="sourceLineNo">192</span><a id="line.192">        return null;</a>
+<span class="sourceLineNo">193</span><a id="line.193">    }</a>
+<span class="sourceLineNo">194</span><a id="line.194"></a>
+<span class="sourceLineNo">195</span><a id="line.195">    /**</a>
+<span class="sourceLineNo">196</span><a id="line.196">     * ピッキング用の透明シェイプを生成する</a>
+<span class="sourceLineNo">197</span><a id="line.197">     */</a>
+<span class="sourceLineNo">198</span><a id="line.198">    public Shape3D createPickingShape(MapLink link) {</a>
+<span class="sourceLineNo">199</span><a id="line.199">        Point3D[] vertices = calcVertices(link.getFrom(), link.getTo(), link.getWidth(), -0.1); // 10cm 上方に配置する</a>
+<span class="sourceLineNo">200</span><a id="line.200">        Shape3D shape = new MeshView(panel.new QuadPolygon(vertices));</a>
+<span class="sourceLineNo">201</span><a id="line.201">        shape.setDrawMode(DrawMode.FILL);</a>
+<span class="sourceLineNo">202</span><a id="line.202">        shape.setMaterial(pickingMaterial);</a>
+<span class="sourceLineNo">203</span><a id="line.203">        return shape;</a>
+<span class="sourceLineNo">204</span><a id="line.204">    }</a>
+<span class="sourceLineNo">205</span><a id="line.205">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

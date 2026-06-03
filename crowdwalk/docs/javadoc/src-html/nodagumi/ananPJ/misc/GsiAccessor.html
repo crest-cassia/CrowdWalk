@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<title>ソース・コード</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">package nodagumi.ananPJ.misc;</a>
+<span class="sourceLineNo">002</span><a id="line.2"></a>
+<span class="sourceLineNo">003</span><a id="line.3">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">004</span><a id="line.4">import java.awt.image.BufferedImage;</a>
+<span class="sourceLineNo">005</span><a id="line.5">import java.awt.Point;</a>
+<span class="sourceLineNo">006</span><a id="line.6">import java.io.File;</a>
+<span class="sourceLineNo">007</span><a id="line.7">import java.io.FileInputStream;</a>
+<span class="sourceLineNo">008</span><a id="line.8">import java.io.IOException;</a>
+<span class="sourceLineNo">009</span><a id="line.9">import java.net.URL;</a>
+<span class="sourceLineNo">010</span><a id="line.10">import java.nio.file.Files;</a>
+<span class="sourceLineNo">011</span><a id="line.11">import java.util.HashMap;</a>
+<span class="sourceLineNo">012</span><a id="line.12">import javax.imageio.ImageIO;</a>
+<span class="sourceLineNo">013</span><a id="line.13"></a>
+<span class="sourceLineNo">014</span><a id="line.14">import net.arnx.jsonic.JSON;</a>
+<span class="sourceLineNo">015</span><a id="line.15"></a>
+<span class="sourceLineNo">016</span><a id="line.16">import nodagumi.ananPJ.CrowdWalkLauncher;</a>
+<span class="sourceLineNo">017</span><a id="line.17">import nodagumi.Itk.*;</a>
+<span class="sourceLineNo">018</span><a id="line.18"></a>
+<span class="sourceLineNo">019</span><a id="line.19">/**</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * 国土地理院の Web サービスを利用するためのインターフェイスを提供する</a>
+<span class="sourceLineNo">021</span><a id="line.21"> */</a>
+<span class="sourceLineNo">022</span><a id="line.22">public class GsiAccessor {</a>
+<span class="sourceLineNo">023</span><a id="line.23">    /**</a>
+<span class="sourceLineNo">024</span><a id="line.24">     * 緯度経度から Slippy map のタイル番号を求める</a>
+<span class="sourceLineNo">025</span><a id="line.25">     */</a>
+<span class="sourceLineNo">026</span><a id="line.26">    public static Point getTileNumber(double lat, double lon, int zoom) {</a>
+<span class="sourceLineNo">027</span><a id="line.27">        int xtile = (int)Math.floor((lon + 180) / 360 * (1 &lt;&lt; zoom));</a>
+<span class="sourceLineNo">028</span><a id="line.28">        int ytile = (int)Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 &lt;&lt; zoom));</a>
+<span class="sourceLineNo">029</span><a id="line.29">        if (xtile &lt; 0)</a>
+<span class="sourceLineNo">030</span><a id="line.30">            xtile = 0;</a>
+<span class="sourceLineNo">031</span><a id="line.31">        if (xtile &gt;= (1 &lt;&lt; zoom))</a>
+<span class="sourceLineNo">032</span><a id="line.32">            xtile = ((1 &lt;&lt; zoom) - 1);</a>
+<span class="sourceLineNo">033</span><a id="line.33">        if (ytile &lt; 0)</a>
+<span class="sourceLineNo">034</span><a id="line.34">            ytile = 0;</a>
+<span class="sourceLineNo">035</span><a id="line.35">        if (ytile &gt;= (1 &lt;&lt; zoom))</a>
+<span class="sourceLineNo">036</span><a id="line.36">            ytile = ((1 &lt;&lt; zoom) - 1);</a>
+<span class="sourceLineNo">037</span><a id="line.37">        return new Point(xtile, ytile);</a>
+<span class="sourceLineNo">038</span><a id="line.38">    }</a>
+<span class="sourceLineNo">039</span><a id="line.39"></a>
+<span class="sourceLineNo">040</span><a id="line.40">    /**</a>
+<span class="sourceLineNo">041</span><a id="line.41">     * Slippy map のタイル番号から緯度経度とタイルサイズを求める</a>
+<span class="sourceLineNo">042</span><a id="line.42">     */</a>
+<span class="sourceLineNo">043</span><a id="line.43">    public static Rectangle2D tile2boundingBox(int x, int y, int zoom) {</a>
+<span class="sourceLineNo">044</span><a id="line.44">        double north = tile2lat(y, zoom);</a>
+<span class="sourceLineNo">045</span><a id="line.45">        double south = tile2lat(y + 1, zoom);</a>
+<span class="sourceLineNo">046</span><a id="line.46">        double west = tile2lon(x, zoom);</a>
+<span class="sourceLineNo">047</span><a id="line.47">        double east = tile2lon(x + 1, zoom);</a>
+<span class="sourceLineNo">048</span><a id="line.48">        return new java.awt.geom.Rectangle2D.Double(west, north, east - west, north - south);</a>
+<span class="sourceLineNo">049</span><a id="line.49">    }</a>
+<span class="sourceLineNo">050</span><a id="line.50"></a>
+<span class="sourceLineNo">051</span><a id="line.51">    private static double tile2lon(int x, int z) {</a>
+<span class="sourceLineNo">052</span><a id="line.52">        return x / Math.pow(2.0, z) * 360.0 - 180;</a>
+<span class="sourceLineNo">053</span><a id="line.53">    }</a>
+<span class="sourceLineNo">054</span><a id="line.54"></a>
+<span class="sourceLineNo">055</span><a id="line.55">    private static double tile2lat(int y, int z) {</a>
+<span class="sourceLineNo">056</span><a id="line.56">        double n = Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, z);</a>
+<span class="sourceLineNo">057</span><a id="line.57">        return Math.toDegrees(Math.atan(Math.sinh(n)));</a>
+<span class="sourceLineNo">058</span><a id="line.58">    }</a>
+<span class="sourceLineNo">059</span><a id="line.59"></a>
+<span class="sourceLineNo">060</span><a id="line.60">    /**</a>
+<span class="sourceLineNo">061</span><a id="line.61">     * キャッシュされた地理院タイル画像のファイル名を取得する</a>
+<span class="sourceLineNo">062</span><a id="line.62">     */</a>
+<span class="sourceLineNo">063</span><a id="line.63">    public static String getFileNameOfGsiTileImage(String cachePath, String tileName, int x, int y, int zoom, String ext) {</a>
+<span class="sourceLineNo">064</span><a id="line.64">        String _cachePath = cachePath.replaceFirst("[/\\\\]$", "");</a>
+<span class="sourceLineNo">065</span><a id="line.65">        return String.format("%s/%s/%d/%d/%d.%s", _cachePath, tileName, zoom, x, y, ext);</a>
+<span class="sourceLineNo">066</span><a id="line.66">    }</a>
+<span class="sourceLineNo">067</span><a id="line.67"></a>
+<span class="sourceLineNo">068</span><a id="line.68">    /**</a>
+<span class="sourceLineNo">069</span><a id="line.69">     * 地理院タイル画像を cachePath ディレクトリにダウンロードする</a>
+<span class="sourceLineNo">070</span><a id="line.70">     */</a>
+<span class="sourceLineNo">071</span><a id="line.71">    public static boolean downloadGsiTileImage(String cachePath, String tileName, int x, int y, int zoom, String ext) {</a>
+<span class="sourceLineNo">072</span><a id="line.72">        String _cachePath = cachePath.replaceFirst("[/\\\\]$", "");</a>
+<span class="sourceLineNo">073</span><a id="line.73">        String dirPath = String.format("%s/%s/%d/%d", _cachePath, tileName, zoom, x);</a>
+<span class="sourceLineNo">074</span><a id="line.74">        File dir = new File(dirPath);</a>
+<span class="sourceLineNo">075</span><a id="line.75">        if (! dir.exists()) {</a>
+<span class="sourceLineNo">076</span><a id="line.76">            Itk.logInfo("Make directory", dirPath);</a>
+<span class="sourceLineNo">077</span><a id="line.77">            dir.mkdirs();</a>
+<span class="sourceLineNo">078</span><a id="line.78">        }</a>
+<span class="sourceLineNo">079</span><a id="line.79"></a>
+<span class="sourceLineNo">080</span><a id="line.80">        String filePath = String.format("%s/%d.%s", dirPath, y, ext);</a>
+<span class="sourceLineNo">081</span><a id="line.81">        File file = new File(filePath);</a>
+<span class="sourceLineNo">082</span><a id="line.82">        if (file.exists()) {</a>
+<span class="sourceLineNo">083</span><a id="line.83">            return true;</a>
+<span class="sourceLineNo">084</span><a id="line.84">        }</a>
+<span class="sourceLineNo">085</span><a id="line.85">        if (CrowdWalkLauncher.offline) {</a>
+<span class="sourceLineNo">086</span><a id="line.86">            return false;</a>
+<span class="sourceLineNo">087</span><a id="line.87">        }</a>
+<span class="sourceLineNo">088</span><a id="line.88">        // インターネット接続を確認して以降の動作に反映</a>
+<span class="sourceLineNo">089</span><a id="line.89">        if (! CrowdWalkLauncher.internetEnabled) {</a>
+<span class="sourceLineNo">090</span><a id="line.90">            if (CrowdWalkLauncher.isInternetEnabled()) {</a>
+<span class="sourceLineNo">091</span><a id="line.91">                CrowdWalkLauncher.internetEnabled = true;</a>
+<span class="sourceLineNo">092</span><a id="line.92">            } else {</a>
+<span class="sourceLineNo">093</span><a id="line.93">                CrowdWalkLauncher.offline = true;</a>
+<span class="sourceLineNo">094</span><a id="line.94">                return false;</a>
+<span class="sourceLineNo">095</span><a id="line.95">            }</a>
+<span class="sourceLineNo">096</span><a id="line.96">        }</a>
+<span class="sourceLineNo">097</span><a id="line.97"></a>
+<span class="sourceLineNo">098</span><a id="line.98">        String url = String.format("http://cyberjapandata.gsi.go.jp/xyz/%s/%d/%d/%d.%s", tileName, zoom, x, y, ext);</a>
+<span class="sourceLineNo">099</span><a id="line.99">        Itk.logInfo("Download", url);</a>
+<span class="sourceLineNo">100</span><a id="line.100">        try {</a>
+<span class="sourceLineNo">101</span><a id="line.101">            BufferedImage image = ImageIO.read(new URL(url));</a>
+<span class="sourceLineNo">102</span><a id="line.102">            Itk.logInfo("Save", filePath);</a>
+<span class="sourceLineNo">103</span><a id="line.103">            ImageIO.write(image, ext, file);</a>
+<span class="sourceLineNo">104</span><a id="line.104">        } catch (IOException e) {</a>
+<span class="sourceLineNo">105</span><a id="line.105">            Itk.dumpStackTraceOf(e) ;</a>
+<span class="sourceLineNo">106</span><a id="line.106">            return false;</a>
+<span class="sourceLineNo">107</span><a id="line.107">        }</a>
+<span class="sourceLineNo">108</span><a id="line.108">        try {</a>
+<span class="sourceLineNo">109</span><a id="line.109">            // サーバーに負荷を掛けすぎてアクセス拒否されないために毎秒2回とする</a>
+<span class="sourceLineNo">110</span><a id="line.110">            Thread.sleep(500);</a>
+<span class="sourceLineNo">111</span><a id="line.111">        } catch(InterruptedException e) {}</a>
+<span class="sourceLineNo">112</span><a id="line.112">        return true;</a>
+<span class="sourceLineNo">113</span><a id="line.113">    }</a>
+<span class="sourceLineNo">114</span><a id="line.114"></a>
+<span class="sourceLineNo">115</span><a id="line.115">    /**</a>
+<span class="sourceLineNo">116</span><a id="line.116">     * 地理院タイルの左上点の標高値を取得する</a>
+<span class="sourceLineNo">117</span><a id="line.117">     */</a>
+<span class="sourceLineNo">118</span><a id="line.118">    public static double getElevation(String cachePath, int x, int y, int zoom) {</a>
+<span class="sourceLineNo">119</span><a id="line.119">        String _cachePath = cachePath.replaceFirst("[/\\\\]$", "");</a>
+<span class="sourceLineNo">120</span><a id="line.120">        String filePath = String.format("%s/elevation_%d_%d_%d.json", _cachePath, zoom, x, y);</a>
+<span class="sourceLineNo">121</span><a id="line.121">        File file = new File(filePath);</a>
+<span class="sourceLineNo">122</span><a id="line.122">        if (! file.exists()) {</a>
+<span class="sourceLineNo">123</span><a id="line.123">            if (CrowdWalkLauncher.offline) {</a>
+<span class="sourceLineNo">124</span><a id="line.124">                return 0.0;</a>
+<span class="sourceLineNo">125</span><a id="line.125">            }</a>
+<span class="sourceLineNo">126</span><a id="line.126">            // インターネット接続を確認して以降の動作に反映</a>
+<span class="sourceLineNo">127</span><a id="line.127">            if (! CrowdWalkLauncher.internetEnabled) {</a>
+<span class="sourceLineNo">128</span><a id="line.128">                if (CrowdWalkLauncher.isInternetEnabled()) {</a>
+<span class="sourceLineNo">129</span><a id="line.129">                    CrowdWalkLauncher.internetEnabled = true;</a>
+<span class="sourceLineNo">130</span><a id="line.130">                } else {</a>
+<span class="sourceLineNo">131</span><a id="line.131">                    CrowdWalkLauncher.offline = true;</a>
+<span class="sourceLineNo">132</span><a id="line.132">                    return 0.0;</a>
+<span class="sourceLineNo">133</span><a id="line.133">                }</a>
+<span class="sourceLineNo">134</span><a id="line.134">            }</a>
+<span class="sourceLineNo">135</span><a id="line.135">            // 国土地理院Webの標高APIにアクセスして標高値を取得し、キャッシュファイルに保存する</a>
+<span class="sourceLineNo">136</span><a id="line.136">            Rectangle2D tileRect = tile2boundingBox(x, y, zoom);</a>
+<span class="sourceLineNo">137</span><a id="line.137">            String url = String.format("http://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=%s&amp;lat=%s&amp;outtype=JSON", tileRect.getX(), tileRect.getY());</a>
+<span class="sourceLineNo">138</span><a id="line.138">            try {</a>
+<span class="sourceLineNo">139</span><a id="line.139">                Itk.logInfo("Access to", url);</a>
+<span class="sourceLineNo">140</span><a id="line.140">                Files.copy(new URL(url).openStream(), file.toPath());</a>
+<span class="sourceLineNo">141</span><a id="line.141">            } catch (IOException e) {</a>
+<span class="sourceLineNo">142</span><a id="line.142">                Itk.logError("IOException", e.getMessage());</a>
+<span class="sourceLineNo">143</span><a id="line.143">                return 0.0;</a>
+<span class="sourceLineNo">144</span><a id="line.144">            }</a>
+<span class="sourceLineNo">145</span><a id="line.145">        }</a>
+<span class="sourceLineNo">146</span><a id="line.146">        String elevation = "";</a>
+<span class="sourceLineNo">147</span><a id="line.147">        try {</a>
+<span class="sourceLineNo">148</span><a id="line.148">            Itk.logInfo("Read elevation file", filePath);</a>
+<span class="sourceLineNo">149</span><a id="line.149">            HashMap&lt;String, Object&gt; json = JSON.decode(new FileInputStream(filePath));</a>
+<span class="sourceLineNo">150</span><a id="line.150">            elevation = json.get("elevation").toString();</a>
+<span class="sourceLineNo">151</span><a id="line.151">            return new Double(elevation).doubleValue();</a>
+<span class="sourceLineNo">152</span><a id="line.152">        } catch (Exception e) {</a>
+<span class="sourceLineNo">153</span><a id="line.153">            Itk.logError(e.getMessage(), elevation);</a>
+<span class="sourceLineNo">154</span><a id="line.154">        }</a>
+<span class="sourceLineNo">155</span><a id="line.155">        return 0.0;</a>
+<span class="sourceLineNo">156</span><a id="line.156">    }</a>
+<span class="sourceLineNo">157</span><a id="line.157">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

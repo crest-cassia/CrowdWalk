@@ -1,0 +1,11 @@
+{
+    "agent" : {"widthUnit_SameLane" : 1.0,
+    	       "nodeCrossingForceTimeMargin":1.5,
+    	       "nodeCrossingForceFactor":10.0},
+    "generation" : {
+        "_speedModel" : "plain",
+        "speedModel" : "crossing",
+        "_" : null},
+    "link" : { "gathering_location_width" : 6.0 },
+    "_" : null
+}
