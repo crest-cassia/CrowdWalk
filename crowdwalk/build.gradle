@@ -4,6 +4,8 @@
  */
 
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.apache.tools.ant.types.Commandline
+
 
 plugins {
     id 'java'
@@ -267,3 +269,24 @@ jar {
       from('build/ruby')
     }
 }
+
+task runRuby(type: JavaExec) {
+    classpath = configurations.runtimeClasspath
+    mainClass = 'org.jruby.Main'
+
+    doFirst {
+        def ruby = project.findProperty('ruby')
+        if (!ruby) {
+            throw new GradleException(
+                'ruby is required. Example: ./gradlew runRuby -Pruby="tools/osmJson2CrowdWalkMap --help"'
+            )
+        }
+
+        args Commandline.translateCommandline(ruby.toString())
+    }
+
+    standardInput = System.in
+    standardOutput = System.out
+    errorOutput = System.err
+}
+
