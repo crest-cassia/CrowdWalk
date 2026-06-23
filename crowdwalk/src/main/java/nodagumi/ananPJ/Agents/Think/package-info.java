@@ -8,9 +8,10 @@
  * Think Formula は、関数形式の計算・判断ルーチン記述であり、
  * 以下の用途で用いられる。
  * <ul>
- *  <li> {@link nodagumi.ananPJ.Agents.Think.ThinkFormula RationalAgent の判断ルーチン記述}。
+ *  <li> <a href="#RatiionalAgentActRule"> RationalAgent の判断ルーチン記述 </a>
+     ({@link nodagumi.ananPJ.Agents.Think.ThinkFormula 実装クラス})。
  *  </li>
- *  <li> {@link nodagumi.ananPJ.navigation.Formula.NaviFormula 主観的距離マップ(mental map)の計算記述}。
+ *  <li> <a href="#MentalMapRuleExpression"> 主観的距離マップ(mental map)の計算記述</a> ({@link nodagumi.ananPJ.navigation.Formula.NaviFormula 実装クラス})。
  *  </li>
  * </ul>
  * 
@@ -74,7 +75,7 @@
  * <h3>具体的な事例</h3>
  *   Formula を使ったいくつかの事例を示す。
  * 
- * <h4>RationalAgentの行動ルール</h4>
+ * <h4 id="RatiionalAgentActRule">RationalAgentの行動ルール</h4>
  *    {@link nodagumi.ananPJ.Agents.RationalAgent RationalAgent}の行動ルールは、
  *    generation file の "agentType"/"rule" の下に、以下のように記述する。
  *    (sample/generatedTown/gridTown00_bench.rational.gen.json 参照)
@@ -109,7 +110,7 @@
  *			    {"":"clearAlert", "message":"foo-bar-baz"}]}
  *	       ]
  *    </pre>
- * <h4>MentalMapルール記述</h4>
+ * <h4 id="MentalMapRuleExpression">MentalMapルール記述</h4>
  *   エージェントが経路を選ぶ際、基本的には物理的最短距離を選ぶが、
  *   その距離を、心理条件(メンタルモード)によって変更することが可能である
  *   ({@link nodagumi.ananPJ.navigation.Formula.NaviFormula NaviFormula})。
